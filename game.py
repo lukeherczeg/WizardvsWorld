@@ -1,23 +1,55 @@
 from tkinter import *
 import os
 import wsl
+import pygame
 
 wsl.set_display_to_host()
 print("Distro:\t", wsl.get_wsl_distro())
 print("Host:\t", wsl.get_wsl_host())
 print("Display:", os.environ['DISPLAY'])
 
-root = Tk()
+BLACK = (0, 0, 0)
+WHITE = (200, 200, 200)
+WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 800
+SCREEN = pygame.display.set_mode((WINDOW_HEIGHT, WINDOW_WIDTH))
 
-w = Label(root, text = "Lets count a stack of n+10!")
-w.pack()
-print("What number do you want to start from? ", end = '')
-start = int(input())
-for i in range(start-1, start+9):
-    w = Label(root, text = i+1, height = 2, width = 15, font = "helvetica", background = "white")
-    w.pack()
 
-w = Label(root, text = "Done!")
-w.pack()
+def main():
+    pygame.init()
+    clock = pygame.time.Clock()
+    SCREEN.fill(BLACK)
+    draw_button_2 = False
 
-root.mainloop()
+    while True:
+        draw_grid()
+        button = pygame.Rect(0, 0, 49, 49)
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if button.collidepoint(event.pos):
+                        button2 = pygame.Rect(0, 50, 49, 49)
+                        draw_button_2 = True
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        pygame.draw.rect(SCREEN, WHITE, button)
+        if draw_button_2:
+            pygame.draw.rect(SCREEN, BLACK, button)
+            pygame.draw.rect(SCREEN, WHITE, button2)
+
+        pygame.display.update()
+
+
+def draw_grid():
+    block_size = 50  # Set the size of the grid block
+    for x in range(WINDOW_WIDTH):
+        for y in range(WINDOW_HEIGHT):
+            rect = pygame.Rect(x * block_size, y * block_size, block_size, block_size)
+            pygame.draw.rect(SCREEN, WHITE, rect, 1)
+
+
+if __name__ == "__main__":
+    main()
