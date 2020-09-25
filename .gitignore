@@ -8,6 +8,10 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+.idea
+__pycache__
+
+
 # Generated files
 .idea/**/contentModel.xml
 
