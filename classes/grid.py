@@ -17,29 +17,29 @@ class Grid:
     return self._game_map
 
   def get_movement(self, row, col, num_moves):
-    tile_list = []
-
+    
+    tile_list = [self._game_map[row][col]]
     if(num_moves == 0):
-      return ['(' + str(self._game_map[row][col].row) + ',' + str(self._game_map[row][col].col) + ')']
+      return tile_list
     
     #proceed top if not at border, above tile is standable, and no wall in the way
     if(row != 0 and self._game_map[row-1][col].standable and not self._game_map[row][col].walls[0] and not self._game_map[row-1][col].walls[2]):
-      tile_list.append(self.get_movement(row-1, col, num_moves-1))
+      tile_list.extend(self.get_movement(row-1, col, num_moves-1))
 
     #proceed left if not at border, left tile is standable, and no wall in the way
     if(col != 0 and self._game_map[row][col-1].standable and not self._game_map[row][col].walls[1] and not self._game_map[row][col-1].walls[3]):
-      tile_list.append(self.get_movement(row, col-1, num_moves-1))
+      tile_list.extend(self.get_movement(row, col-1, num_moves-1))
 
     #proceed bottom if not at border, lower tile is standable, and no wall in the way
     if(row != self.GRID_SIZE-1 and self._game_map[row+1][col].standable and not self._game_map[row][col].walls[2] and not self._game_map[row+1][col].walls[0]):
-      tile_list.append(self.get_movement(row+1, col, num_moves-1))
+      tile_list.extend(self.get_movement(row+1, col, num_moves-1))
 
     #proceed right if not at border, right tile is standable, and no wall in the way
     if(col != self.GRID_SIZE-1 and self._game_map[row][col+1].standable and not self._game_map[row][col].walls[3] and not self._game_map[row][col+1].walls[1]):
-      tile_list.append(self.get_movement(row, col+1, num_moves-1))
+      tile_list.extend(self.get_movement(row, col+1, num_moves-1))
 
     #array syntax flattens and dict.fromKeys removes duplicates
-    return list(dict.fromkeys([item for sublist in tile_list for item in sublist]))
+    return list(dict.fromkeys(tile_list))
 
   def print_map_data(self):
     #Standable map
