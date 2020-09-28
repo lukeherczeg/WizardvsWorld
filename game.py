@@ -1,7 +1,7 @@
-from tkinter import *
 import os
-import wsl
 import pygame
+import sys
+import wsl
 
 wsl.set_display_to_host()
 print("Distro:\t", wsl.get_wsl_distro())
