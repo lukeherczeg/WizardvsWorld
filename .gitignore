@@ -24,6 +24,9 @@ __pycache__
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
+# Juan files
+.inputrc
+
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries

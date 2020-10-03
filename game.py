@@ -1,6 +1,6 @@
-from tkinter import *
 import os
 import wsl
+import sys
 import pygame
 
 wsl.set_display_to_host()
