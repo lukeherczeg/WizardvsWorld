@@ -2,7 +2,7 @@
 A 2D, tactical role-playing game where you play as a single wizard fighting an army of endless soldiers.
 
 ## Configuring WSL and PyCharm for PyGame
-PyGame 1.9.7 (the latest stable version) has some issues working with Python 3.8, so to run the project we need to make sure set up PyCharm to use Python 3.7 on WSL as its iterpreter, and use PyCharm to install PyGame 1.9.6, which is compatible with Python 3.7.
+PyGame 1.9.7 (the latest stable version) has some issues working with Python 3.8, so to run the project we need to make sure we set up PyCharm to use 'WSL: Python 3.7' as its iterpreter, and use PyCharm to install PyGame 1.9.6, which is compatible with Python 3.7.
 These instructions assume that you are using Ubuntu 20.04 (You probably are if you installed a new Ubuntu version for this class)
 
 1. Check if you have Python 3.7 installed on your WSL by running `python3.7 --version`, if it is installed skip to step 3
