@@ -1,4 +1,5 @@
-from tkinter import *
+#from tkinter import *
+from classes.entity import *
 import os
 import wsl
 import pygame
@@ -20,6 +21,8 @@ def main():
     clock = pygame.time.Clock()
     SCREEN.fill(BLACK)
     draw_button_2 = False
+    dude = Wizard()
+    bad = Soldier()
 
     while True:
         draw_grid()
@@ -33,13 +36,15 @@ def main():
 
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
+                #sys.exit()
+
 
         pygame.draw.rect(SCREEN, WHITE, button)
         if draw_button_2:
             pygame.draw.rect(SCREEN, BLACK, button)
             pygame.draw.rect(SCREEN, WHITE, button2)
-
+        SCREEN.blit(dude.image(True, False), (dude.currentTile, 0))
+        SCREEN.blit(bad.image(True, False), (250, 250))
         pygame.display.update()
 
 
