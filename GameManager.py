@@ -1,7 +1,7 @@
 import abc
-from enemyai import EnemyAI
-from classes.entity import Wizard
-from classes.entity import Soldier
+from classes.enemyai import EnemyAI
+from classes.entity import Player
+from classes.entity import Enemy
 from classes.entity import Archer
 
 
@@ -39,13 +39,13 @@ class PhaseTwo(Phase):
 
     def enter(self):
         print('Entering Phase 2...')
-        player = Wizard()
-        enemy = Soldier()
+        player = Player()
+        enemy = Enemy()
         ai = EnemyAI(player, enemy)
-        ai.enemyAI()
+        ai.enemy_ai()
         enemy2 = Archer()
         ai = EnemyAI(player, enemy2)
-        ai.enemyAI()
+        ai.enemy_ai()
 
     def update(self):
         print('Main Functions of Phase 2...')

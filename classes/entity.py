@@ -8,7 +8,7 @@ from classes.tile import Tile
 
 # entity will have various shared data types
 class Entity:
-    currentTile: Tile  #################needs to be tile instead of int
+    currentTile: Tile
     health: int
     attack: int  # these variables may change based on how we want to do combat
     defense: int
@@ -19,7 +19,7 @@ class Entity:
     def __init__(self):
         defense = 0
 
-    def getPosition(self):
+    def get_position(self):
         return self.currentTile
 
 
@@ -27,15 +27,17 @@ class Entity:
 # this method is responsible for taking in bools that will decipher which image of the character to retrieve
 
 # the wizard will have methods and variables specific to the wizard
-class Wizard(Entity):
+class Player(Entity):
     def __init__(self):
+        super().__init__()
         self.currentTile = Tile(0, 0, True)
         self.health = 100
         self.attack = 20
         self.defense = 5
         self.range = 2
 
-    def image(self, damaged, attacking):
+    @staticmethod
+    def image(damaged, attacking):
 
         # create path to the asset based on what kind of wizard we need to print (ie hurt, attacking, normal)
         if not damaged and not attacking:
@@ -57,15 +59,17 @@ class Wizard(Entity):
         return wizard
 
 
-class Soldier(Entity):
+class Enemy(Entity):
     def __init__(self):
+        super().__init__()
         self.currentTile = Tile(0, 1, True)
         self.health = 50
         self.attack = 10
         self.defense = 5
         self.range = 1
 
-    def image(self, damaged, attacking):
+    @staticmethod
+    def image(damaged, attacking):
 
         # create path to the asset based on what kind of soldier we need to print (ie hurt, attacking, normal)
         if not damaged and not attacking:
@@ -87,8 +91,9 @@ class Soldier(Entity):
         return soldier
 
 
-class Archer(Entity):
+class Archer(Enemy):
     def __init__(self):
+        super().__init__()
         self.currentTile = Tile(0, 2, True)
         self.health = 30
         self.attack = 15

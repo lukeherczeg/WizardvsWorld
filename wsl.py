@@ -16,7 +16,6 @@ def get_wsl_host():
     if not get_wsl_distro():
         return None
 
-    result = None
     # If we're in WSL2...
     if 'WSL_INTEROP' in os.environ:
         with open("/etc/resolv.conf", "r") as resolv_file:
@@ -28,6 +27,6 @@ def get_wsl_host():
         return "localhost"
 
 
-def set_display_to_host(major = 0, minor = None):
+def set_display_to_host(major=0, minor=None):
     if get_wsl_distro():
-        os.environ['DISPLAY'] = (get_wsl_host() + ":%d" % major + (".%d" % minor if minor != None else ""))
+        os.environ['DISPLAY'] = (get_wsl_host() + ":%d" % major + (".%d" % minor if minor is not None else ""))
