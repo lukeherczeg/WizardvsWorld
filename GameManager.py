@@ -1,4 +1,9 @@
 import abc
+from enemyai import EnemyAI
+from classes.entity import Wizard
+from classes.entity import Soldier
+from classes.entity import Archer
+
 
 class Phase(metaclass=abc.ABCMeta):
     """Represents a in-game phase"""
@@ -6,32 +11,48 @@ class Phase(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def enter(self):
         pass
+
     @abc.abstractmethod
     def update(self):
         pass
+
     @abc.abstractmethod
     def exit(self):
         pass
+
 
 class PhaseOne(Phase):
     """Description of Phase 1"""
 
     def enter(self):
         print('Entering Phase 1...')
+
     def update(self):
         print('Main Functions of Phase 1...')
+
     def exit(self):
         print('Exiting Phase 1...')
+
 
 class PhaseTwo(Phase):
     """Description of Phase 2"""
 
     def enter(self):
         print('Entering Phase 2...')
+        player = Wizard()
+        enemy = Soldier()
+        ai = EnemyAI(player, enemy)
+        ai.enemyAI()
+        enemy2 = Archer()
+        ai = EnemyAI(player, enemy2)
+        ai.enemyAI()
+
     def update(self):
         print('Main Functions of Phase 2...')
+
     def exit(self):
         print('Exiting Phase 2...')
+
 
 class FSM:
     """Manages the actual flow of the game"""
@@ -67,12 +88,14 @@ class FSM:
 
         self.current_phase.update()
 
+
 def test_fsm():
     """Quick unit test for the FSM"""
     fsm = FSM()
     for x in range(0, 5):
         fsm.next_phase()
         fsm.update()
+
 
 if __name__ == '__main__':
     test_fsm()
