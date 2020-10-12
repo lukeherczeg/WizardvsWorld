@@ -1,5 +1,6 @@
 import pygame
-from GameManager import Phase
+
+from classes.phase import Phase
 from classes.entity import Player
 from classes.tile import Tile
 from classes.grid import Grid

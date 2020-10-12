@@ -3,22 +3,21 @@ from random import random
 
 
 class Grid:
-    GRID_HEIGHT = 15
-    GRID_WIDTH = 25
     STANDABLE_TILE_DENSITY: float = 0.9
     WALL_DENSITY = 0.04
 
-    def __init__(self):
-
+    def __init__(self, width, height):
+        self.GRID_HEIGHT = width
+        self.GRID_WIDTH = height
         # INDEX WITH [ROW][COL]
-        self._game_map = [[self.__generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
+        self._game_map = [[self.__generate_tile(x, y) for y in range(self.GRID_HEIGHT)] for x in range(self.GRID_WIDTH)]
 
     @property
     def game_map(self):
         return self._game_map
 
     def is_valid_tile(self, row, col):
-        if row > 0 and col > 0 and self._game_map[row][col].standable:
+        if row >= 0 and col >= 0 and self._game_map[row][col].standable:
             return True
         else:
             return False
