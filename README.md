@@ -1,7 +1,28 @@
 # WizardvsWorld
-A 2D, tactical role-playing game where you play as a single wizard fighting an army of endless soldiers.
+Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical role-playing game where you play as a single wizard fighting an army of endless soldiers. The game is built using the PyGame 1.9.6 engine. 
 
-## Configuring WSL and PyCharm for PyGame
+Link to project page: [https://github.com/lukeherczeg/WizardvsWorld](https://github.com/lukeherczeg/WizardvsWorld)
+
+## Requirements
+* PyGame 1.9.6
+
+## Installation
+Package Name: [Coming Soon]
+
+Executable Command: [Coming Soon]
+
+Initialization Command: [Coming Soon]
+
+## Miscellaneous
+
+### Contributors
+* Luke Herczeg
+* Jacob Hyde
+* Gus Segovia
+* Logan Smith
+* Juan Suhr
+
+### Configuring WSL and PyCharm for PyGame (For Development)
 PyGame 1.9.7 (the latest stable version) has some issues working with Python 3.8, so to run the project we need to make sure we set up PyCharm to use 'WSL: Python 3.7' as its iterpreter, and use PyCharm to install PyGame 1.9.6, which is compatible with Python 3.7.
 These instructions assume that you are using Ubuntu 20.04 (You probably are if you installed a new Ubuntu version for this class)
 
