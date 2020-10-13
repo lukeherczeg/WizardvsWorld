@@ -6,14 +6,20 @@ class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
 
     def __init__(self, width, height):
-        self.GRID_HEIGHT = height
-        self.GRID_WIDTH = width
+        self.GRID_HEIGHT = width
+        self.GRID_WIDTH = height
         # INDEX WITH [ROW][COL]
-        self._game_map = [[self.__generate_tile(x, y) for y in range(self.GRID_HEIGHT)] for x in range(self.GRID_WIDTH)]
+        self._game_map = [[self.__generate_tile(x, y) for x in range(self.GRID_HEIGHT)] for y in range(self.GRID_WIDTH)]
 
     @property
     def game_map(self):
         return self._game_map
+
+    def is_valid_tile(self, row, col):
+        if 0 <= row < self.GRID_HEIGHT and 0 <= col < self.GRID_WIDTH and self.game_map[row][col].standable:
+            return True
+        else:
+            return False
 
     def get_movement(self, row, col, num_moves):
 
@@ -74,7 +80,7 @@ class Grid:
         # Position map
         for row in self._game_map:
             for col in row:
-                print('(' + str(col.row) + ',' + str(col.col) + ')', end=' ')
+                print('(' + str(col.row) + ',' + str(col.col) + ')' + ('O' if col.standable else 'X'), end=' ')
             print()
 
     def __generate_tile(self, col, row):
