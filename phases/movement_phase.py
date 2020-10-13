@@ -1,14 +1,11 @@
-from game import *
+from draw import *
 from classes.phase import Phase
+from classes.entity import Player
 from classes.tile import Tile
 
 
-def highlight_tile(row, col):
-    SCREEN.fill(BLACK)
-    draw_grid()
-    rect = pygame.Rect((col * BLOCK_SIZE), (row * BLOCK_SIZE), BLOCK_SIZE, BLOCK_SIZE)
-    pygame.draw.rect(SCREEN, WHITE, rect)
-    pygame.display.update()
+def highlight(row, col):
+    highlight_tile(GRID.game_map[row][col])
 
 
 class PlayerMovementPhase(Phase):
@@ -16,21 +13,21 @@ class PlayerMovementPhase(Phase):
     currentTile: Tile
     grid: Grid
 
-    def __init__(self, player, grid):
+    def __init__(self, player):
         self.player = player
         self.currentTile = player.currentTile
-        self.grid = grid
+        self.grid = GRID
 
     def select_tile(self, row, col):
         if self.grid.is_valid_tile(row, col):
             self.currentTile = self.grid.game_map[row][col]
             print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
-            highlight_tile(self.currentTile.row, self.currentTile.col)
+            highlight(self.currentTile.row, self.currentTile.col)
         else:
             print(f"The tile at ({row}, {col}) is invalid.")
 
     def selection(self):
-        highlight_tile(self.currentTile.row, self.currentTile.col)
+        highlight(self.currentTile.row, self.currentTile.col)
         selecting = True
         while selecting:
             events = pygame.event.get()
@@ -52,15 +49,19 @@ class PlayerMovementPhase(Phase):
                                   f", that's not the player silly!")
 
                     if event.key == pygame.K_LEFT:
+                        draw_tile(self.currentTile)
                         self.select_tile(row, col - 1)
 
                     elif event.key == pygame.K_RIGHT:
+                        draw_tile(self.currentTile)
                         self.select_tile(row, col + 1)
 
                     elif event.key == pygame.K_UP:
+                        draw_tile(self.currentTile)
                         self.select_tile(row - 1, col)
 
                     elif event.key == pygame.K_DOWN:
+                        draw_tile(self.currentTile)
                         self.select_tile(row + 1, col)
 
     def enter(self):
