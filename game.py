@@ -44,8 +44,8 @@ def main():
 
 
 def draw_grid():
-    for y in range(GRID.GRID_HEIGHT):
-        for x in range(GRID.GRID_WIDTH):
+    for y in range(GRID.GRID_WIDTH):
+        for x in range(GRID.GRID_HEIGHT):
             rect = pygame.Rect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
             pygame.draw.rect(SCREEN, WHITE, rect, 1)
 
