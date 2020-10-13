@@ -1,6 +1,7 @@
 import pygame
 import sys
 import wsl
+import draw
 from classes.fsm import FSM
 from classes.entity import Player
 from classes.grid import Grid
@@ -27,6 +28,12 @@ def main():
 
     player = Player(GRID)
     fsm = FSM()
+    
+    pygame.init()
+    screen, grid = draw.init(pygame)
+
+    draw.draw_grid(pygame, screen, grid)
+    draw.draw_characters(pygame, screen, [Enemy(), Enemy()])
 
     fsm.add_phase(phases.movement_phase.PlayerMovementPhase(player, GRID))
     fsm.next_phase()
@@ -36,19 +43,9 @@ def main():
         draw_grid()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                draw.quit_game(pygame)
 
         pygame.display.update()
-
-
-def draw_grid():
-    for y in range(GRID.GRID_WIDTH):
-        for x in range(GRID.GRID_HEIGHT):
-            rect = pygame.Rect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
-            pygame.draw.rect(SCREEN, WHITE, rect, 1)
-
-    pygame.display.update()
 
 
 if __name__ == "__main__":
