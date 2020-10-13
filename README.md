@@ -1,5 +1,5 @@
 # WizardvsWorld
-Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical role-playing game where you play as a single wizard fighting an army of endless soldiers. The game is built using the PyGame 1.9.6 engine. 
+Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical roguelike role-playing game where you play as a single wizard fighting an army of endless soldiers. The game is built using the PyGame 1.9.6 engine. 
 
 Link to project page: [https://github.com/lukeherczeg/WizardvsWorld](https://github.com/lukeherczeg/WizardvsWorld)
 

@@ -33,7 +33,7 @@ class Entity:
 class Player(Entity):
     def __init__(self):
         super().__init__()
-        self.currentTile = Tile(0, 0, True)
+        self.currentTile = grid.game_map[1][1]
         self.health = 100
         self.attack = 20
         self.defense = 5
@@ -69,7 +69,7 @@ class Player(Entity):
 class Enemy(Entity):
     def __init__(self):
         super().__init__()
-        self.currentTile = Tile(0, 1, True)
+        self.currentTile = grid.game_map[0][1]
         self.health = 50
         self.attack = 10
         self.defense = 5
@@ -104,7 +104,7 @@ class Enemy(Entity):
 class Archer(Enemy):
     def __init__(self):
         super().__init__()
-        self.currentTile = Tile(0, 2, True)
+        self.currentTile = grid.game_map[0][2]
         self.health = 30
         self.attack = 15
         self.defense = 0
