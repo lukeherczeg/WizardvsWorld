@@ -1,6 +1,9 @@
 import pygame
 import sys
 import wsl
+import classes.fsm
+import classes.entity
+import phases.movement_phase
 
 from classes.grid import Grid
 
@@ -8,7 +11,7 @@ wsl.set_display_to_host()
 
 BLACK = (0, 0, 0)
 WHITE = (200, 200, 200)
-RED = (200, 0, 0)
+RED = (255, 0, 0)
 WINDOW_HEIGHT = 600
 WINDOW_WIDTH = 1000
 SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -23,40 +26,30 @@ def main():
     pygame.init()
     clock = pygame.time.Clock()
     SCREEN.fill(BLACK)
-    draw_button_2 = False
 
-    # Main game loop
+    player = classes.entity.Player(GRID)
+
+    fsm = classes.fsm.FSM()
+    fsm.add_phase(phases.movement_phase.PlayerMovementPhase(player, GRID))
+    fsm.next_phase()
+
     while True:
         draw_grid()
-        button = pygame.Rect(0, 0, 39, 39)
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if button.collidepoint(event.pos):
-                        button2 = pygame.Rect(0, 40, 39, 39)
-                        draw_button_2 = True
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
-        pygame.draw.rect(SCREEN, WHITE, button)
-        if draw_button_2:
-            pygame.draw.rect(SCREEN, BLACK, button)
-            pygame.draw.rect(SCREEN, WHITE, button2)
 
         pygame.display.update()
 
 
 def draw_grid():
-    for x in range(GRID.GRID_WIDTH):
-        for y in range(GRID.GRID_HEIGHT):
-            color = RED
-            if GRID.is_valid_tile(x, y):
-                color = WHITE
+    for y in range(GRID.GRID_HEIGHT):
+        for x in range(GRID.GRID_WIDTH):
+            rect = pygame.Rect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
+            pygame.draw.rect(SCREEN, WHITE, rect, 1)
 
-            rect = pygame.Rect(y * BLOCK_SIZE, x * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
-            pygame.draw.rect(SCREEN, color, rect, 1)
+    pygame.display.update()
 
 
 if __name__ == "__main__":

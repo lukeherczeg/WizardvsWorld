@@ -9,8 +9,8 @@ class EnemyAI:
     Enemy: Entity
 
     def __init__(self, wizard, soldier):
-        self.playerPosition = wizard.getPosition()
-        self.currentPosition = soldier.getPosition()
+        self.playerPosition = wizard.get_position()
+        self.currentPosition = soldier.get_position()
         self.Player = wizard
         self.Enemy = soldier
 
