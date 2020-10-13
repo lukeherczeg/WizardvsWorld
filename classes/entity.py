@@ -3,6 +3,7 @@
 
 import pygame
 import os
+from draw import GRID
 from classes.tile import Tile
 
 
@@ -15,7 +16,6 @@ class Entity:
     max_Movement: int
     cur_Movement: int
     range: int
-
 
     def __init__(self):
         self.damaged = False
@@ -33,15 +33,14 @@ class Entity:
 class Player(Entity):
     def __init__(self):
         super().__init__()
-        self.currentTile = grid.game_map[1][1]
+        self.currentTile = GRID.game_map[1][1]
         self.health = 100
         self.attack = 20
         self.defense = 5
         self.range = 2
         self.isSelected = False
 
-
-    #@staticmethod
+    # @staticmethod
     def image(self):
 
         # create path to the asset based on what kind of wizard we need to print (ie hurt, attacking, normal)
@@ -69,14 +68,14 @@ class Player(Entity):
 class Enemy(Entity):
     def __init__(self):
         super().__init__()
-        self.currentTile = grid.game_map[0][1]
+        self.currentTile = GRID.game_map[0][1]
         self.health = 50
         self.attack = 10
         self.defense = 5
         self.range = 1
         self.isAttackable = False
 
-    #@staticmethod
+    # @staticmethod
     def image(self):
 
         # create path to the asset based on what kind of soldier we need to print (ie hurt, attacking, normal)
@@ -104,12 +103,12 @@ class Enemy(Entity):
 class Archer(Enemy):
     def __init__(self):
         super().__init__()
-        self.currentTile = grid.game_map[0][2]
+        self.currentTile = GRID.game_map[0][2]
         self.health = 30
         self.attack = 15
         self.defense = 0
         self.range = 2
-        self.isAttackable  = False
+        self.isAttackable = False
 
     def image(self):
 
