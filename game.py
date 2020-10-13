@@ -1,7 +1,7 @@
-import os
 import pygame
 import draw
 import wsl
+
 
 wsl.set_display_to_host()
 print("Distro:\t", wsl.get_wsl_distro())
@@ -30,5 +30,7 @@ def main():
 
 
 
+
 if __name__ == "__main__":
     main()
+
