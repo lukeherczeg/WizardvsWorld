@@ -1,8 +1,7 @@
 from game import *
 from classes.phase import Phase
-from classes.entity import Player
 from classes.tile import Tile
-from classes.grid import Grid
+
 
 def highlight_tile(row, col):
     SCREEN.fill(BLACK)
@@ -36,7 +35,11 @@ class PlayerMovementPhase(Phase):
         while selecting:
             events = pygame.event.get()
             for event in events:
-                if event.type == pygame.KEYDOWN:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                elif event.type == pygame.KEYDOWN:
                     row = self.currentTile.row
                     col = self.currentTile.col
 

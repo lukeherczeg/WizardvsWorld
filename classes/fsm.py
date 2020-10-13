@@ -51,4 +51,3 @@ class FSM:
     def update(self):
         """Call update on current phase and perform other relevant functions"""
         self.__current_phase.update()
-        

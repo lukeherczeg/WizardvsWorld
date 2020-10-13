@@ -1,12 +1,12 @@
 from classes.tile import Tile
-from classes.entity import Entity
+from classes.entity import Player, Enemy
 
 
 class EnemyAI:
     playerPosition: Tile
     currentPosition: Tile
-    Player: Entity
-    Enemy: Entity
+    Player: Player
+    Enemy: Enemy
 
     def __init__(self, wizard, soldier):
         self.playerPosition = wizard.get_position()
