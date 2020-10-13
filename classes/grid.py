@@ -3,14 +3,13 @@ from random import random
 
 
 class Grid:
-    GRID_SIZE = 12
-    STANDABLE_TILE_DENSITY = 0.9
-    WALL_DENSITY = 0.04
+    STANDABLE_TILE_DENSITY_ODDS: float = 0.98
 
-    def __init__(self):
-
+    def __init__(self, width, height):
+        self.GRID_HEIGHT = height
+        self.GRID_WIDTH = width
         # INDEX WITH [ROW][COL]
-        self._game_map = [[self.__generate_tile(x, y) for x in range(self.GRID_SIZE)] for y in range(self.GRID_SIZE)]
+        self._game_map = [[self.__generate_tile(x, y) for y in range(self.GRID_HEIGHT)] for x in range(self.GRID_WIDTH)]
 
     @property
     def game_map(self):
@@ -47,11 +46,11 @@ class Grid:
             tile_list.extend(self.get_movement(row, col - 1, num_moves - 1))
 
         # proceed bottom if not at border, lower tile is standable
-        if row != self.GRID_SIZE - 1 and self._game_map[row + 1][col].standable:
+        if row != self.GRID_HEIGHT - 1 and self._game_map[row + 1][col].standable:
             tile_list.extend(self.get_movement(row + 1, col, num_moves - 1))
 
         # proceed right if not at border, right tile is standable
-        if col != self.GRID_SIZE - 1 and self._game_map[row][col + 1].standable:
+        if col != self.GRID_WIDTH - 1 and self._game_map[row][col + 1].standable:
             tile_list.extend(self.get_movement(row, col + 1, num_moves - 1))
 
         # array syntax flattens and dict.fromKeys removes duplicates
@@ -80,7 +79,7 @@ class Grid:
 
     def __generate_tile(self, col, row):
         # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
-        return Tile(col=col, row=row, standable=self.__generate_true(self.STANDABLE_TILE_DENSITY))
+        return Tile(col=col, row=row, standable=self.__generate_true(self.STANDABLE_TILE_DENSITY_ODDS))
 
     @staticmethod
     def __generate_true(odds):

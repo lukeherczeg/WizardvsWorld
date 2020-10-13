@@ -4,17 +4,14 @@ import wsl
 
 
 wsl.set_display_to_host()
-print("Distro:\t", wsl.get_wsl_distro())
-print("Host:\t", wsl.get_wsl_host())
-print("Display:", os.environ['DISPLAY'])
 
 def main():
 
     pygame.init()
-    screen = draw.init(pygame)
+    screen, grid = draw.init(pygame)
 
     while True:
-        draw.draw_grid(pygame, screen)
+        draw.draw_grid(pygame, screen, grid)
         # button = pygame_inst.Rect(0, 0, 39, 39)
         for event in pygame.event.get():
             # if event.type == pygame.MOUSEBUTTONDOWN:
