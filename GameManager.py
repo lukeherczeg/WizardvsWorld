@@ -1,22 +1,20 @@
-import abc
+from abc import abstractmethod, ABCMeta
 from classes.enemyai import EnemyAI
-from classes.entity import Player
-from classes.entity import Enemy
-from classes.entity import Archer
+from classes.entity import Player, Enemy, Archer
 
 
-class Phase(metaclass=abc.ABCMeta):
+class Phase(metaclass=ABCMeta):
     """Represents a in-game phase"""
 
-    @abc.abstractmethod
+    @abstractmethod
     def enter(self):
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def update(self):
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def exit(self):
         pass
 
@@ -53,49 +51,3 @@ class PhaseTwo(Phase):
     def exit(self):
         print('Exiting Phase 2...')
 
-
-class FSM:
-    """Manages the actual flow of the game"""
-
-    def __init__(self):
-        self.phase_number = 0
-        self.phases = [
-            PhaseOne(),
-            PhaseTwo()
-        ]
-        self.current_phase = None
-
-    def next_phase(self):
-        """Transition to the next phase"""
-
-        # Starting the game
-        if self.current_phase is None:
-            self.phase_number = 0
-            self.current_phase = self.phases[0]
-            self.current_phase.enter()
-            return
-
-        # Other transitions
-        self.current_phase.exit()
-        self.phase_number += 1
-        if self.phase_number == len(self.phases):
-            self.phase_number = 0
-        self.current_phase = self.phases[self.phase_number]
-        self.current_phase.enter()
-
-    def update(self):
-        """Call update on current phase and perform other relevant functions"""
-
-        self.current_phase.update()
-
-
-def test_fsm():
-    """Quick unit test for the FSM"""
-    fsm = FSM()
-    for x in range(0, 5):
-        fsm.next_phase()
-        fsm.update()
-
-
-if __name__ == '__main__':
-    test_fsm()

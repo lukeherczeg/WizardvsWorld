@@ -5,7 +5,7 @@ from random import random
 class Grid:
     GRID_HEIGHT = 15
     GRID_WIDTH = 25
-    STANDABLE_TILE_DENSITY: float = 0.9
+    STANDABLE_TILE_DENSITY_ODDS: float = 0.98
     WALL_DENSITY = 0.04
 
     def __init__(self):
@@ -18,7 +18,7 @@ class Grid:
         return self._game_map
 
     def is_valid_tile(self, row, col):
-        if row > 0 and col > 0 and self._game_map[row][col].standable:
+        if 0 <= row < self.GRID_HEIGHT and 0 <= col < self.GRID_WIDTH and self.game_map[row][col].standable:
             return True
         else:
             return False
@@ -82,12 +82,12 @@ class Grid:
         # Position map
         for row in self._game_map:
             for col in row:
-                print('(' + str(col.row) + ',' + str(col.col) + ')', end=' ')
+                print('(' + str(col.row) + ',' + str(col.col) + ')' + ('O' if col.standable else 'X'), end=' ')
             print()
 
     def __generate_tile(self, col, row):
         # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
-        return Tile(col=col, row=row, standable=self.__generate_true(self.STANDABLE_TILE_DENSITY))
+        return Tile(col=col, row=row, standable=self.__generate_true(self.STANDABLE_TILE_DENSITY_ODDS))
 
     @staticmethod
     def __generate_true(odds):

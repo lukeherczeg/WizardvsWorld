@@ -4,6 +4,7 @@
 import pygame
 import os
 from classes.tile import Tile
+from classes.grid import Grid
 
 
 # entity will have various shared data types
@@ -28,9 +29,9 @@ class Entity:
 
 # the wizard will have methods and variables specific to the wizard
 class Player(Entity):
-    def __init__(self):
+    def __init__(self, grid):
         super().__init__()
-        self.currentTile = Tile(0, 0, True)
+        self.currentTile = grid.game_map[1][1]
         self.health = 100
         self.attack = 20
         self.defense = 5
