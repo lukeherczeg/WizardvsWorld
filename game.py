@@ -1,8 +1,7 @@
-#from tkinter import *
-from classes.entity import *
-import os
-import wsl
 import pygame
+import sys
+import wsl
+
 
 wsl.set_display_to_host()
 print("Distro:\t", wsl.get_wsl_distro())
@@ -11,50 +10,48 @@ print("Display:", os.environ['DISPLAY'])
 
 BLACK = (0, 0, 0)
 WHITE = (200, 200, 200)
-WINDOW_HEIGHT = 800
-WINDOW_WIDTH = 800
-SCREEN = pygame.display.set_mode((WINDOW_HEIGHT, WINDOW_WIDTH))
-
+WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 1000
+SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+BLOCK = 40
 
 def main():
-    pygame.init()
-    clock = pygame.time.Clock()
-    SCREEN.fill(BLACK)
-    draw_button_2 = False
-    dude = Wizard()
-    bad = Soldier()
 
-    while True:
-        draw_grid()
-        button = pygame.Rect(0, 0, 49, 49)
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if button.collidepoint(event.pos):
-                        button2 = pygame.Rect(0, 50, 49, 49)
-                        draw_button_2 = True
+        pygame.init()
+        clock = pygame.time.Clock()
+        SCREEN.fill(BLACK)
+        draw_button_2 = False
 
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                #sys.exit()
+        while True:
+            draw_grid()
+            button = pygame.Rect(0, 0, 39, 39)
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if button.collidepoint(event.pos):
+                            button2 = pygame.Rect(0, 40, 39, 39)
+                            draw_button_2 = True
 
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-        pygame.draw.rect(SCREEN, WHITE, button)
-        if draw_button_2:
-            pygame.draw.rect(SCREEN, BLACK, button)
-            pygame.draw.rect(SCREEN, WHITE, button2)
-        SCREEN.blit(dude.image(True, False), (dude.currentTile, 0))
-        SCREEN.blit(bad.image(True, False), (250, 250))
-        pygame.display.update()
+            pygame.draw.rect(SCREEN, WHITE, button)
+            if draw_button_2:
+                pygame.draw.rect(SCREEN, BLACK, button)
+                pygame.draw.rect(SCREEN, WHITE, button2)
+
 
 
 def draw_grid():
-    block_size = 50  # Set the size of the grid block
+    block_size = 40  # Set the size of the grid block
     for x in range(WINDOW_WIDTH):
         for y in range(WINDOW_HEIGHT):
             rect = pygame.Rect(x * block_size, y * block_size, block_size, block_size)
             pygame.draw.rect(SCREEN, WHITE, rect, 1)
 
 
+
 if __name__ == "__main__":
     main()
+
