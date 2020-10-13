@@ -3,12 +3,12 @@ from random import random
 
 
 class Grid:
-    GRID_HEIGHT = 15
-    GRID_WIDTH = 25
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
-    WALL_DENSITY = 0.04
 
-    def __init__(self):
+    def __init__(self, width, height):
+        self.GRID_WIDTH = width
+        self.GRID_HEIGHT = height
+
 
         # INDEX WITH [ROW][COL]
         self._game_map = [[self.__generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
