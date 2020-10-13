@@ -1,6 +1,7 @@
 import pygame
 import draw
 import wsl
+from classes.entity import Enemy
 
 
 wsl.set_display_to_host()
@@ -10,8 +11,10 @@ def main():
     pygame.init()
     screen, grid = draw.init(pygame)
 
+    draw.draw_grid(pygame, screen, grid)
+    draw.draw_characters(pygame, screen, [Enemy(), Enemy()])
+
     while True:
-        draw.draw_grid(pygame, screen, grid)
         # button = pygame_inst.Rect(0, 0, 39, 39)
         for event in pygame.event.get():
             # if event.type == pygame.MOUSEBUTTONDOWN:
