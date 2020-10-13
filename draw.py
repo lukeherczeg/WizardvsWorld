@@ -17,12 +17,22 @@ def init(pygame):
 def draw_grid(pygame, screen, grid):
     for x in range(grid.GRID_WIDTH):
         for y in range(grid.GRID_HEIGHT):
-            print(grid.game_map[x][y].row)
-            tile_img = pygame.image.load(grid.game_map[x][y].image)
+            tile_img = pygame.image.load(_get_tile_img(grid.game_map[x][y]))
             tile_rect = tile_img.get_rect()
             tile_rect = tile_rect.move([x * BLOCK_SIZE, y * BLOCK_SIZE])
             screen.blit(tile_img, tile_rect)
     pygame.display.flip()
+
+def draw_characters():
+    return 0
+
+def _get_tile_img(tile):
+    main_directory = os.path.dirname('WizardvsWorld')
+    asset_path = os.path.join(main_directory, 'assets')
+    if(tile.standable):
+        return os.path.join(asset_path, 'grass.png')
+    else:
+        return os.path.join(asset_path, 'stone.png')
 
 def quit_game(pygame):
     pygame.quit()
