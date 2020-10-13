@@ -2,6 +2,7 @@ import pygame
 import draw
 import wsl
 from classes.entity import Enemy
+from classes.tile import Tile
 
 
 wsl.set_display_to_host()
@@ -11,8 +12,13 @@ def main():
     pygame.init()
     screen, grid = draw.init(pygame)
 
+    enemy = Enemy()
+
     draw.draw_grid(pygame, screen, grid)
-    draw.draw_characters(pygame, screen, [Enemy(), Enemy()])
+    draw.draw_characters(pygame, screen, [Enemy()])
+    oldPos = enemy.get_position().col, enemy.get_position().row
+    enemy.currentTile = Tile(8,12,True)
+    draw.move_player(pygame, screen, grid, enemy, oldPos)
 
     while True:
         # button = pygame_inst.Rect(0, 0, 39, 39)
@@ -28,9 +34,5 @@ def main():
 
         # pygame.draw.rect(SCREEN, WHITE, button)
 
-
-
-
 if __name__ == "__main__":
     main()
-
