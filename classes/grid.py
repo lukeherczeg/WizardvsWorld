@@ -9,7 +9,7 @@ class Grid:
         self.GRID_WIDTH = width
         self.GRID_HEIGHT = height
         # INDEX WITH [ROW][COL]
-        self._game_map = [[self.__generate_tile(x, y) for y in range(self.GRID_HEIGHT)] for x in range(self.GRID_WIDTH)]
+        self._game_map = [[self.__generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
 
     @property
     def game_map(self):
