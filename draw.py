@@ -48,6 +48,7 @@ def draw_tinted_tiles(tile_list, entity, tint):
     entity_rect = entity_img.get_rect()
     entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
     SCREEN.blit(entity_img, entity_rect)
+    draw_entities()
     pygame.display.flip()
 
 
@@ -140,8 +141,16 @@ def animate_attack(attacker, victim):
     angle = math.degrees(angle)
 
     # get proportion of x movement to y movement needed
-    x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y)))
-    y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x)))
+    if target_y == start_y:
+        x_diff = 1
+    else:
+        x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y)))
+    if target_x == start_x:
+        y_diff = 1
+    else:
+        y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x)))
+
+    print(f"{x_diff}, {y_diff} is the diff.")
 
     # For animating fireball gif
     animation_index = 0
@@ -149,7 +158,7 @@ def animate_attack(attacker, victim):
     trans_fireballs = []
     for fireball in FIREBALL_GIF:
         trans_fireball = pygame.transform.rotate(fireball, angle - 135)
-        trans_fireballs.append(pygame.transform.scale(trans_fireball, (45, 45)))
+        trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
 
     while abs(start_x - target_x) >= 3 or abs(start_y - target_y) >= 3:
         # update animation position and frame

@@ -15,32 +15,36 @@ def main():
 
     ######################### DEMO ########################
     wiz = Player()
-    enemy = Knight()
+    knight = Knight()
+    archer = Archer()
 
     wiz.currentTile = GRID.game_map[1][10]
-    enemy.currentTile = GRID.game_map[13][5]
+    knight.currentTile = GRID.game_map[13][5]
+    knight.currentTile.occupied = True
+    archer.currentTile = GRID.game_map[1][1]
+    archer.currentTile.occupied = True
 
     ENTITIES.append(wiz)
-    ENTITIES.append(enemy)
+    ENTITIES.append(knight)
+    ENTITIES.append(archer)
 
     total_refresh_drawing()
     time.sleep(1)
 
-    old_pos = wiz.get_position().col, wiz.get_position().row
-    wiz.currentTile = GRID.game_map[3][9]
-    animate_move(wiz, old_pos)
-    time.sleep(2)
-
-    animate_attack(wiz, enemy)
+    wiz.attacking = True
+    animate_attack(wiz, knight)
+    time.sleep(1)
+    animate_attack(wiz, archer)
+    wiz.attacking = False
     print('Done')
     ######################### DEMO ########################
 
     fsm.add_phase(phases.movement_phase.PlayerMovementPhase(wiz))
-    fsm.next_phase()
-    fsm.update()
 
     while True:
         for event in pygame.event.get():
+            fsm.next_phase()
+            fsm.update()
             if event.type == pygame.QUIT:
                 quit_game()
 
