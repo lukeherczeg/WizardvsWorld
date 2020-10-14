@@ -21,6 +21,7 @@ class PlayerMovementPhase(Phase):
 
     def select_tile(self, row, col):
         if self.grid.is_valid_standable_tile(row, col):
+            draw_tile(self.currentTile)
             self.currentTile = self.grid.game_map[row][col]
             print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
             select(self.currentTile.row, self.currentTile.col)
@@ -53,19 +54,15 @@ class PlayerMovementPhase(Phase):
                                   f", that's not the player silly!")
 
                     if event.key == pygame.K_LEFT:
-                        draw_tile(self.currentTile)
                         self.select_tile(row, col - 1)
 
                     elif event.key == pygame.K_RIGHT:
-                        draw_tile(self.currentTile)
                         self.select_tile(row, col + 1)
 
                     elif event.key == pygame.K_UP:
-                        draw_tile(self.currentTile)
                         self.select_tile(row - 1, col)
 
                     elif event.key == pygame.K_DOWN:
-                        draw_tile(self.currentTile)
                         self.select_tile(row + 1, col)
 
     def movement(self):
