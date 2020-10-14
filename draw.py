@@ -31,9 +31,9 @@ def draw_tile(tile):
     pygame.display.flip()
 
 
-def show_movable_tiles(tile_list, entity):
+def draw_highlighted_tiles(tile_list, entity, tint):
     for tile in tile_list:
-        tile_img = _get_tile_img(tile, 'blue')
+        tile_img = _get_tile_img(tile, tint)
         tile_rect = tile_img.get_rect()
         tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
         SCREEN.blit(tile_img, tile_rect)
@@ -45,7 +45,7 @@ def show_movable_tiles(tile_list, entity):
     pygame.display.flip()
 
 
-def highlight_tile(tile):
+def draw_highlighted_tile(tile):
     tile_img = _get_tile_img(tile, TileTint.BLUE)
     tile_rect = tile_img.get_rect()
     tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])

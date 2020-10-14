@@ -6,7 +6,7 @@ from classes.tile import Tile
 
 def highlight(row, col):
     print(f"Highlighting ({row}, {col}).")
-    highlight_tile(GRID.game_map[row][col])
+    draw_highlighted_tile(GRID.game_map[row][col])
 
 
 class PlayerMovementPhase(Phase):
@@ -68,8 +68,11 @@ class PlayerMovementPhase(Phase):
                         draw_tile(self.currentTile)
                         self.select_tile(row + 1, col)
 
-    #def movement(self):
-        #movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_Movement)
+    def movement(self):
+        movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_Movement)
+        movable_tiles_border = GRID.get_movement_border(movable_tiles, self.player.range)
+        draw_highlighted_tiles(movable_tiles, self.player, TileTint.BLUE)
+        draw_highlighted_tiles(movable_tiles_border, self.player, TileTint.RED)
 
     def enter(self):
         print('Entering Selection Phase...')
@@ -77,7 +80,7 @@ class PlayerMovementPhase(Phase):
 
     def update(self):
         print('Entering Player Movement Selection...')
-
+        self.movement()
 
     def exit(self):
         print('Exiting Phase 1...')
