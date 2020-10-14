@@ -5,6 +5,7 @@ from classes.tile import Tile
 
 
 def highlight(row, col):
+    print(f"Highlighting ({row}, {col}).")
     highlight_tile(GRID.game_map[row][col])
 
 
@@ -23,6 +24,7 @@ class PlayerMovementPhase(Phase):
             self.currentTile = self.grid.game_map[row][col]
             print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
             highlight(self.currentTile.row, self.currentTile.col)
+            draw_entities()
         else:
             print(f"The tile at ({row}, {col}) is invalid.")
 
@@ -43,6 +45,8 @@ class PlayerMovementPhase(Phase):
                     if event.key == pygame.K_RETURN:
                         if self.currentTile == self.player.currentTile:
                             print(f"You picked the player's location! Time to move!")
+                            self.player.selected = True
+                            draw_entities()
                             selecting = False
                         else:
                             print(f"You tried to pick the tile at ({row}, {col})"
@@ -64,12 +68,16 @@ class PlayerMovementPhase(Phase):
                         draw_tile(self.currentTile)
                         self.select_tile(row + 1, col)
 
+    #def movement(self):
+        #movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_Movement)
+
     def enter(self):
         print('Entering Selection Phase...')
         self.selection()
 
     def update(self):
         print('Entering Player Movement Selection...')
+
 
     def exit(self):
         print('Exiting Phase 1...')

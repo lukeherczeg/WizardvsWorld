@@ -1,4 +1,4 @@
-from classes.tile import Tile
+from classes.tile import Tile, TextureType
 from random import random
 
 
@@ -109,7 +109,16 @@ class Grid:
 
     def __generate_tile(self, col, row):
         # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
-        return Tile(col=col, row=row, standable=self.__generate_true(self.STANDABLE_TILE_DENSITY_ODDS))
+        standable = self.__generate_true(self.STANDABLE_TILE_DENSITY_ODDS)
+        if standable:
+            if self.__generate_true(.7):
+                return Tile(col=col, row=row, standable=standable, texture_type=TextureType.GRASS)
+            else:
+                return Tile(col=col, row=row, standable=standable, texture_type=TextureType.DIRT)
+        else:
+            return Tile(col=col, row=row, standable=standable, texture_type=TextureType.STONE)
+
+
 
     @staticmethod
     def __generate_true(odds):
