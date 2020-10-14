@@ -15,46 +15,79 @@ class Grid:
     def game_map(self):
         return self._game_map
 
+    def is_valid_standable_tile(self, row, col):
+        if self.is_valid_tile(row, col) and self.game_map[row][col].standable:
+            return True
+        else:
+            return False
+
     def is_valid_tile(self, row, col):
-        if 0 <= row < self.GRID_HEIGHT and 0 <= col < self.GRID_WIDTH and self.game_map[row][col].standable:
+        if 0 <= row < self.GRID_HEIGHT and 0 <= col < self.GRID_WIDTH:
             return True
         else:
             return False
 
     def get_movement_border(self, movable_tiles, attack_range):
         tile_list = []
+        non_standable_tiles = []
+
+        # This is a fairly complicated algorithm for determining the border tiles of
+        # valid movement tiles as well as non-standable tiles anywhere in between.
 
         for tile in movable_tiles:
             valid_edge_tiles = []
             adjacent_movable_tiles = 0
             valid_tiles = 4
 
-            if self.is_valid_tile(tile.row + 1, tile.col):
-                if self._game_map[tile.row + 1][tile.col] in movable_tiles:
+            row = tile.row + 1
+            col = tile.col
+            new_tile = self._game_map[row][col]
+            if self.is_valid_tile(row, col):
+                if new_tile in movable_tiles:
                     adjacent_movable_tiles += 1
+                elif not new_tile.standable:
+                    non_standable_tiles.append(new_tile)
                 else:
-                    valid_edge_tiles.append(self._game_map[tile.row + 1][tile.col])
+                    valid_edge_tiles.append(new_tile)
             else:
                 valid_tiles -= 1
-            if self.is_valid_tile(tile.row - 1, tile.col):
-                if self._game_map[tile.row - 1][tile.col] in movable_tiles:
+
+            row = tile.row - 1
+            col = tile.col
+            new_tile = self._game_map[row][col]
+            if self.is_valid_tile(row, col):
+                if new_tile in movable_tiles:
                     adjacent_movable_tiles += 1
+                elif not new_tile.standable:
+                    non_standable_tiles.append(new_tile)
                 else:
-                    valid_edge_tiles.append(self._game_map[tile.row - 1][tile.col])
+                    valid_edge_tiles.append(new_tile)
             else:
                 valid_tiles -= 1
-            if self.is_valid_tile(tile.row, tile.col + 1):
-                if self._game_map[tile.row][tile.col + 1] in movable_tiles:
+
+            row = tile.row
+            col = tile.col + 1
+            new_tile = self._game_map[row][col]
+            if self.is_valid_tile(row, col):
+                if new_tile in movable_tiles:
                     adjacent_movable_tiles += 1
+                elif not new_tile.standable:
+                    non_standable_tiles.append(new_tile)
                 else:
-                    valid_edge_tiles.append(self._game_map[tile.row][tile.col + 1])
+                    valid_edge_tiles.append(new_tile)
             else:
                 valid_tiles -= 1
-            if self.is_valid_tile(tile.row, tile.col - 1):
-                if self._game_map[tile.row][tile.col - 1] in movable_tiles:
+
+            row = tile.row
+            col = tile.col - 1
+            new_tile = self._game_map[row][col]
+            if self.is_valid_tile(row, col):
+                if new_tile in movable_tiles:
                     adjacent_movable_tiles += 1
+                elif not new_tile.standable:
+                    non_standable_tiles.append(new_tile)
                 else:
-                    valid_edge_tiles.append(self._game_map[tile.row][tile.col - 1])
+                    valid_edge_tiles.append(new_tile)
             else:
                 valid_tiles -= 1
 
@@ -62,6 +95,7 @@ class Grid:
             if adjacent_movable_tiles != valid_tiles:
                 tile_list.extend(list(dict.fromkeys(valid_edge_tiles)))
 
+        tile_list.extend(non_standable_tiles)
         return tile_list
 
     def get_movement(self, row, col, num_moves):

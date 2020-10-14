@@ -20,7 +20,7 @@ class PlayerMovementPhase(Phase):
         self.grid = GRID
 
     def select_tile(self, row, col):
-        if self.grid.is_valid_tile(row, col):
+        if self.grid.is_valid_standable_tile(row, col):
             self.currentTile = self.grid.game_map[row][col]
             print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
             highlight(self.currentTile.row, self.currentTile.col)
