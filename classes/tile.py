@@ -7,8 +7,7 @@ class Tile:
     def __init__(self, col, row, standable, texture_type=TextureType.NONE):
         self._col = col
         self._row = row
-        self._standable = standable  # bool
-        # self._walls = walls #length-4 bool array [top, left, bottom, right] BREAK IN CASE OF DIRECTIONS
+        self._standable = standable #bool
         self._occupied = False
         self._texture_type = texture_type
 
@@ -26,10 +25,6 @@ class Tile:
 
     def __repr__(self):
         return f'({self.row}, {self.col})'
-
-    # @property
-    # def walls(self):
-    #   return self._walls
 
     @property
     def occupied(self):

@@ -1,12 +1,17 @@
 import sys
 import os
 import pygame
+import math
 from assets.image_loader import *
 from const import TextureType, TileTint
 from classes.entity import Player, Archer, Knight
 
 ENTITIES = []
 
+# NOTES:
+# There are DRAW functions and ANIMATE functions.
+# DRAW - code runs almost instantly and repaints screen
+# ANIMATE - code runs with delay for animation time and maintains screen state outside of animation
 
 def total_refresh_drawing():
     draw_grid()
@@ -52,7 +57,6 @@ def draw_highlighted_tile(tile):
     SCREEN.blit(tile_img, tile_rect)
     pygame.display.flip()
 
-
 def draw_entities(ignorables=None):
     if ignorables is None:
         entities = ENTITIES
@@ -66,17 +70,23 @@ def draw_entities(ignorables=None):
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.update(entity_rect)
 
+def animate_move(entity, oldPos):
 
-def move_player(entity, old_pos):
-    target_x, target_y = entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE
-    old_x, old_y = old_pos
-    old_x = old_x * BLOCK_SIZE
-    old_y = old_y * BLOCK_SIZE
+    #Initialize start and end points and covert to pixel values
+    target_x, target_y = entity.get_position().col*BLOCK_SIZE, entity.get_position().row*BLOCK_SIZE
+    old_x, old_y = oldPos
+    old_x = old_x*BLOCK_SIZE
+    old_y = old_y*BLOCK_SIZE
+
+    #Create rect of moving entity
     entity_img = _get_entity_img(entity)
     entity_rect = entity_img.get_rect()
     entity_rect = entity_rect.move([old_x, old_y])
+
+    #For animating perpendicular wiggle while walking
     wiggle_index = 0
 
+    #TO BE CHANGED, move horizontally
     while old_x != target_x:
         if old_x < target_x:
             entity_rect = entity_rect.move([X_MOVEMENT_SPEED, move_wiggle[wiggle_index]])
@@ -84,14 +94,17 @@ def move_player(entity, old_pos):
         elif old_x > target_x:
             entity_rect = entity_rect.move([-X_MOVEMENT_SPEED, move_wiggle[wiggle_index]])
             old_x = old_x - X_MOVEMENT_SPEED
-        wiggle_index = wiggle_index + 1
-        if wiggle_index == len(move_wiggle):
-            wiggle_index = 0
+
+        wiggle_index = 0 if wiggle_index == len(move_wiggle)-1 else wiggle_index + 1
+
+        #redraw the grid and entities besides the one being animated,
+        #then draw animation frame of entity
         draw_grid()
         draw_entities(ignorables=[entity])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.flip()
 
+    #TO BE CHANGED, move vertically
     while old_y != target_y:
         if old_y < target_y:
             entity_rect = entity_rect.move([move_wiggle[wiggle_index], Y_MOVEMENT_SPEED])
@@ -100,16 +113,69 @@ def move_player(entity, old_pos):
             entity_rect = entity_rect.move([move_wiggle[wiggle_index], -Y_MOVEMENT_SPEED])
             old_y = old_y - Y_MOVEMENT_SPEED
 
-        wiggle_index = wiggle_index + 1
-        if wiggle_index == len(move_wiggle):
-            wiggle_index = 0
+        wiggle_index = 0 if wiggle_index == len(move_wiggle)-1 else wiggle_index + 1
+
+        #redraw the grid and entities besides the one being animated,
+        #then draw animation frame of entity
         draw_grid()
         draw_entities(ignorables=[entity])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.flip()
 
+    #this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
 
+def animate_attack(attacker, victim):
+
+    #Initialize start and end points and covert to pixel values
+    start_x = attacker.get_position().col*BLOCK_SIZE
+    start_y = attacker.get_position().row*BLOCK_SIZE
+    target_x = victim.get_position().col*BLOCK_SIZE
+    target_y = victim.get_position().row*BLOCK_SIZE
+
+    #point attack at enemy
+    angle = math.atan2(-(start_y-target_y), start_x - target_x)
+    angle = math.degrees(angle)
+
+    #get proportion of x movement to y movement needed
+    x_diff = math.ceil(abs((target_x-start_x) / (target_y-start_y)))
+    y_diff = math.ceil(abs((target_y-start_y) / (target_x-start_x)))
+
+    #For animating fireball gif
+    animation_index = 0
+
+    trans_fireballs = []
+    for fireball in FIREBALL_GIF:
+        trans_fireball = pygame.transform.rotate(fireball, angle-135)
+        trans_fireballs.append(pygame.transform.scale(trans_fireball, (45,45)))
+
+    while abs(start_x - target_x) >= 3 or abs(start_y - target_y) >= 3:
+        #update animation position and frame
+        fire_rect = trans_fireballs[animation_index].get_rect()
+        fire_rect = fire_rect.move([start_x, start_y])
+
+        #animation logic
+        if start_x < target_x:
+            start_x = start_x + x_diff
+        elif start_x > target_x:
+            start_x = start_x - x_diff
+
+        if start_y < target_y:
+            start_y = start_y + y_diff
+        elif start_y > target_y:
+            start_y = start_y - y_diff
+
+        animation_index = 0 if animation_index == len(FIREBALL_GIF)-1 else animation_index + 1
+
+        #redraw the grid and entities besides the one being animated,
+        #then draw animation frame of entity
+        draw_grid()
+        draw_entities()
+        SCREEN.blit(trans_fireballs[animation_index], fire_rect)
+        pygame.display.flip()
+
+    #this is done to re-center the final animation sprite and ensure game state is up to date
+    total_refresh_drawing()
 
 def _get_tile_img(tile, tint=None):
     if tile.texture_type == TextureType.GRASS:

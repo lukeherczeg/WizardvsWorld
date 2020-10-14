@@ -21,8 +21,7 @@ move_wiggle = [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, -1, 0, -1, 0, -1, 0, -1]
 main_directory = os.path.dirname('WizardvsWorld')
 asset_path = os.path.join(main_directory, 'assets')
 
-
-# Load textures
+#load textures
 DIRT_PNG = pygame.image.load(os.path.join(asset_path, 'dirt.png')).convert()
 DIRT_BLUE_PNG = pygame.image.load(os.path.join(asset_path, 'dirtBLUE.png')).convert()
 DIRT_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'dirtORANGE.png')).convert()
@@ -40,7 +39,7 @@ STONE_BLUE_PNG = pygame.image.load(os.path.join(asset_path, 'stoneBLUE.png')).co
 STONE_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'stoneORANGE.png')).convert()
 STONE_RED_PNG = pygame.image.load(os.path.join(asset_path, 'stoneRED.png')).convert()
 
-# Load entities
+#load entities
 ARCHER_PNG = pygame.image.load(os.path.join(asset_path, 'archer.png')).convert_alpha()
 ARCHER_ATTACK_PNG = pygame.image.load(os.path.join(asset_path, 'archerattack.png')).convert_alpha()
 ARCHER_ATTACKABLE_PNG = pygame.image.load(os.path.join(asset_path, 'archerattackable.png')).convert_alpha()
@@ -53,6 +52,14 @@ WIZ_PNG = pygame.image.load(os.path.join(asset_path, 'wiz.png')).convert_alpha()
 WIZ_ATTACK_PNG = pygame.image.load(os.path.join(asset_path, 'wizattack.png')).convert_alpha()
 WIZ_HURT_PNG = pygame.image.load(os.path.join(asset_path, 'wizhurt.png')).convert_alpha()
 WIZ_SELECTED_PNG = pygame.image.load(os.path.join(asset_path, 'wizselected.png')).convert_alpha()
+FIREBALL_GIF = [
+    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_0.png')).convert_alpha(),
+    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_1.png')).convert_alpha(),
+    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_2.png')).convert_alpha(),
+    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_3.png')).convert_alpha(),
+    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_4.png')).convert_alpha(),
+]
 
-# Miscellaneous
-# SELECT_PNG = pygame.image.load(os.path.join(asset_path, 'select.png')).convert_alpha()
+
+#Miscelaneous
+SELECT_PNG = pygame.image.load(os.path.join(asset_path, 'select.png')).convert_alpha()
