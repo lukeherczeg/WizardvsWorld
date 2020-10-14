@@ -6,8 +6,10 @@ from assets.image_loader import *
 from classes.grid import Grid
 
 BLACK = (0, 0, 0)
-WHITE = (200, 200, 200)
-RED = (255, 0, 0)
+WHITE = (255, 255, 255)
+RED = (200, 0, 0)
+BRIGHT_RED = (255, 0, 0)
+BLUE = (0, 0, 255)
 WINDOW_HEIGHT = 600
 WINDOW_WIDTH = 1000
 wsl.set_display_to_host()
