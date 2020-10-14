@@ -19,6 +19,9 @@ class Tile:
     def standable(self):
         return self._standable
 
+    def __repr__(self):
+        return f'({self.row}, {self.col})'
+
     # @property
     # def walls(self):
     #   return self._walls

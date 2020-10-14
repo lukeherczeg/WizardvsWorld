@@ -62,6 +62,30 @@ class Grid:
         # array syntax flattens and dict.fromKeys removes duplicates
         return list(dict.fromkeys(tile_list))
 
+    # Greedy search for a path to a tile
+    def path_to(self, start_tile, end_tile):
+        to_visit = [start_tile]
+        visited = {start_tile: None}  # Tile maps to its parent tile
+
+        while len(to_visit) != 0:
+            current = to_visit.pop(0)
+
+            if current is end_tile:
+                tile = current
+                solution = []
+                while visited[tile] is not None:
+                    solution.append(tile)
+                    tile = visited[tile]
+                solution.append(start_tile)
+                solution.reverse()
+                return solution
+
+            edges = self.get_movement(current.row, current.col, 1)
+            for edge in edges:
+                if edge not in visited:
+                    visited[edge] = current
+                    to_visit.append(edge)
+
     def print_map_data(self):
         # Standable map
         for row in self._game_map:
