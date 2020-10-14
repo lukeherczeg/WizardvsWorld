@@ -19,7 +19,7 @@ def main():
     enemy = Enemy()
 
     wiz.currentTile = GRID.game_map[1][10]
-    enemy.currentTile = GRID.game_map[5][10]
+    enemy.currentTile = GRID.game_map[10][2]
 
     ENTITIES.append(wiz)
     ENTITIES.append(enemy)
@@ -28,12 +28,16 @@ def main():
     time.sleep(1)
 
     old_pos = wiz.get_position().col, wiz.get_position().row
-    show_movable_tiles(GRID.get_movement(wiz.currentTile.col,wiz.currentTile.row, 3), wiz)
+    draw_highlighted_tiles(GRID.get_movement(wiz.currentTile.col,wiz.currentTile.row, 3), wiz)
 
     time.sleep(3)
 
     wiz.currentTile = GRID.game_map[3][9]
     animate_move(wiz, old_pos)
+    time.sleep(2)
+
+    animate_attack(wiz, enemy)
+    print('Done')
     ######################### DEMO ########################
 
     # fsm.add_phase(phases.movement_phase.PlayerMovementPhase(player))
