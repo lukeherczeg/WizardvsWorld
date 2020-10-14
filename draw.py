@@ -1,22 +1,9 @@
-import wsl
 import sys
 import os
 import pygame
 from assets.image_loader import *
 from classes.grid import Grid
 
-BLACK = (0, 0, 0)
-WHITE = (200, 200, 200)
-RED = (255, 0, 0)
-WINDOW_HEIGHT = 600
-WINDOW_WIDTH = 1000
-wsl.set_display_to_host()
-SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-
-X_MOVEMENT_SPEED = 1
-Y_MOVEMENT_SPEED = 1
-move_wiggle = [0,0,0,1,1,1,1,0,0,0,-1,-1,-1]
-BLOCK_SIZE = 40  # Set the size of the grid block
 GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
 ENTITIES = []
 
@@ -34,7 +21,7 @@ def draw_grid():
             SCREEN.blit(tile_img, tile_rect)
 
 def draw_tile(tile):
-    tile_img = pygame.image.load(_get_tile_img(tile)).convert()
+    tile_img = _get_tile_img(tile)
     tile_rect = tile_img.get_rect()
     tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
     SCREEN.blit(tile_img, tile_rect)
@@ -43,7 +30,7 @@ def draw_tile(tile):
 def show_movable_tiles(tile_list, entity):
     for tile in tile_list:
         highlight_tile(tile)
-    
+
     entity_img = _get_entity_img(entity)
     entity_rect = entity_img.get_rect()
     entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
@@ -63,13 +50,13 @@ def draw_characters(ignorables=None):
         entities = filter(lambda entity: not entity in ignorables, ENTITIES)
 
     for entity in entities:
-        entity_img = _get_entity_img(None)
+        entity_img = _get_entity_img(entity)
         entity_rect = entity_img.get_rect()
         entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.update(entity_rect)
 
-def move_player(entity, oldPos):
+def animate_move(entity, oldPos):
     target_x, target_y = entity.get_position().col*BLOCK_SIZE, entity.get_position().row*BLOCK_SIZE
     old_x, old_y = oldPos
     old_x = old_x*BLOCK_SIZE
@@ -109,9 +96,11 @@ def move_player(entity, oldPos):
         draw_characters(ignorables=[entity])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.flip()
-    
+
     total_refresh_drawing()
 
+def animate_attack(attacker, victim):
+    return 1
 
 def _get_tile_img(tile, highlight=None):
     if(highlight == 'blue'):
@@ -126,7 +115,11 @@ def _get_tile_img(tile, highlight=None):
 
 
 def _get_entity_img(entity):
-    return WIZ_PNG
+    print(type(entity).__name__)
+    if type(entity).__name__ == "Player":
+        return WIZ_PNG
+    elif type(entity).__name__ == "Enemy":
+        return WIZ_PNG
 
 
 def quit_game():
