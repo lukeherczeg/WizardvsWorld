@@ -6,10 +6,10 @@ class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
 
     def __init__(self, width, height):
-        self.GRID_HEIGHT = width
-        self.GRID_WIDTH = height
+        self.GRID_WIDTH = width
+        self.GRID_HEIGHT = height
         # INDEX WITH [ROW][COL]
-        self._game_map = [[self.__generate_tile(x, y) for x in range(self.GRID_HEIGHT)] for y in range(self.GRID_WIDTH)]
+        self._game_map = [[self.__generate_tile(x, y) for y in range(self.GRID_HEIGHT)] for x in range(self.GRID_WIDTH)]
 
     @property
     def game_map(self):
