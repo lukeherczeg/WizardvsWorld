@@ -20,10 +20,13 @@ def main():
 
     ######################### DEMO ########################
     wiz = Player()
+    enemy = Enemy()
 
     wiz.currentTile = GRID.game_map[1][10]
+    enemy.currentTile = GRID.game_map[5][10]
 
     ENTITIES.append(wiz)
+    ENTITIES.append(enemy)
 
     total_refresh_drawing()
     time.sleep(1)
@@ -34,7 +37,7 @@ def main():
     time.sleep(3)
 
     wiz.currentTile = GRID.game_map[3][9]
-    move_player(wiz, old_pos)
+    animate_move(wiz, old_pos)
     ######################### DEMO ########################
 
     # fsm.add_phase(phases.movement_phase.PlayerMovementPhase(player))
