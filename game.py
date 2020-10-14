@@ -2,6 +2,7 @@ from draw import *
 from classes.fsm import FSM
 from classes.entity import Player, Enemy
 import phases.movement_phase
+import test
 
 import time
 
@@ -9,6 +10,9 @@ print(f'Grid Width: {GRID.GRID_WIDTH}; Grid Height: {GRID.GRID_HEIGHT}')
 
 
 def main():
+
+    test.test(SCREEN)
+
     player = Player()
     fsm = FSM()
 
