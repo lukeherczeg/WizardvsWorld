@@ -3,9 +3,9 @@ import os
 import pygame
 import math
 from assets.image_loader import *
-from classes.grid import Grid
+from const import TextureType, TileTint
+from classes.entity import Player, Archer, Knight
 
-GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
 ENTITIES = []
 
 # NOTES:
@@ -15,8 +15,9 @@ ENTITIES = []
 
 def total_refresh_drawing():
     draw_grid()
-    draw_characters()
+    draw_entities()
     pygame.display.flip()
+
 
 def draw_grid():
     for _, col in enumerate(GRID.game_map):
@@ -26,6 +27,7 @@ def draw_grid():
             tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
             SCREEN.blit(tile_img, tile_rect)
 
+
 def draw_tile(tile):
     tile_img = _get_tile_img(tile)
     tile_rect = tile_img.get_rect()
@@ -33,9 +35,13 @@ def draw_tile(tile):
     SCREEN.blit(tile_img, tile_rect)
     pygame.display.flip()
 
-def draw_highlighted_tiles(tile_list, entity):
+
+def draw_highlighted_tiles(tile_list, entity, tint):
     for tile in tile_list:
-        draw_highlight_tile(tile)
+        tile_img = _get_tile_img(tile, tint)
+        tile_rect = tile_img.get_rect()
+        tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
+        SCREEN.blit(tile_img, tile_rect)
 
     entity_img = _get_entity_img(entity)
     entity_rect = entity_img.get_rect()
@@ -43,13 +49,15 @@ def draw_highlighted_tiles(tile_list, entity):
     SCREEN.blit(entity_img, entity_rect)
     pygame.display.flip()
 
-def draw_highlight_tile(tile):
-    tile_img = _get_tile_img(tile, 'blue')
+
+def draw_highlighted_tile(tile):
+    tile_img = _get_tile_img(tile, TileTint.BLUE)
     tile_rect = tile_img.get_rect()
     tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
     SCREEN.blit(tile_img, tile_rect)
+    pygame.display.flip()
 
-def draw_characters(ignorables=None):
+def draw_entities(ignorables=None):
     if ignorables is None:
         entities = ENTITIES
     else:
@@ -72,7 +80,7 @@ def animate_move(entity, oldPos):
     entity_rect = entity_rect.move([old_x, old_y])
     wiggle_index = 0
 
-    while(old_x != target_x):
+    while old_x != target_x:
         if old_x < target_x:
             entity_rect = entity_rect.move([X_MOVEMENT_SPEED, move_wiggle[wiggle_index]])
             old_x = old_x + X_MOVEMENT_SPEED
@@ -80,14 +88,14 @@ def animate_move(entity, oldPos):
             entity_rect = entity_rect.move([-X_MOVEMENT_SPEED, move_wiggle[wiggle_index]])
             old_x = old_x - X_MOVEMENT_SPEED
         wiggle_index = wiggle_index + 1
-        if(wiggle_index == len(move_wiggle)):
+        if wiggle_index == len(move_wiggle):
             wiggle_index = 0
         draw_grid()
-        draw_characters(ignorables=[entity])
+        draw_entities(ignorables=[entity])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.flip()
 
-    while(old_y != target_y):
+    while old_y != target_y:
         if old_y < target_y:
             entity_rect = entity_rect.move([move_wiggle[wiggle_index], Y_MOVEMENT_SPEED])
             old_y = old_y + Y_MOVEMENT_SPEED
@@ -97,7 +105,7 @@ def animate_move(entity, oldPos):
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle)-1 else wiggle_index + 1
         draw_grid()
-        draw_characters(ignorables=[entity])
+        draw_entities(ignorables=[entity])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.flip()
 
@@ -108,14 +116,14 @@ def animate_attack(attacker, victim):
     start_y = attacker.get_position().row*BLOCK_SIZE
     target_x = victim.get_position().col*BLOCK_SIZE
     target_y = victim.get_position().row*BLOCK_SIZE
-    
+
     animation_index = 0
 
     angle = math.atan2(-(start_y-target_y), start_x - target_x)
     angle = math.degrees(angle)
 
-    x_diff = abs(math.ceil((target_x-start_x) / (target_y-start_y)))
-    y_diff = abs(math.ceil((target_y-start_y) / (target_x-start_x)))
+    x_diff = math.ceil(abs((target_x-start_x) / (target_y-start_y)))
+    y_diff = math.ceil(abs((target_y-start_y) / (target_x-start_x)))
 
     trans_fireballs = []
     for fireball in FIREBALL_GIF:
@@ -135,32 +143,82 @@ def animate_attack(attacker, victim):
             start_y = start_y + y_diff
         elif start_y > target_y:
             start_y = start_y - y_diff
-
         animation_index = 0 if animation_index == len(FIREBALL_GIF)-1 else animation_index + 1
         draw_grid()
-        draw_characters()
+        draw_entities()
         SCREEN.blit(trans_fireballs[animation_index], fire_rect)
         pygame.display.flip()
-
     total_refresh_drawing()
 
-def _get_tile_img(tile, highlight=None):
-    if(highlight == 'blue'):
-        if tile.standable:
+def _get_tile_img(tile, tint=None):
+    if tile.texture_type == TextureType.GRASS:
+        if tint == TileTint.BLUE:
             return GRASS_BLUE_PNG
+        elif tint == TileTint.RED:
+            return GRASS_RED_PNG
+        elif tint == TileTint.ORANGE:
+            return GRASS_ORANGE_PNG
         else:
+            return GRASS_PNG
+    if tile.texture_type == TextureType.DIRT:
+        if tint == TileTint.BLUE:
+            return DIRT_BLUE_PNG
+        elif tint == TileTint.RED:
+            return DIRT_RED_PNG
+        elif tint == TileTint.ORANGE:
+            return DIRT_ORANGE_PNG
+        else:
+            return DIRT_PNG
+    elif tile.texture_type == TextureType.STONE:
+        if tint == TileTint.BLUE:
+            return STONE_BLUE_PNG
+        elif tint == TileTint.RED:
             return STONE_RED_PNG
-    if tile.standable:
-        return GRASS_PNG
-    else:
-        return STONE_PNG
+        elif tint == TileTint.ORANGE:
+            return STONE_ORANGE_PNG
+        else:
+            return STONE_PNG
+    elif tile.texture_type == TextureType.FLOOR:
+        if tint == TileTint.BLUE:
+            return FLOOR_BLUE_PNG
+        elif tint == TileTint.RED:
+            return FLOOR_RED_PNG
+        elif tint == TileTint.ORANGE:
+            return FLOOR_ORANGE_PNG
+        else:
+            return FLOOR_PNG
 
 
 def _get_entity_img(entity):
-    if type(entity).__name__ == "Player":
-        return WIZ_PNG
-    elif type(entity).__name__ == "Enemy":
-        return KNIGHT_PNG
+    if isinstance(entity, Player):
+        if entity.attacking:
+            return WIZ_ATTACK_PNG
+        elif entity.damaged:
+            return WIZ_HURT_PNG
+        elif entity.selected:
+            return WIZ_SELECTED_PNG
+        else:
+            return WIZ_PNG
+
+    if isinstance(entity, Knight):
+        if entity.attacking:
+            return KNIGHT_ATTACK_PNG
+        elif entity.damaged:
+            return KNIGHT_HURT_PNG
+        elif entity.attackable:
+            return KNIGHT_ATTACKABLE_PNG
+        else:
+            return KNIGHT_PNG
+
+    if isinstance(entity, Archer):
+        if entity.attacking:
+            return ARCHER_ATTACK_PNG
+        elif entity.damaged:
+            return ARCHER_HURT_PNG
+        elif entity.attackable:
+            return ARCHER_ATTACKABLE_PNG
+        else:
+            return ARCHER_PNG
 
 
 def quit_game():

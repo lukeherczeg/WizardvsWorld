@@ -3,7 +3,7 @@
 
 import pygame
 import os
-from draw import GRID
+from assets.image_loader import GRID
 from classes.tile import Tile
 
 
@@ -13,7 +13,7 @@ class Entity:
     health: int
     attack: int  # these variables may change based on how we want to do combat
     defense: int
-    max_Movement: int
+    max_Movement: int = 5
     cur_Movement: int
     range: int
 
@@ -38,9 +38,15 @@ class Player(Entity):
         self.attack = 20
         self.defense = 5
         self.range = 2
-        self.isSelected = False
+        self.selected = False
+
 
 class Enemy(Entity):
+    def __init__(self):
+        super().__init__()
+
+
+class Knight(Enemy):
     def __init__(self):
         super().__init__()
         self.currentTile = GRID.game_map[0][1]
@@ -48,7 +54,8 @@ class Enemy(Entity):
         self.attack = 10
         self.defense = 5
         self.range = 1
-        self.isAttackable = False
+        self.attackable = False
+
 
 class Archer(Enemy):
     def __init__(self):
@@ -58,4 +65,4 @@ class Archer(Enemy):
         self.attack = 15
         self.defense = 0
         self.range = 2
-        self.isAttackable = False
+        self.attackable = False
