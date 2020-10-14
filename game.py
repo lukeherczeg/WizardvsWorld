@@ -19,7 +19,9 @@ def main():
 
     wiz.currentTile = GRID.game_map[1][10]
 
-    total_refresh_drawing([wiz])
+    ENTITIES.append(wiz)
+
+    total_refresh_drawing()
     time.sleep(1)
 
     old_pos = wiz.get_position().col, wiz.get_position().row

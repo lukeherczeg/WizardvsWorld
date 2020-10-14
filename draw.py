@@ -18,10 +18,11 @@ Y_MOVEMENT_SPEED = 1
 move_wiggle = [0,0,0,1,1,1,1,0,0,0,-1,-1,-1]
 BLOCK_SIZE = 40  # Set the size of the grid block
 GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
+ENTITIES = []
 
-def total_refresh_drawing(entities):
+def total_refresh_drawing():
     draw_grid()
-    draw_characters(entities)
+    draw_characters()
     pygame.display.flip()
 
 def draw_grid():
@@ -55,17 +56,18 @@ def highlight_tile(tile):
     tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
     SCREEN.blit(tile_img, tile_rect)
 
-def draw_characters(entities, ignorables=None):
-    if ignorables:
-        entities = entities.filter(lambda entity: not entity in ignorables, entities)
-    
+def draw_characters(ignorables=None):
+    if ignorables is None:
+        entities = ENTITIES
+    else:
+        entities = filter(lambda entity: not entity in ignorables, ENTITIES)
+    print(entities)
     for entity in entities:
         entity_img = _get_entity_img(None)
         entity_rect = entity_img.get_rect()
         entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
         SCREEN.blit(entity_img, entity_rect)
-
-    pygame.display.flip()
+        pygame.display.update(entity_rect)
 
 def move_player(entity, oldPos):
     target_x, target_y = entity.get_position().col*BLOCK_SIZE, entity.get_position().row*BLOCK_SIZE
@@ -88,6 +90,7 @@ def move_player(entity, oldPos):
         if(wiggle_index == len(move_wiggle)):
             wiggle_index = 0
         draw_grid()
+        draw_characters(ignorables=[entity])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.flip()
 
@@ -103,13 +106,11 @@ def move_player(entity, oldPos):
         if(wiggle_index == len(move_wiggle)):
             wiggle_index = 0
         draw_grid()
+        draw_characters(ignorables=[entity])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.flip()
     
-    entity_rect = entity_img.get_rect()
-    entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
-    SCREEN.blit(entity_img, entity_rect)
-    pygame.display.flip()
+    total_refresh_drawing()
 
 
 def _get_tile_img(tile, highlight=None):
