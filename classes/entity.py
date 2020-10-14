@@ -40,31 +40,6 @@ class Player(Entity):
         self.range = 2
         self.isSelected = False
 
-    # @staticmethod
-    def image(self):
-
-        # create path to the asset based on what kind of wizard we need to print (ie hurt, attacking, normal)
-        if self.damaged:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'wizhurt.png')
-        elif self.attacking:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'wizattack.png')
-        elif self.isSelected:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'wizselected.png')
-        else:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'wiz.png')
-
-        wizard = pygame.image.load(image_path)
-        return wizard
-
-
 class Enemy(Entity):
     def __init__(self):
         super().__init__()
@@ -75,31 +50,6 @@ class Enemy(Entity):
         self.range = 1
         self.isAttackable = False
 
-    # @staticmethod
-    def image(self):
-
-        # create path to the asset based on what kind of soldier we need to print (ie hurt, attacking, normal)
-        if self.damaged:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'knighthurt.png')
-        elif self.attacking:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'knightattack.png')
-        elif self.isAttackable:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'knightattackable.png')
-        else:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'knight.png')
-
-        knight = pygame.image.load(image_path)
-        return knight
-
-
 class Archer(Enemy):
     def __init__(self):
         super().__init__()
@@ -109,26 +59,3 @@ class Archer(Enemy):
         self.defense = 0
         self.range = 2
         self.isAttackable = False
-
-    def image(self):
-
-        # create path to the asset based on what kind of soldier we need to print (ie hurt, attacking, normal)
-        if self.damaged:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'archerhurt.png')
-        elif self.attacking:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'archerattack.png')
-        elif self.isAttackable:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'archerattackable.png')
-        else:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'archer.png')
-
-        archer = pygame.image.load(image_path)
-        return archer
