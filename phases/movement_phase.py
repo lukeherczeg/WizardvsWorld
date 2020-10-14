@@ -4,9 +4,9 @@ from classes.entity import Player
 from classes.tile import Tile
 
 
-def highlight(row, col):
+def select(row, col):
     print(f"Highlighting ({row}, {col}).")
-    draw_highlighted_tile(GRID.game_map[row][col])
+    draw_selected_tile(GRID.game_map[row][col])
 
 
 class PlayerMovementPhase(Phase):
@@ -23,13 +23,13 @@ class PlayerMovementPhase(Phase):
         if self.grid.is_valid_standable_tile(row, col):
             self.currentTile = self.grid.game_map[row][col]
             print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
-            highlight(self.currentTile.row, self.currentTile.col)
+            select(self.currentTile.row, self.currentTile.col)
             draw_entities()
         else:
             print(f"The tile at ({row}, {col}) is invalid.")
 
     def selection(self):
-        highlight(self.currentTile.row, self.currentTile.col)
+        select(self.currentTile.row, self.currentTile.col)
         selecting = True
         while selecting:
             events = pygame.event.get()
@@ -71,8 +71,8 @@ class PlayerMovementPhase(Phase):
     def movement(self):
         movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_Movement)
         movable_tiles_border = GRID.get_movement_border(movable_tiles, self.player.range)
-        draw_highlighted_tiles(movable_tiles, self.player, TileTint.BLUE)
-        draw_highlighted_tiles(movable_tiles_border, self.player, TileTint.RED)
+        draw_tinted_tiles(movable_tiles, self.player, TileTint.BLUE)
+        draw_tinted_tiles(movable_tiles_border, self.player, TileTint.RED)
 
     def enter(self):
         print('Entering Selection Phase...')

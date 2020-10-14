@@ -35,9 +35,9 @@ def main():
     print('Done')
     ######################### DEMO ########################
 
-    # fsm.add_phase(phases.movement_phase.PlayerMovementPhase(player))
-    # fsm.next_phase()
-    # fsm.update()
+    fsm.add_phase(phases.movement_phase.PlayerMovementPhase(wiz))
+    fsm.next_phase()
+    fsm.update()
 
     while True:
         for event in pygame.event.get():
