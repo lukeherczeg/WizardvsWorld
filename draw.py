@@ -61,7 +61,7 @@ def draw_characters(ignorables=None):
         entities = ENTITIES
     else:
         entities = filter(lambda entity: not entity in ignorables, ENTITIES)
-    print(entities)
+
     for entity in entities:
         entity_img = _get_entity_img(None)
         entity_rect = entity_img.get_rect()
