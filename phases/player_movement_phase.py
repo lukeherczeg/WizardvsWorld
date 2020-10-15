@@ -124,4 +124,4 @@ class PlayerMovementPhase(Phase):
         self.movement()
 
     def exit(self):
-        print('Exiting Phase 1...')
+        print('Exiting Player Movement Phase...')

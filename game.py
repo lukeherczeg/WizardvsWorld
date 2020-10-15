@@ -1,6 +1,7 @@
 from draw import *
 from classes.fsm import FSM
-import phases.movement_phase
+import phases.player_movement_phase
+import phases.player_attack_phase
 import test
 
 from classes.entity import Player, Archer, Knight
@@ -39,7 +40,8 @@ def main():
     print('Done')
     ######################### DEMO ########################
 
-    fsm.add_phase(phases.movement_phase.PlayerMovementPhase(wiz))
+    fsm.add_phase(phases.player_movement_phase.PlayerMovementPhase(wiz))
+    fsm.add_phase(phases.player_attack_phase.PlayerAttackPhase(wiz))
 
     while True:
         for event in pygame.event.get():
