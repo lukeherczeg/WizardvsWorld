@@ -37,7 +37,7 @@ class Player(Entity):
         self.health = 100
         self.attack = 20
         self.defense = 5
-        self.range = 2
+        self.range = 3
         self.selected = False
 
 

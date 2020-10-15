@@ -16,14 +16,15 @@ class PlayerAttackPhase(Phase):
     def enter(self):
         self.currentTile = self.player.currentTile
         print('Entering Attack Selection...')
-        possible_enemy_tiles = GRID.get_movement_border(self.movement_data.immovable_tiles, self.player.range)
-        enemy_tiles = []
+        #possible_enemy_tiles = GRID.get_movement_border(self.movement_data.immovable_tiles, self.player.range)
 
-        possible_enemy_tiles.extend(self.movement_data.immovable_tiles)
+        enemy_tiles = GRID.get_attack(self.currentTile.row, self.currentTile.col, self.player.range)
 
-        for tile in possible_enemy_tiles:
-            if tile.occupied:
-                enemy_tiles.append(tile)
+        #possible_enemy_tiles.extend(self.movement_data.immovable_tiles)
+
+        # for tile in possible_enemy_tiles:
+        #     if tile.occupied:
+        #         enemy_tiles.append(tile)
 
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.ORANGE)
 

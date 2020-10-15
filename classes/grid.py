@@ -15,6 +15,12 @@ class Grid:
     def game_map(self):
         return self._game_map
 
+    def is_valid_tile_in_list(self, row, col, tile_list):
+        if self.is_valid_tile(row, col) and self.game_map[row][col] in tile_list:
+            return True
+        else:
+            return False
+
     def is_valid_standable_tile(self, row, col):
         if self.is_valid_tile(row, col) and self.game_map[row][col].standable:
             return True
@@ -101,6 +107,31 @@ class Grid:
 
         tile_list.extend(non_standable_tiles)
         return tile_list
+
+    def get_attack(self, row, col, num_moves):
+
+        tile_list = [self._game_map[row][col]]
+        if num_moves == 0:
+            return tile_list
+
+        # proceed top if not at border
+        if row != 0:
+            tile_list.extend(self.get_attack(row - 1, col, num_moves - 1))
+
+        # proceed left if not at border
+        if col != 0:
+            tile_list.extend(self.get_attack(row, col - 1, num_moves - 1))
+
+        # proceed bottom if not at border
+        if row != self.GRID_HEIGHT - 1:
+            tile_list.extend(self.get_attack(row + 1, col, num_moves - 1))
+
+        # proceed right if not at border
+        if col != self.GRID_WIDTH - 1:
+            tile_list.extend(self.get_attack(row, col + 1, num_moves - 1))
+
+        # array syntax flattens and dict.fromKeys removes duplicates
+        return list(dict.fromkeys(tile_list))
 
     def get_movement(self, row, col, num_moves):
 

@@ -14,14 +14,24 @@ class PlayerMovementPhase(Phase):
     currentTile: Tile
     grid: Grid
     immovable_tiles: [Tile]
+    movable_tiles: [Tile]
+    enemy_tiles: [Tile]
 
     def __init__(self, player):
         self.player = player
         self.currentTile = player.currentTile
         self.grid = GRID
+        self.immovable_tiles = None
+        self.movable_tiles = None
+        self.enemy_tiles = None
 
-    def select_tile(self, row, col, movable_tiles=None):
-        if movable_tiles is None:
+    def select_tile(self, row, col):
+        """Restricts tile selection based on the tile constraints passed to it.
+           If there are no movable or enemy tiles, then it must be normal, free selection phase,
+           if there are movable tiles, it sets constraints and tints for the movement phase,
+           and if there are enemy tiles, it sets constraints for the attack phase."""
+
+        if self.movable_tiles is None and self.enemy_tiles is None:
             if self.grid.is_valid_standable_tile(row, col):
                 draw_tile(self.currentTile)
                 self.currentTile = self.grid.game_map[row][col]
@@ -30,14 +40,36 @@ class PlayerMovementPhase(Phase):
                 draw_entities()
             else:
                 print(f"The tile at ({row}, {col}) is invalid.")
-        else:
-            if self.grid.is_valid_standable_tile(row, col) and self.grid.game_map[row][col] in movable_tiles:
-                draw_tinted_tiles(movable_tiles, self.player, TileTint.BLUE)
-                self.currentTile = self.grid.game_map[row][col]
-                print(f"You are selecting the move to the tile at ({self.currentTile.row}, {self.currentTile.col})")
-                select(self.currentTile.row, self.currentTile.col)
 
-    def selection(self, movable_tiles=None):
+        elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
+            draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
+            self.currentTile = self.grid.game_map[row][col]
+            print(f"You are selecting the move to the tile at ({self.currentTile.row}, {self.currentTile.col})")
+            select(self.currentTile.row, self.currentTile.col)
+
+        elif self.enemy_tiles and self.grid.is_valid_tile_in_list(row, col, self.enemy_tiles):
+            draw_tinted_tiles(self.enemy_tiles, self.player, TileTint.ORANGE)
+            self.currentTile = self.grid.game_map[row][col]
+            print(f"You are selecting to attack to the tile at ({self.currentTile.row}, {self.currentTile.col})")
+            select(self.currentTile.row, self.currentTile.col)
+
+    def select_by_keypress(self, event):
+        row = self.currentTile.row
+        col = self.currentTile.col
+
+        if event.key == pygame.K_LEFT:
+            self.select_tile(row, col - 1)
+
+        elif event.key == pygame.K_RIGHT:
+            self.select_tile(row, col + 1)
+
+        elif event.key == pygame.K_UP:
+            self.select_tile(row - 1, col)
+
+        elif event.key == pygame.K_DOWN:
+            self.select_tile(row + 1, col)
+
+    def selection(self):
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -45,49 +77,24 @@ class PlayerMovementPhase(Phase):
                 sys.exit()
 
             elif event.type == pygame.KEYDOWN:
-                row = self.currentTile.row
-                col = self.currentTile.col
 
                 if event.key == pygame.K_RETURN:
-                    if movable_tiles is None:
+                    if self.movable_tiles is None and self.enemy_tiles is None:
                         return True
-                    else:
-                        if self.currentTile in movable_tiles:
+                    elif self.movable_tiles:
+                        if self.currentTile in self.movable_tiles:
+                            return True
+                    elif self.enemy_tiles:
+                        if self.currentTile in self.enemy_tiles:
                             return True
 
-                # If we didn't call with movable tiles, then we can move the selector anywhere
-                if movable_tiles is None:
-                    if event.key == pygame.K_LEFT:
-                        self.select_tile(row, col - 1)
-
-                    elif event.key == pygame.K_RIGHT:
-                        self.select_tile(row, col + 1)
-
-                    elif event.key == pygame.K_UP:
-                        self.select_tile(row - 1, col)
-
-                    elif event.key == pygame.K_DOWN:
-                        self.select_tile(row + 1, col)
-
-                # If movable_tiles exist, then we are selecting only in the bounds of valid movement
-                else:
-                    if event.key == pygame.K_LEFT:
-                        self.select_tile(row, col - 1, movable_tiles)
-
-                    elif event.key == pygame.K_RIGHT:
-                        self.select_tile(row, col + 1, movable_tiles)
-
-                    elif event.key == pygame.K_UP:
-                        self.select_tile(row - 1, col, movable_tiles)
-
-                    elif event.key == pygame.K_DOWN:
-                        self.select_tile(row + 1, col, movable_tiles)
+                self.select_by_keypress(event)
 
     def movement(self):
         movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_Movement)
         self.immovable_tiles = GRID.get_movement_border(movable_tiles, self.player.range)
-        updated_movable_tiles = list(set(movable_tiles).difference(set(self.immovable_tiles)))
-        draw_tinted_tiles(updated_movable_tiles, self.player, TileTint.BLUE)
+        self.movable_tiles = list(set(movable_tiles).difference(set(self.immovable_tiles)))
+        draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
         draw_tinted_tiles(self.immovable_tiles, self.player, TileTint.RED)
 
         initial_pos = self.currentTile.col, self.currentTile.row
@@ -95,7 +102,7 @@ class PlayerMovementPhase(Phase):
         select(self.currentTile.row, self.currentTile.col)
         selecting = True
         while selecting:
-            if self.selection(updated_movable_tiles):
+            if self.selection():
                 print(f"You picked the movable tile ({self.player.currentTile.row}, {self.player.currentTile.col})!"
                       f" Time to move!")
                 self.player.selected = False
@@ -125,4 +132,5 @@ class PlayerMovementPhase(Phase):
         self.movement()
 
     def exit(self):
+        self.movable_tiles = None
         print('Exiting Player Movement Phase...')
