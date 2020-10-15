@@ -16,13 +16,13 @@ def main():
     pygame.init()
 
     ######################### DEMO ########################
-    wiz = Player()
+    player = Player()
     knight = Knight()
     archer = Archer()
     archer1 = Archer()
     archer2 = Archer()
 
-    wiz.currentTile = GRID.game_map[1][0]
+    player.currentTile = GRID.game_map[1][0]
     knight.currentTile = GRID.game_map[13][5]
     knight.currentTile.occupied = True
     archer.currentTile = GRID.game_map[0][0]
@@ -32,7 +32,7 @@ def main():
     archer2.currentTile = GRID.game_map[1][2]
     archer2.currentTile.occupied = True
 
-    ENTITIES.append(wiz)
+    ENTITIES.append(player)
     ENTITIES.append(knight)
     ENTITIES.append(archer)
     ENTITIES.append(archer1)
@@ -42,17 +42,17 @@ def main():
     total_refresh_drawing()
     time.sleep(1)
 
-    wiz.attacking = True
-    animate_attack(wiz, knight)
+    player.attacking = True
+    animate_attack(player, knight)
     time.sleep(1)
-    animate_attack(wiz, archer)
-    wiz.attacking = False
+    animate_attack(player, archer)
+    player.attacking = False
     print('Done')
     ######################### DEMO ########################
 
     fsm = FSM()
-    player_movement_phase = phases.player_movement_phase.PlayerMovementPhase(wiz)
-    player_attack_phase = phases.player_attack_phase.PlayerAttackPhase(wiz, player_movement_phase)
+    player_movement_phase = phases.player_movement_phase.PlayerMovementPhase(player)
+    player_attack_phase = phases.player_attack_phase.PlayerAttackPhase(player, player_movement_phase)
     enemy_attack_phase = phases.enemy_attack_phase.EnemyAICombatPhase()
     enemy_movement_phase = phases.enemy_movement_phase.EnemyAIMovement()
     fsm.add_phase(player_movement_phase)
