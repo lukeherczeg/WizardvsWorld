@@ -11,23 +11,31 @@ print(f'Grid Width: {GRID.GRID_WIDTH}; Grid Height: {GRID.GRID_HEIGHT}')
 
 
 def main():
-    fsm = FSM()
     pygame.init()
 
     ######################### DEMO ########################
     wiz = Player()
     knight = Knight()
     archer = Archer()
+    archer1 = Archer()
+    archer2 = Archer()
 
     wiz.currentTile = GRID.game_map[1][10]
     knight.currentTile = GRID.game_map[13][5]
     knight.currentTile.occupied = True
     archer.currentTile = GRID.game_map[1][1]
     archer.currentTile.occupied = True
+    archer1.currentTile = GRID.game_map[2][1]
+    archer1.currentTile.occupied = True
+    archer2.currentTile = GRID.game_map[1][2]
+    archer2.currentTile.occupied = True
 
     ENTITIES.append(wiz)
     ENTITIES.append(knight)
     ENTITIES.append(archer)
+    ENTITIES.append(archer1)
+    ENTITIES.append(archer2)
+
 
     total_refresh_drawing()
     time.sleep(1)
@@ -40,8 +48,11 @@ def main():
     print('Done')
     ######################### DEMO ########################
 
-    fsm.add_phase(phases.player_movement_phase.PlayerMovementPhase(wiz))
-    fsm.add_phase(phases.player_attack_phase.PlayerAttackPhase(wiz))
+    fsm = FSM()
+    player_movement_phase = phases.player_movement_phase.PlayerMovementPhase(wiz)
+    player_attack_phase = phases.player_attack_phase.PlayerAttackPhase(wiz, player_movement_phase)
+    fsm.add_phase(player_movement_phase)
+    fsm.add_phase(player_attack_phase)
 
     while True:
         for event in pygame.event.get():

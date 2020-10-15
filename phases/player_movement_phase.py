@@ -13,6 +13,7 @@ class PlayerMovementPhase(Phase):
     player: Player
     currentTile: Tile
     grid: Grid
+    immovable_tiles: [Tile]
 
     def __init__(self, player):
         self.player = player
@@ -84,10 +85,10 @@ class PlayerMovementPhase(Phase):
 
     def movement(self):
         movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_Movement)
-        movable_tiles_border = GRID.get_movement_border(movable_tiles, self.player.range)
-        updated_movable_tiles = list(set(movable_tiles).difference(set(movable_tiles_border)))
+        self.immovable_tiles = GRID.get_movement_border(movable_tiles, self.player.range)
+        updated_movable_tiles = list(set(movable_tiles).difference(set(self.immovable_tiles)))
         draw_tinted_tiles(updated_movable_tiles, self.player, TileTint.BLUE)
-        draw_tinted_tiles(movable_tiles_border, self.player, TileTint.RED)
+        draw_tinted_tiles(self.immovable_tiles, self.player, TileTint.RED)
 
         initial_pos = self.currentTile.col, self.currentTile.row
 
