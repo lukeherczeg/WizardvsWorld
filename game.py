@@ -2,6 +2,8 @@ from draw import *
 from classes.fsm import FSM
 import phases.player_movement_phase
 import phases.player_attack_phase
+import phases.enemy_attack_phase
+import phases.enemy_movement_phase
 import test
 
 from classes.entity import Player, Archer, Knight
@@ -20,12 +22,12 @@ def main():
     archer1 = Archer()
     archer2 = Archer()
 
-    wiz.currentTile = GRID.game_map[1][10]
+    wiz.currentTile = GRID.game_map[1][0]
     knight.currentTile = GRID.game_map[13][5]
     knight.currentTile.occupied = True
-    archer.currentTile = GRID.game_map[1][1]
+    archer.currentTile = GRID.game_map[0][0]
     archer.currentTile.occupied = True
-    archer1.currentTile = GRID.game_map[2][1]
+    archer1.currentTile = GRID.game_map[0][1]
     archer1.currentTile.occupied = True
     archer2.currentTile = GRID.game_map[1][2]
     archer2.currentTile.occupied = True
@@ -51,8 +53,12 @@ def main():
     fsm = FSM()
     player_movement_phase = phases.player_movement_phase.PlayerMovementPhase(wiz)
     player_attack_phase = phases.player_attack_phase.PlayerAttackPhase(wiz, player_movement_phase)
+    enemy_attack_phase = phases.enemy_attack_phase.EnemyAICombatPhase()
+    enemy_movement_phase = phases.enemy_movement_phase.EnemyAIMovement()
     fsm.add_phase(player_movement_phase)
     fsm.add_phase(player_attack_phase)
+    fsm.add_phase(enemy_movement_phase)
+    fsm.add_phase(enemy_attack_phase)
 
     while True:
         for event in pygame.event.get():
