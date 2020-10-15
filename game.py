@@ -1,54 +1,73 @@
-import os
-import pygame
-import sys
-import wsl
+from draw import *
+from classes.fsm import FSM
+import phases.player_movement_phase
+import phases.player_attack_phase
+import phases.enemy_attack_phase
+import phases.enemy_movement_phase
+import test
 
-wsl.set_display_to_host()
-print("Distro:\t", wsl.get_wsl_distro())
-print("Host:\t", wsl.get_wsl_host())
-print("Display:", os.environ['DISPLAY'])
+from classes.entity import Player, Archer, Knight
+import time
 
-BLACK = (0, 0, 0)
-WHITE = (200, 200, 200)
-WINDOW_HEIGHT = 600
-WINDOW_WIDTH = 1000
-SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+print(f'Grid Width: {GRID.GRID_WIDTH}; Grid Height: {GRID.GRID_HEIGHT}')
 
 
 def main():
     pygame.init()
-    clock = pygame.time.Clock()
-    SCREEN.fill(BLACK)
-    draw_button_2 = False
+
+    ######################### DEMO ########################
+    wiz = Player()
+    knight = Knight()
+    archer = Archer()
+    archer1 = Archer()
+    archer2 = Archer()
+
+    wiz.currentTile = GRID.game_map[1][0]
+    knight.currentTile = GRID.game_map[13][5]
+    knight.currentTile.occupied = True
+    archer.currentTile = GRID.game_map[0][0]
+    archer.currentTile.occupied = True
+    archer1.currentTile = GRID.game_map[0][1]
+    archer1.currentTile.occupied = True
+    archer2.currentTile = GRID.game_map[1][2]
+    archer2.currentTile.occupied = True
+
+    ENTITIES.append(wiz)
+    ENTITIES.append(knight)
+    ENTITIES.append(archer)
+    ENTITIES.append(archer1)
+    ENTITIES.append(archer2)
+
+
+    total_refresh_drawing()
+    time.sleep(1)
+
+    wiz.attacking = True
+    animate_attack(wiz, knight)
+    time.sleep(1)
+    animate_attack(wiz, archer)
+    wiz.attacking = False
+    print('Done')
+    ######################### DEMO ########################
+
+    fsm = FSM()
+    player_movement_phase = phases.player_movement_phase.PlayerMovementPhase(wiz)
+    player_attack_phase = phases.player_attack_phase.PlayerAttackPhase(wiz, player_movement_phase)
+    enemy_attack_phase = phases.enemy_attack_phase.EnemyAICombatPhase()
+    enemy_movement_phase = phases.enemy_movement_phase.EnemyAIMovement()
+    fsm.add_phase(player_movement_phase)
+    fsm.add_phase(player_attack_phase)
+    fsm.add_phase(enemy_movement_phase)
+    fsm.add_phase(enemy_attack_phase)
 
     while True:
-        draw_grid()
-        button = pygame.Rect(0, 0, 39, 39)
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if button.collidepoint(event.pos):
-                        button2 = pygame.Rect(0, 40, 39, 39)
-                        draw_button_2 = True
-
+            fsm.next_phase()
+            fsm.update()
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                quit_game()
 
-        pygame.draw.rect(SCREEN, WHITE, button)
-        if draw_button_2:
-            pygame.draw.rect(SCREEN, BLACK, button)
-            pygame.draw.rect(SCREEN, WHITE, button2)
-
-        pygame.display.update()
-
-
-def draw_grid():
-    block_size = 40  # Set the size of the grid block
-    for x in range(WINDOW_WIDTH):
-        for y in range(WINDOW_HEIGHT):
-            rect = pygame.Rect(x * block_size, y * block_size, block_size, block_size)
-            pygame.draw.rect(SCREEN, WHITE, rect, 1)
+        # pygame.draw.rect(SCREEN, WHITE, button)
 
 
 if __name__ == "__main__":

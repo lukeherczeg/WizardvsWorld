@@ -3,6 +3,7 @@
 
 import pygame
 import os
+from assets.image_loader import GRID
 from classes.tile import Tile
 
 
@@ -12,11 +13,13 @@ class Entity:
     health: int
     attack: int  # these variables may change based on how we want to do combat
     defense: int
-    max_Movement: int
+    max_Movement: int = 5
     cur_Movement: int
     range: int
 
     def __init__(self):
+        self.damaged = False
+        self.attacking = False
         defense = 0
 
     def get_position(self):
@@ -30,72 +33,40 @@ class Entity:
 class Player(Entity):
     def __init__(self):
         super().__init__()
-        self.currentTile = Tile(0, 0, True)
+        self.currentTile = GRID.game_map[1][1]
         self.health = 100
         self.attack = 20
         self.defense = 5
-        self.range = 2
-
-    @staticmethod
-    def image(damaged, attacking):
-
-        # create path to the asset based on what kind of wizard we need to print (ie hurt, attacking, normal)
-        if not damaged and not attacking:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'wizhat.png')
-        elif damaged:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'wizhurt.png')
-        elif attacking:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'wizattack.png')
-        else:
-            image_path = ''
-
-        wizard = pygame.image.load(image_path)
-        return wizard
+        self.range = 3
+        self.selected = False
 
 
 class Enemy(Entity):
     def __init__(self):
         super().__init__()
-        self.currentTile = Tile(0, 1, True)
+
+
+class Knight(Enemy):
+    max_Movement = 3
+
+    def __init__(self):
+        super().__init__()
+        self.currentTile = GRID.game_map[0][1]
         self.health = 50
         self.attack = 10
         self.defense = 5
         self.range = 1
-
-    @staticmethod
-    def image(damaged, attacking):
-
-        # create path to the asset based on what kind of soldier we need to print (ie hurt, attacking, normal)
-        if not damaged and not attacking:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'soldier.png')
-        elif damaged:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'soldierhurt.png')
-        elif attacking:
-            main_directory = os.path.dirname('WizardvsWorld')
-            asset_path = os.path.join(main_directory, 'assets')
-            image_path = os.path.join(asset_path, 'soldierattack.png')
-        else:
-            image_path = ''
-
-        soldier = pygame.image.load(image_path)
-        return soldier
+        self.attackable = False
 
 
 class Archer(Enemy):
+    max_Movement = 1
+
     def __init__(self):
         super().__init__()
-        self.currentTile = Tile(0, 2, True)
+        self.currentTile = GRID.game_map[0][2]
         self.health = 30
         self.attack = 15
         self.defense = 0
         self.range = 2
+        self.attackable = False

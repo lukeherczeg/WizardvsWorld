@@ -1,5 +1,5 @@
 # WizardvsWorld
-Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical role-playing game where you play as a single wizard fighting an army of endless soldiers. The game is built using the PyGame 1.9.6 engine. 
+Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical roguelike role-playing game where you play as a single wizard fighting an army of endless soldiers. The game is built using the PyGame 1.9.6 engine. 
 
 Link to project page: [https://github.com/lukeherczeg/WizardvsWorld](https://github.com/lukeherczeg/WizardvsWorld)
 
@@ -31,7 +31,7 @@ These instructions assume that you are using Ubuntu 20.04 (You probably are if y
 3. Open the project in Python and go to File > Settings and search "Interpreter" in the search box at the top and navigate to "Python Interpreter"
 4. Click on the Gear icon next to the "Python Interpreter" line, then click "Add"
 5. Click on the WSL option on the left side
-7. Ensure the correct Linux distribution is selected if you have multiple (mine was just called Ubuntu)
+6. Ensure the correct Linux distribution is selected if you have multiple (mine was just called Ubuntu)
 7. Set the "Python Interpreter Path" to `/usr/bin/python3.7`, click OK twice to close the menus
 8. Click on the Environment Dropdown to the left of the play button at the top of the editor, click "Edit Configurations"
 9. Click on the "+" button in the upper left of the pop-up, click on "Python"
