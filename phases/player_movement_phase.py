@@ -16,6 +16,7 @@ class PlayerMovementPhase(Phase):
     immovable_tiles: [Tile]
     movable_tiles: [Tile]
     enemy_tiles: [Tile]
+    occupied_index: int
 
     def __init__(self, player):
         self.player = player
@@ -24,6 +25,15 @@ class PlayerMovementPhase(Phase):
         self.immovable_tiles = None
         self.movable_tiles = None
         self.enemy_tiles = None
+        self.occupied_index = 0
+
+    def cyclic_last(self, tile_list, current_tile):
+        self.occupied_index -= 1
+        return tile_list[(current_tile - 1) % len(tile_list)]
+
+    def cyclic_next(self, tile_list, current_tile):
+        self.occupied_index += 1
+        return tile_list[(current_tile + 1) % len(tile_list)]
 
     def select_tile(self, row, col):
         """Restricts tile selection based on the tile constraints passed to it.
@@ -56,18 +66,32 @@ class PlayerMovementPhase(Phase):
     def select_by_keypress(self, event):
         row = self.currentTile.row
         col = self.currentTile.col
+        if self.enemy_tiles is None:
+            if event.key == pygame.K_LEFT:
+                self.select_tile(row, col - 1)
 
-        if event.key == pygame.K_LEFT:
-            self.select_tile(row, col - 1)
+            elif event.key == pygame.K_RIGHT:
+                self.select_tile(row, col + 1)
 
-        elif event.key == pygame.K_RIGHT:
-            self.select_tile(row, col + 1)
+            elif event.key == pygame.K_UP:
+                self.select_tile(row - 1, col)
 
-        elif event.key == pygame.K_UP:
-            self.select_tile(row - 1, col)
+            elif event.key == pygame.K_DOWN:
+                self.select_tile(row + 1, col)
+        else:
+            occupied_enemy_tiles = []
 
-        elif event.key == pygame.K_DOWN:
-            self.select_tile(row + 1, col)
+            for tile in self.enemy_tiles:
+                if tile.occupied:
+                    occupied_enemy_tiles.append(tile)
+
+            if event.key == pygame.K_LEFT or event.key == pygame.K_DOWN:
+                hovered_tile = self.cyclic_next(occupied_enemy_tiles, self.occupied_index)
+                self.select_tile(hovered_tile.row, hovered_tile.col)
+
+            elif event.key == pygame.K_RIGHT or event.key == pygame.K_UP:
+                hovered_tile = self.cyclic_last(occupied_enemy_tiles, self.occupied_index)
+                self.select_tile(hovered_tile.row, hovered_tile.col)
 
     def selection(self):
         events = pygame.event.get()
@@ -85,7 +109,7 @@ class PlayerMovementPhase(Phase):
                         if self.currentTile in self.movable_tiles:
                             return True
                     elif self.enemy_tiles:
-                        if self.currentTile in self.enemy_tiles:
+                        if self.currentTile in self.enemy_tiles and self.currentTile.occupied:
                             return True
 
                 self.select_by_keypress(event)
@@ -115,6 +139,8 @@ class PlayerMovementPhase(Phase):
         print("Okay, time to ATTACK!")
 
     def enter(self):
+        self.enemy_tiles = None
+        self.currentTile = self.player.currentTile
         print('Entering Selection Phase...')
         draw_entities()
         select(self.currentTile.row, self.currentTile.col)
