@@ -1,6 +1,6 @@
-import sys
 import os
 import pygame
+import sys
 import math
 import time
 from assets.image_loader import *
@@ -171,7 +171,6 @@ def animate_attack(attacker, victim):
             y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x)))
 
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
-
         if isinstance(attacker, Player):
             _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
@@ -185,22 +184,41 @@ def animate_damage(victim, victim_old_hp):
 
     _animate_damage_bar(victim, victim_old_hp)
 
-    entity_img = _get_entity_img(victim)
+
+def animate_death(entity):
+    entity_img = _get_entity_img(entity)
     wiggle_index = 0
     opacity = 250
 
     while opacity != 0:
         draw_grid()
         draw_entities()
-        _blit_alpha(SCREEN, entity_img, (
-            victim.get_position().col * BLOCK_SIZE + move_wiggle[wiggle_index], victim.get_position().row * BLOCK_SIZE),
-                    opacity)
+        _blit_alpha(SCREEN, entity_img, (entity.get_position().col * BLOCK_SIZE + move_wiggle[wiggle_index],
+                                         entity.get_position().row * BLOCK_SIZE), opacity)
         pygame.display.flip()
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
         opacity = opacity - 2
 
     total_refresh_drawing()
+
+
+def update_coordinates(coords, diffs):
+    start_x, start_y, target_x, target_y = coords
+    x_diff, y_diff = diffs
+
+    # animation logic
+    if start_x < target_x:
+        start_x = start_x + x_diff
+    elif start_x > target_x:
+        start_x = start_x - x_diff
+
+    if start_y < target_y:
+        start_y = start_y + y_diff
+    elif start_y > target_y:
+        start_y = start_y - y_diff
+
+    return start_x, start_y
 
 
 def _animate_player_attack(coords):
@@ -218,16 +236,7 @@ def _animate_player_attack(coords):
         fire_rect = trans_fireballs[animation_index].get_rect()
         fire_rect = fire_rect.move([start_x, start_y])
 
-        # animation logic
-        if start_x < target_x:
-            start_x = start_x + x_diff
-        elif start_x > target_x:
-            start_x = start_x - x_diff
-
-        if start_y < target_y:
-            start_y = start_y + y_diff
-        elif start_y > target_y:
-            start_y = start_y - y_diff
+        start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
 
         animation_index = 0 if animation_index == len(FIREBALL_GIF) - 1 else animation_index + 1
 
@@ -246,7 +255,7 @@ def _animate_knight_attack():
     draw_grid()
     draw_entities(hard=False)
     pygame.display.flip()
-    time.sleep(0.5)
+    time.sleep(0.2)
 
 
 def _animate_archer_attack(coords):
@@ -259,16 +268,7 @@ def _animate_archer_attack(coords):
         arrow_rect = trans_arrow.get_rect()
         arrow_rect = arrow_rect.move([start_x, start_y])
 
-        # animation logic
-        if start_x < target_x:
-            start_x = start_x + x_diff
-        elif start_x > target_x:
-            start_x = start_x - x_diff
-
-        if start_y < target_y:
-            start_y = start_y + y_diff
-        elif start_y > target_y:
-            start_y = start_y - y_diff
+        start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
 
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity
@@ -323,8 +323,8 @@ def _animate_damage_bar(victim, victim_old_hp):
     # HP bar math 4px by 24px
     hp_bar_y = (victim.get_position().row * BLOCK_SIZE) + 4
     hp_bar_x = (victim.get_position().col * BLOCK_SIZE) + 4
-    BAR_LENGTH = 24
-    BAR_HEIGHT = 4
+    bar_length = 24
+    bar_height = 4
 
     # get ratios for scaling health reduction graphically
     old_hp_ratio = 0
@@ -344,8 +344,8 @@ def _animate_damage_bar(victim, victim_old_hp):
         new_hp_ratio = 0
 
     # track start and stop of green movement
-    green_hp_bar_x_pos = math.floor(BAR_LENGTH * old_hp_ratio)
-    green_hp_bar_x_final = math.floor(BAR_LENGTH * new_hp_ratio)
+    green_hp_bar_x_pos = math.floor(bar_length * old_hp_ratio)
+    green_hp_bar_x_final = math.floor(bar_length * new_hp_ratio)
 
     # animate
     x_move_amount = [0, 0, 0, 0, 0, 0, 0, -1]
@@ -354,8 +354,8 @@ def _animate_damage_bar(victim, victim_old_hp):
         # draw
         draw_grid()
         draw_entities(hard=False)
-        pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, BAR_LENGTH, BAR_HEIGHT))
-        pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, BAR_HEIGHT))
+        pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, bar_length, bar_height))
+        pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
         pygame.display.flip()
 
         # load next animation frame
