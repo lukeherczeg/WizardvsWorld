@@ -2,6 +2,7 @@ import sys
 import os
 import pygame
 import math
+import time
 from assets.image_loader import *
 from const import TextureType, TileTint
 from classes.entity import Player, Archer, Knight
@@ -60,7 +61,7 @@ def draw_selected_tile(tile):
     pygame.display.flip()
 
 
-def draw_entities(ignorables=None):
+def draw_entities(ignorables=None, hard=True):
     if ignorables is None:
         entities = ENTITIES
     else:
@@ -71,7 +72,7 @@ def draw_entities(ignorables=None):
         entity_rect = entity_img.get_rect()
         entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
         SCREEN.blit(entity_img, entity_rect)
-        pygame.display.update(entity_rect)
+        if hard: pygame.display.update(entity_rect)
 
 
 def animate_move(entity, old_pos):
@@ -129,29 +130,44 @@ def animate_move(entity, old_pos):
     total_refresh_drawing()
 
 
-def animate_attack(attacker, victim):
-    # Initialize start and end points and covert to pixel values
-    start_x = attacker.get_position().col * BLOCK_SIZE
-    start_y = attacker.get_position().row * BLOCK_SIZE
-    target_x = victim.get_position().col * BLOCK_SIZE
-    target_y = victim.get_position().row * BLOCK_SIZE
-
-    # point attack at enemy
-    angle = math.atan2(-(start_y - target_y), start_x - target_x)
-    angle = math.degrees(angle)
-
-    # get proportion of x movement to y movement needed
-    if target_y == start_y:
-        x_diff = 1
+def animate_attack(attacker, victim, victim_old_hp):
+    if isinstance(attacker, Knight):
+        animate_knight_attack()
     else:
-        x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y)))
-    if target_x == start_x:
-        y_diff = 1
-    else:
-        y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x)))
+        # Initialize start and end points and covert to pixel values
+        start_x = attacker.get_position().col * BLOCK_SIZE
+        start_y = attacker.get_position().row * BLOCK_SIZE
+        target_x = victim.get_position().col * BLOCK_SIZE
+        target_y = victim.get_position().row * BLOCK_SIZE
 
-    print(f"{x_diff}, {y_diff} is the diff.")
+        # point attack at enemy
+        angle = math.atan2(-(start_y - target_y), start_x - target_x)
+        angle = math.degrees(angle)
 
+        # get proportion of x movement to y movement needed
+        if target_y == start_y:
+            x_diff = 1
+        else:
+            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y)))
+        if target_x == start_x:
+            y_diff = 1
+        else:
+            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x)))
+
+        coords = (start_x,start_y,target_x,target_y,x_diff,y_diff,angle)
+
+        if isinstance(attacker, Player):
+            animate_player_attack(coords)
+        elif isinstance(attacker, Archer):
+            animate_archer_attack(coords)
+    
+    animate_damage(victim, victim_old_hp)
+
+def animate_damage(victim, victim_old_hp):
+    return 0
+
+def animate_player_attack(coords):
+    start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     # For animating fireball gif
     animation_index = 0
 
@@ -160,7 +176,7 @@ def animate_attack(attacker, victim):
         trans_fireball = pygame.transform.rotate(fireball, angle - 135)
         trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
 
-    while abs(start_x - target_x) >= 3 or abs(start_y - target_y) >= 3:
+    while abs(start_x - target_x) >= 15 or abs(start_y - target_y) >= 15:
         # update animation position and frame
         fire_rect = trans_fireballs[animation_index].get_rect()
         fire_rect = fire_rect.move([start_x, start_y])
@@ -181,13 +197,49 @@ def animate_attack(attacker, victim):
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity
         draw_grid()
-        draw_entities()
+        draw_entities(hard=False)
         SCREEN.blit(trans_fireballs[animation_index], fire_rect)
         pygame.display.flip()
 
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
 
+def animate_knight_attack():
+    draw_grid()
+    draw_entities(hard=False)
+    pygame.display.flip()
+    time.sleep(0.2)
+
+def animate_archer_attack(coords):
+    start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
+    trans_arrow = pygame.transform.rotate(ARROW_PNG, angle + 90)
+    trans_arrow = pygame.transform.scale(trans_arrow, (20, 20))
+
+    while abs(start_x - target_x) >= 2 or abs(start_y - target_y) >= 2:
+        # update animation position and frame
+        arrow_rect = trans_arrow.get_rect()
+        arrow_rect = arrow_rect.move([start_x, start_y])
+
+        # animation logic
+        if start_x < target_x:
+            start_x = start_x + x_diff
+        elif start_x > target_x:
+            start_x = start_x - x_diff
+
+        if start_y < target_y:
+            start_y = start_y + y_diff
+        elif start_y > target_y:
+            start_y = start_y - y_diff
+
+        # redraw the grid and entities besides the one being animated,
+        # then draw animation frame of entity
+        draw_grid()
+        draw_entities(hard=False)
+        SCREEN.blit(trans_arrow, arrow_rect)
+        pygame.display.flip()
+
+    # this is done to re-center the final animation sprite and ensure game state is up to date
+    total_refresh_drawing()
 
 def _get_tile_img(tile, tint=None):
     if tile.texture_type == TextureType.GRASS:

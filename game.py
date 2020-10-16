@@ -42,9 +42,18 @@ def main():
 
     wiz.attacking = True
     animate_attack(wiz, knight)
-    time.sleep(1)
-    animate_attack(wiz, archer)
     wiz.attacking = False
+    time.sleep(1)
+
+    archer1.attacking = True
+    animate_attack(archer1, wiz)
+    archer.attacking = False
+    time.sleep(1)
+
+    knight.attacking = True
+    animate_attack(knight, wiz)
+    knight.attacking = False
+
     print('Done')
     ######################### DEMO ########################
 
