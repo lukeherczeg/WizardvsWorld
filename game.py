@@ -38,7 +38,7 @@ def main():
     ENTITIES.append(archer1)
     ENTITIES.append(archer2)
 
-
+    '''
     total_refresh_drawing()
     time.sleep(1)
 
@@ -48,8 +48,8 @@ def main():
     animate_attack(player, archer)
     player.attacking = False
     print('Done')
+    '''
     ######################### DEMO ########################
-
     fsm = FSM()
 
     # Declare Phases

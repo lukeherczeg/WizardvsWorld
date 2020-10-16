@@ -7,8 +7,6 @@ from const import TextureType, TileTint
 from classes.entity import Player, Archer, Knight
 
 ENTITIES = []
-
-
 # NOTES:
 # There are DRAW functions and ANIMATE functions.
 # DRAW - code runs almost instantly and repaints screen
