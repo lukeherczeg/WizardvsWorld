@@ -133,7 +133,7 @@ class PlayerMovementPhase(Phase):
         draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
         draw_tinted_tiles(self.immovable_tiles, self.player, TileTint.RED)
 
-        initial_pos = self.currentTile.col, self.currentTile.row
+        initial_tile = self.currentTile
 
         select(self.currentTile.row, self.currentTile.col)
         selecting = True
@@ -147,7 +147,7 @@ class PlayerMovementPhase(Phase):
 
         self.player.currentTile = self.currentTile
 
-        animate_move(self.player, initial_pos)
+        animate_entity_movement(self.player, initial_tile)
         # print("Okay, time to ATTACK!")
 
     def enter(self):

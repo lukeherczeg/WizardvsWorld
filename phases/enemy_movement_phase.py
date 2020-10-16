@@ -36,7 +36,7 @@ class EnemyAIMovement(Phase):
                 if tile.occupied or tile is self.player_position:
                     movable_tiles.remove(tile)
 
-            init_post = enemy.currentTile.col, enemy.currentTile.row
+            init_tile = enemy.get_position()
             new_tile = random.randint(0, len(movable_tiles) - 1)
             cannot_move = True
 
@@ -51,7 +51,7 @@ class EnemyAIMovement(Phase):
             enemy.currentTile = movable_tiles[new_tile]
             enemy.currentTile.occupied = True
             time.sleep(0.5)
-            animate_move(enemy, init_post)
+            animate_entity_movement(enemy, init_tile)
 
     def enter(self):
         print('Entering Enemy Movement Selection...')
