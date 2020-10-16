@@ -65,9 +65,8 @@ class PlayerAttackPhase(Phase):
             # TUTORIAL
             if self.is_tutorial:
                 MessageBox('Uh oh, enemies are close! Select one of the enemies within range by pressing ENTER'
-                                     + ' while they are in your cursor.')
+                           + ' while they are in your selector.')
                 total_refresh_drawing()
-
 
             start_index = len(occupied_enemy_tiles) - 1
             self.data_from_movement.occupied_index = start_index

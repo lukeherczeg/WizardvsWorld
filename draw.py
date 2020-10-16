@@ -51,8 +51,13 @@ def draw_tinted_tiles(tile_list, entity, tint):
     pygame.display.flip()
 
 
-def draw_selected_tile(tile):
-    tile_img = SELECT_PNG
+def draw_selected_tile(tile, enemy=None):
+    if enemy is None:
+        tile_img = SELECT_PNG
+    elif isinstance(enemy, Knight):
+        tile_img = KNIGHT_ATTACKABLE_PNG
+    elif isinstance(enemy, Archer):
+        tile_img = ARCHER_ATTACKABLE_PNG
     tile_rect = tile_img.get_rect()
     tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
     SCREEN.blit(tile_img, tile_rect)

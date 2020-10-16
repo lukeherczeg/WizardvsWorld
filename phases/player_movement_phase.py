@@ -5,9 +5,12 @@ from classes.tile import Tile
 from classes.user_interface import MessageBox
 
 
-def select(row, col):
+def select(row, col, enemy=None):
     # print(f"Highlighting ({row}, {col}).")
-    draw_selected_tile(GRID.game_map[row][col])
+    if enemy is None:
+        draw_selected_tile(GRID.game_map[row][col])
+    else:
+        draw_selected_tile(GRID.game_map[row][col], enemy)
 
 
 class PlayerMovementPhase(Phase):
@@ -64,6 +67,13 @@ class PlayerMovementPhase(Phase):
             self.currentTile = self.grid.game_map[row][col]
             print(f"You are selecting to attack to the tile at ({self.currentTile.row}, {self.currentTile.col})")
             select(self.currentTile.row, self.currentTile.col)
+
+            # If we want to use enemy specific selection tiles:
+
+            # for enemy in ENTITIES:
+            #     if enemy.currentTile is self.currentTile:
+            #         select(self.currentTile.row, self.currentTile.col, enemy)
+            #         break
 
     def select_by_keypress(self, event):
         row = self.currentTile.row
