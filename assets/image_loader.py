@@ -67,3 +67,4 @@ FIREBALL_GIF = [
     pygame.image.load(os.path.join(asset_path, 'fireball/fireball_4.png')).convert_alpha(),
 ]
 ARROW_PNG = pygame.image.load(os.path.join(asset_path, 'arrow.png')).convert_alpha()
+LOGO_PNG = pygame.image.load(os.path.join(asset_path, 'logo.png')).convert_alpha()

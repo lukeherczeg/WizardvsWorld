@@ -1,6 +1,7 @@
 from classes.phase import Phase
 from phases.counter_attack import *
 from phases.counter_attack import CounterAttack
+from classes.user_interface import MessageBox
 
 
 class EnemyAICombatPhase(Phase):
@@ -14,7 +15,9 @@ class EnemyAICombatPhase(Phase):
         self.Player = ENTITIES[0]
         self.player_position = self.Player.get_position()
         self.grid = GRID
+        self.is_tutorial = True
 
+        
     def attack_player_procedure(self, enemy):
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
         attacker = CounterAttack(self.Player, enemy, enemy_tiles)
@@ -50,6 +53,12 @@ class EnemyAICombatPhase(Phase):
         print('Entering Enemy Attack Selection')
         self.player_position = self.Player.currentTile
 
+        # TUTORIAL
+        if self.is_tutorial:
+            MessageBox('Now your enemies will have a chance to attack you!')
+            total_refresh_drawing()
+
+
     def update(self):
         print('Entering Enemy Attack Computation')
         for enemy in self.Enemies:
@@ -58,3 +67,4 @@ class EnemyAICombatPhase(Phase):
 
     def exit(self):
         print('Exiting Enemy Phase...')
+        self.is_tutorial = False
