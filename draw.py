@@ -73,6 +73,23 @@ def draw_entities(ignorables=None, hard=True):
         SCREEN.blit(entity_img, entity_rect)
         if hard: pygame.display.update(entity_rect)
 
+def draw_text(message, size, tile=None, offset=None, color=WHITE):
+
+    x_pos = tile.get_position().col if not tile is None else 0
+    y_pos = tile.get_position().row if not tile is None else 0
+
+    x_offset, y_offset = offset if not offset is None else (0,0)
+
+    x_pos, y_pos = x_pos + x_offset, y_pos + y_offset
+
+    #create number rect
+    message_font = pygame.font.Font('freesansbold.ttf', size)
+    message_text = message_font.render(str(message), True, color)
+    message_rect = message_text.get_rect()
+    message_rect = message_rect.move([x_pos, y_pos])
+    SCREEN.blit(message_text, message_rect)
+    pygame.display.flip()
+
 
 def animate_move(entity, old_pos):
     # Initialize start and end points and covert to pixel values
@@ -172,20 +189,29 @@ def animate_damage(victim, victim_old_hp):
     number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
     number_rect = number_rect.move([number_x_fixed, number_y_var])
 
+    victim_rect = _get_entity_img(victim).get_rect()
+    victim_rect = victim_rect.move([victim.get_position().col*BLOCK_SIZE, victim.get_position().row*BLOCK_SIZE])
+
     #draw and animate number rect
     y_move_amount = [0,0,0,0,0,0,0,0,0,0,-1]
     y_move_index = 0
+    wiggle_index = 0
     for i in range(120):
         number_rect = number_rect.move([0, y_move_amount[y_move_index]])
+        victim_rect = victim_rect.move([move_wiggle[wiggle_index], 0])
 
         y_move_index = 0 if y_move_index == len(y_move_amount) - 1 else y_move_index + 1
+        wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
 
         draw_grid()
-        draw_entities(hard=False)
+        draw_entities(hard=False, ignorables=[victim])
         SCREEN.blit(number_text, number_rect)
+        SCREEN.blit(_get_entity_img(victim), victim_rect)
         pygame.display.flip()
-    
+   
     total_refresh_drawing()
+
+    time.sleep(0.2)
 
     #create initial rectangles
 
@@ -316,13 +342,13 @@ def animate_archer_attack(coords):
     total_refresh_drawing()
 
 def _blit_alpha(target, source, location, opacity):
-        x = location[0]
-        y = location[1]
-        temp = pygame.Surface((source.get_width(), source.get_height())).convert()
-        temp.blit(target, (-x, -y))
-        temp.blit(source, (0, 0))
-        temp.set_alpha(opacity)        
-        target.blit(temp, location)
+    x = location[0]
+    y = location[1]
+    temp = pygame.Surface((source.get_width(), source.get_height())).convert()
+    temp.blit(target, (-x, -y))
+    temp.blit(source, (0, 0))
+    temp.set_alpha(opacity)      
+    target.blit(temp, location)
 
 def _get_tile_img(tile, tint=None):
     if tile.texture_type == TextureType.GRASS:

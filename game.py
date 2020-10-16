@@ -46,7 +46,6 @@ def main():
     player.damaged = True
     animate_damage(player, old_player_health)
     player.damaged = False
-    time.sleep(1)
 
     archer2.attacking = True
     animate_attack(archer2, player)
@@ -56,7 +55,6 @@ def main():
     player.damaged = True
     animate_damage(player, old_player_health)
     player.damaged = False
-    time.sleep(1)
 
     knight.attacking = True
     animate_attack(knight, player)
@@ -66,7 +64,6 @@ def main():
     player.damaged = True
     animate_damage(player, old_player_health)
     player.damaged = False
-    time.sleep(1)
 
     player.attacking = True
     animate_attack(player, knight)
@@ -77,7 +74,6 @@ def main():
     animate_damage(knight, old_knight_health)
     ENTITIES.remove(knight)
     animate_death(knight)
-    time.sleep(1)
 
     player.attacking = True
     animate_attack(player, archer1)
@@ -88,7 +84,6 @@ def main():
     animate_damage(archer1, old_archer1_health)
     ENTITIES.remove(archer1)
     animate_death(archer1)
-    time.sleep(1)
 
     player.attacking = True
     animate_attack(player, archer2)
@@ -99,7 +94,13 @@ def main():
     animate_damage(archer2, old_archer2_health)
     ENTITIES.remove(archer2)
     animate_death(archer2)
-    time.sleep(1)
+
+    draw_text("BIG DICK WIZ", 24, offset=(200,200))
+    time.sleep(2)
+    draw_text("COMING TO YO CASTLE", 24, offset=(220,300), color=RED)
+    time.sleep(2)
+    draw_text("STEALING YO GRILL", 24, offset=(240,400), color=WHITE)
+    time.sleep(2)
 
     print('Done')
     ######################### DEMO ########################
