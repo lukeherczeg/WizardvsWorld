@@ -1,5 +1,7 @@
+from assets.image_loader import *
 from classes.phase import Phase
-from classes.user_interface import *
+from classes.user_interface import Button
+from draw import quit_game
 
 class StartScreen(Phase):
     def __init__(self):
@@ -14,11 +16,18 @@ class StartScreen(Phase):
 
         # Buttons
         self.__buttons = []
-        self.__buttons.append(Button(WINDOW_WIDTH // 4 - 100, 2 * WINDOW_HEIGHT // 3, 100, 50, 'Start', BRIGHT_RED, RED)) #TODO: CALL START GAME FUNCTION IN GAME.PY
+        self.__buttons.append(Button(WINDOW_WIDTH // 4 - 100, 2 * WINDOW_HEIGHT // 3, 100, 50, 'Start', BRIGHT_RED, RED, self.complete)) #TODO: CALL START GAME FUNCTION IN GAME.PY
         self.__buttons.append(Button(3 * WINDOW_WIDTH // 4, 2 * WINDOW_HEIGHT // 3, 100, 50, 'Quit', BRIGHT_RED, RED, quit_game))
 
+        # Completion
+        self.__completed = None
+
+    def complete(self):
+        self.__completed = True
+
     def enter(self):
-        pass
+        print('Entering start...')
+        self.__completed = False
 
     def update(self):
         SCREEN.fill(WHITE)
@@ -28,6 +37,11 @@ class StartScreen(Phase):
             button.update()
 
         pygame.display.update()
+
+        if self.__completed:
+            return True
+        else:
+            return False
 
     def exit(self):
         pass

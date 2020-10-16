@@ -1,6 +1,5 @@
 from draw import *
 from classes.fsm import FSM
-from phases.start_screen import StartScreen
 import phases.player_movement_phase
 import phases.player_attack_phase
 import phases.enemy_attack_phase
@@ -52,27 +51,28 @@ def main():
     ######################### DEMO ########################
 
     fsm = FSM()
+
+    # Declare Phases
     player_movement_phase = phases.player_movement_phase.PlayerMovementPhase(player)
     player_attack_phase = phases.player_attack_phase.PlayerAttackPhase(player, player_movement_phase)
     enemy_attack_phase = phases.enemy_attack_phase.EnemyAICombatPhase()
     enemy_movement_phase = phases.enemy_movement_phase.EnemyAIMovement()
+
+    # Add Phases
     fsm.add_phase(player_movement_phase)
     fsm.add_phase(player_attack_phase)
     fsm.add_phase(enemy_movement_phase)
     fsm.add_phase(enemy_attack_phase)
 
-    fsm.add_phase(StartScreen()) # TODO: MAKE THIS A SPECIAL PHASE BEFORE THE GAMEPLAY LOOP
-    fsm.next_phase()
+    # Start the FSM
+    fsm.restart()
 
+    # Gameplay Loop
     while True:
-        fsm.update()
         for event in pygame.event.get():
-            fsm.next_phase()
             fsm.update()
             if event.type == pygame.QUIT:
                 quit_game()
-
-        # pygame.draw.rect(SCREEN, WHITE, button)
 
 
 if __name__ == "__main__":

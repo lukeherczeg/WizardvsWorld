@@ -1,4 +1,4 @@
-from draw import *
+from assets.image_loader import *
 
 class Button:
     # Inspired by the tutorial at https://pythonprogramming.net/pygame-button-function/
@@ -25,8 +25,12 @@ class Button:
         if self.__pos_x + self.__width > mouse[0] > self.__pos_x and self.__pos_y + self.__height > mouse[1] > self.__pos_y:
             pygame.draw.rect(SCREEN, self.__color_active, (self.__pos_x, self.__pos_y, self.__width, self.__height))
 
-            if is_pressed[0] == 1 and self.__on_click is not None:
-                self.__on_click()
+            # Check for clicks
+            if is_pressed[0] and self.__on_click is not None:
+                pygame.time.delay(25)
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        self.__on_click()
         # Button isn't hovered
         else:
             pygame.draw.rect(SCREEN, self.__color_inactive, (self.__pos_x, self.__pos_y, self.__width, self.__height))
