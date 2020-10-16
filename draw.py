@@ -90,32 +90,49 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     SCREEN.blit(message_text, message_rect)
     pygame.display.flip()
 
+#TODO
+def animate_text(message, size, tile=None, offset=None, color=WHITE, time=0):
+    return 0
 
-def animate_move(entity, old_pos):
+
+def animate_entity_movement(entity, prev_tile):
+
+    tile_list = GRID.path_to(prev_tile, entity.get_position())
+
+    for i in range(len(tile_list)-1):
+        old_pos = (tile_list[i].col*BLOCK_SIZE, tile_list[i].row*BLOCK_SIZE)
+        new_pos = (tile_list[i+1].col*BLOCK_SIZE, tile_list[i+1].row*BLOCK_SIZE)
+        animate_move(entity, old_pos, new_pos)
+
+    # this is done to re-center the final animation sprite and ensure game state is up to date
+    total_refresh_drawing()
+
+
+def animate_move(entity, old_pos, new_pos):
     # Initialize start and end points and covert to pixel values
-    target_x, target_y = entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE
+    target_x, target_y = new_pos
     old_x, old_y = old_pos
-    old_x = old_x * BLOCK_SIZE
-    old_y = old_y * BLOCK_SIZE
 
     # Create rect of moving entity
     entity_img = _get_entity_img(entity)
     entity_rect = entity_img.get_rect()
     entity_rect = entity_rect.move([old_x, old_y])
 
-    # For animating perpendicular wiggle while walking
+    # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
+    move_speed_index = 0
 
-    # TO BE CHANGED, move horizontally
+    #move horizontally
     while old_x != target_x:
         if old_x < target_x:
-            entity_rect = entity_rect.move([X_MOVEMENT_SPEED, move_wiggle[wiggle_index]])
-            old_x = old_x + X_MOVEMENT_SPEED
+            entity_rect = entity_rect.move([X_MOVEMENT_SPEED[move_speed_index], move_wiggle[wiggle_index]])
+            old_x = old_x + X_MOVEMENT_SPEED[move_speed_index]
         elif old_x > target_x:
-            entity_rect = entity_rect.move([-X_MOVEMENT_SPEED, move_wiggle[wiggle_index]])
-            old_x = old_x - X_MOVEMENT_SPEED
+            entity_rect = entity_rect.move([-X_MOVEMENT_SPEED[move_speed_index], move_wiggle[wiggle_index]])
+            old_x = old_x - X_MOVEMENT_SPEED[move_speed_index]
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
+        move_speed_index = 0 if move_speed_index == len(X_MOVEMENT_SPEED) - 1 else move_speed_index + 1
 
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity
@@ -127,13 +144,14 @@ def animate_move(entity, old_pos):
     # TO BE CHANGED, move vertically
     while old_y != target_y:
         if old_y < target_y:
-            entity_rect = entity_rect.move([move_wiggle[wiggle_index], Y_MOVEMENT_SPEED])
-            old_y = old_y + Y_MOVEMENT_SPEED
+            entity_rect = entity_rect.move([move_wiggle[wiggle_index], Y_MOVEMENT_SPEED[move_speed_index]])
+            old_y = old_y + Y_MOVEMENT_SPEED[move_speed_index]
         elif old_y > target_y:
-            entity_rect = entity_rect.move([move_wiggle[wiggle_index], -Y_MOVEMENT_SPEED])
-            old_y = old_y - Y_MOVEMENT_SPEED
+            entity_rect = entity_rect.move([move_wiggle[wiggle_index], -Y_MOVEMENT_SPEED[move_speed_index]])
+            old_y = old_y - Y_MOVEMENT_SPEED[move_speed_index]
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
+        move_speed_index = 0 if move_speed_index == len(X_MOVEMENT_SPEED) - 1 else move_speed_index + 1
 
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity
@@ -141,9 +159,6 @@ def animate_move(entity, old_pos):
         draw_entities(ignorables=[entity])
         SCREEN.blit(entity_img, entity_rect)
         pygame.display.flip()
-
-    # this is done to re-center the final animation sprite and ensure game state is up to date
-    total_refresh_drawing()
 
 
 def animate_attack(attacker, victim):
