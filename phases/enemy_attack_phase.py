@@ -21,7 +21,8 @@ class EnemyAICombatPhase(Phase):
 
         for enemy in self.Enemies:
             if isinstance(enemy, Enemy):
-                self.attack_player_procedure(enemy)
+                if enemy.health > 0:
+                    self.attack_player_procedure(enemy)
 
     def attack_player_procedure(self, enemy):
         if self.can_enemy_attack(enemy, enemy.range):
@@ -33,14 +34,11 @@ class EnemyAICombatPhase(Phase):
             print("The Player had " + str(self.Player.health) + " after the enemy attacked")
 
     def can_enemy_attack(self, enemy, fight_range):
-        print("The player position is currently col: " + str(self.player_position.col)
-              + " row: " + str(self.player_position.row))
-        print("The Enemy position is currently col: " + str(enemy.currentTile.col)
-              + " row " + str(enemy.currentTile.row))
 
-        if abs(self.player_position.row - enemy.currentTile.row) <= fight_range or abs(
-                self.player_position.col - enemy.currentTile.col) <= fight_range:
-            print("Enemy can attack!")
+        p1 = [self.player_position.row, self.player_position.col]
+        p2 = [enemy.currentTile.row, enemy.currentTile.col]
+        distance1 = int(math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2)))
+        if distance1 <= fight_range:
             return True
         else:
             return False
