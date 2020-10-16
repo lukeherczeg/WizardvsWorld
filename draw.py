@@ -4,10 +4,8 @@ import pygame
 import math
 import time
 from assets.image_loader import *
-from const import TextureType, TileTint
+from const import TextureType, TileTint, ENTITIES
 from classes.entity import Player, Archer, Knight, PLAYER_HEALTH, ARCHER_HEALTH, KNIGHT_HEALTH
-
-ENTITIES = []
 
 
 # NOTES:
