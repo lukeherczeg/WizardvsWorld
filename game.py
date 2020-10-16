@@ -22,8 +22,8 @@ def main():
     archer1 = Archer()
     archer2 = Archer()
 
-    player.currentTile = GRID.game_map[1][0]
-    knight.currentTile = GRID.game_map[13][5]
+    player.currentTile = GRID.game_map[10][4]
+    knight.currentTile = GRID.game_map[10][5]
     knight.currentTile.occupied = True
     archer.currentTile = GRID.game_map[0][0]
     archer.currentTile.occupied = True
@@ -44,9 +44,27 @@ def main():
 
     player.attacking = True
     animate_attack(player, knight)
-    time.sleep(1)
-    animate_attack(player, archer)
     player.attacking = False
+    old_knight_health = knight.health
+    knight.health = knight.health - 5
+    animate_damage(knight, old_knight_health)
+    time.sleep(1)
+
+    archer1.attacking = True
+    animate_attack(archer1, player)
+    archer.attacking = False
+    old_player_health = player.health
+    player.health = player.health - 20
+    animate_damage(player, old_player_health)
+    time.sleep(1)
+
+    knight.attacking = True
+    animate_attack(knight, player)
+    knight.attacking = False
+    old_player_health = player.health
+    player.health = player.health - 20
+    animate_damage(player, old_player_health)
+
     print('Done')
     ######################### DEMO ########################
 
