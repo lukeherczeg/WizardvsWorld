@@ -233,6 +233,9 @@ def animate_damage(victim, victim_old_hp):
         new_hp_ratio = victim.health / ARCHER_HEALTH
         old_hp_ratio = victim_old_hp / ARCHER_HEALTH
 
+    if new_hp_ratio < 0 :
+        new_hp_ratio = 0
+
     green_hp_bar_x_pos = math.floor(BAR_LENGTH * old_hp_ratio)
     green_hp_bar_x_final = math.floor(BAR_LENGTH * new_hp_ratio)
 
