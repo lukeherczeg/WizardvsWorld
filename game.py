@@ -6,13 +6,16 @@ import phases.enemy_attack_phase
 import phases.enemy_movement_phase
 
 from classes.entity import Player
-import time
 
 print(f'Grid Width: {GRID.GRID_WIDTH}; Grid Height: {GRID.GRID_HEIGHT}')
 
 
 def main():
     pygame.init()
+
+    pygame.display.set_caption('Wizard vs. World ALPHA Build v 0.1')
+    pygame.display.set_icon(WIZ_PNG)
+
     player = Player()
     player.currentTile = GRID.game_map[7][0]
     ENTITIES.append(player)
