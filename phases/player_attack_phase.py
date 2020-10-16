@@ -1,5 +1,6 @@
 from phases.player_movement_phase import *
 import time
+from classes.entity import Enemy
 
 
 class PlayerAttackPhase(Phase):
@@ -14,10 +15,19 @@ class PlayerAttackPhase(Phase):
         self.grid = GRID
         self.data_from_movement = data_from_movement
 
+    def remove_enemy_from_tile(self, enemy_tiles):
+        for enemy in ENTITIES:
+            for tile in enemy_tiles:
+                if enemy.currentTile is tile:
+                    if enemy.health == 0:
+                        tile.occupied = False
+                        self.data_from_movement.enemy_tiles.remove(tile)
+
     def attack_selection(self):
         # possible_enemy_tiles = GRID.get_movement_border(self.movement_data.immovable_tiles, self.player.range)
 
         enemy_tiles = GRID.get_attack(self.currentTile.row, self.currentTile.col, self.player.range)
+
         self.data_from_movement.enemy_tiles = enemy_tiles
 
         # possible_enemy_tiles.extend(self.movement_data.immovable_tiles)
@@ -37,15 +47,32 @@ class PlayerAttackPhase(Phase):
             selecting = True
             while selecting:
                 if self.data_from_movement.selection():
-                    print(
-                        f"You picked the attackable tile ({self.player.currentTile.row}, {self.player.currentTile.col})!"
-                        f" Time to attack!")
+                    # print(
+                    #     f"You picked the attackable tile ({self.data_from_movement.currentTile.row}, "
+                    #     f"{self.data_from_movement.currentTile.col})!"
+                    #     f" Time to attack!")
+                    for enemy in ENTITIES:
+                        if isinstance(enemy, Enemy):
+                            if enemy.currentTile is self.data_from_movement.currentTile:
+                                # print("Enemy Before attack", end=" ")
+                                # print(enemy.health)
+                                damage_taken = self.player.attack - enemy.defense
+                                if damage_taken < 0:
+                                    damage_taken = 0
+                                enemy.health -= damage_taken
+                                animate_attack(self.player, enemy)
+                                if enemy.health < 0:
+                                    enemy.health = 0
+                                    self.remove_enemy_from_tile(enemy_tiles)
+                                    ENTITIES.remove(enemy)
+                                # print("Enemy Health after attack", end=" ")
+                                # print(enemy.health)
                     self.player.selected = False
                     draw_entities()
                     selecting = False
         else:
             time.sleep(1)
-            print(f"No enemies within range, back to selection!")
+            # print(f"No enemies within range, back to selection!")
 
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.NONE)
 

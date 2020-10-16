@@ -26,12 +26,10 @@ class EnemyAICombatPhase(Phase):
 
     def attack_player_procedure(self, enemy):
         if self.can_enemy_attack(enemy, enemy.range):
-            print("The Player had " + str(self.Player.health) + " before the enemy attacked")
             damage_taken = enemy.attack - self.Player.defense
             if damage_taken < 0:
                 damage_taken = 0
             self.Player.health -= damage_taken
-            print("The Player had " + str(self.Player.health) + " after the enemy attacked")
 
     def can_enemy_attack(self, enemy, fight_range):
 
