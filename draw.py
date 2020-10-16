@@ -224,38 +224,19 @@ def animate_damage(victim, victim_old_hp):
 
 def animate_death(entity):
 
-    # Create rect of moving entity
     entity_img = _get_entity_img(entity)
-    entity_rect = entity_img.get_rect()
-    entity_rect = entity_rect.move([entity.get_position().col*BLOCK_SIZE, entity.get_position().row*BLOCK_SIZE])
-
-    # For animating perpendicular wiggle while walking
     wiggle_index = 0
+    opacity = 250
 
-    y_move_amount = [0,0,0,0,0,0,0,0,0,0,-1]
-    y_move_index = 0
-    for i in range(120):
-
-        # entity_rect = entity_rect.move([move_wiggle[wiggle_index], Y_MOVEMENT_SPEED])
-        # old_y = old_y + Y_MOVEMENT_SPEED
-
-        # wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
-
-        # # redraw the grid and entities besides the one being animated,
-        # # then draw animation frame of entity
-        # draw_grid()
-        # draw_entities(ignorables=[entity])
-        # SCREEN.blit(entity_img, entity_rect)
-        # pygame.display.flip()
-
-        # number_rect = number_rect.move([0, y_move_amount[y_move_index]])
-
-        # y_move_index = 0 if y_move_index == len(y_move_amount) - 1 else y_move_index + 1
+    while opacity != 0:
 
         draw_grid()
-        draw_entities(hard=False)
-        SCREEN.blit(number_text, number_rect)
+        draw_entities()
+        _blit_alpha(SCREEN, entity_img,(entity.get_position().col*BLOCK_SIZE + move_wiggle[wiggle_index], entity.get_position().row*BLOCK_SIZE), opacity)
         pygame.display.flip()
+
+        wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
+        opacity = opacity - 2
     
     total_refresh_drawing()
 
@@ -333,6 +314,15 @@ def animate_archer_attack(coords):
 
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
+
+def _blit_alpha(target, source, location, opacity):
+        x = location[0]
+        y = location[1]
+        temp = pygame.Surface((source.get_width(), source.get_height())).convert()
+        temp.blit(target, (-x, -y))
+        temp.blit(source, (0, 0))
+        temp.set_alpha(opacity)        
+        target.blit(temp, location)
 
 def _get_tile_img(tile, tint=None):
     if tile.texture_type == TextureType.GRASS:
