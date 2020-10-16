@@ -5,6 +5,9 @@ import pygame
 import os
 from classes.tile import Tile
 
+PLAYER_HEALTH = 100
+KNIGHT_HEALTH = 50
+ARCHER_HEALTH = 30
 
 # entity will have various shared data types
 class Entity:

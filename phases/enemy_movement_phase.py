@@ -32,7 +32,7 @@ class EnemyAIMovement(Phase):
                     init_post = enemy.currentTile.col, enemy.currentTile.row
                     new_tile = random.randint(0, len(movable_tiles)-1)
                     cannot_move = True
-                    print(movable_tiles)
+                    # print(movable_tiles)
                     if len(movable_tiles) == 1:
                         continue
                     while cannot_move:
@@ -43,6 +43,7 @@ class EnemyAIMovement(Phase):
                     enemy.currentTile.occupied = False
                     enemy.currentTile = movable_tiles[new_tile]
                     enemy.currentTile.occupied = True
+                    time.sleep(0.5)
                     animate_move(enemy, init_post)
 
     def gets_closer(self, enemy, new_position):
@@ -58,7 +59,7 @@ class EnemyAIMovement(Phase):
             return True
 
     def update(self):
-        print('Entering Attack Computation / Animation...')
+        print('Entering Enemy Movement Computation / Animation...')
 
     def exit(self):
         print('Exiting Player Phase...')

@@ -1,6 +1,7 @@
 from phases.player_movement_phase import *
 import time
 from classes.entity import Enemy
+from phases.counter_attack import CounterAttack, remove_enemy_from_tile
 
 
 class PlayerAttackPhase(Phase):
@@ -8,20 +9,37 @@ class PlayerAttackPhase(Phase):
     currentTile: Tile
     grid: Grid
     data_from_movement: PlayerMovementPhase
+    counter_attack: CounterAttack
 
-    def __init__(self, player, data_from_movement):
+    def __init__(self, player, data_from_movement=None):
         self.player = player
         self.currentTile = player.currentTile
         self.grid = GRID
         self.data_from_movement = data_from_movement
 
-    def remove_enemy_from_tile(self, enemy_tiles):
-        for enemy in ENTITIES:
-            for tile in enemy_tiles:
-                if enemy.currentTile is tile:
-                    if enemy.health == 0:
-                        tile.occupied = False
-                        self.data_from_movement.enemy_tiles.remove(tile)
+    def attack_enemy_procedure(self, enemy, enemy_tiles):
+        if enemy.currentTile is self.data_from_movement.currentTile:
+            print("Enemy Before attack", end=" ")
+            print(enemy.health)
+            damage_taken = self.player.attack - enemy.defense
+            self.player.attacking = True
+            animate_attack(self.player, enemy)
+            self.player.attacking = False
+            enemy_health_old = enemy.health
+            if damage_taken < 0:
+                damage_taken = 0
+            enemy.health -= damage_taken
+            animate_damage(enemy, enemy_health_old)
+
+            if enemy.health <= 0:
+                enemy.health = 0
+                remove_enemy_from_tile(enemy_tiles)
+                ENTITIES.remove(enemy)
+            elif enemy.health > 0:
+                print("Enemy Health after attack", end=" ")
+                print(enemy.health)
+                counter_attack = CounterAttack(enemy, self.player)
+                counter_attack.enter()
 
     def attack_selection(self):
         # possible_enemy_tiles = GRID.get_movement_border(self.movement_data.immovable_tiles, self.player.range)
@@ -43,7 +61,8 @@ class PlayerAttackPhase(Phase):
         if enemies_within_range != 0:
             start_index = len(occupied_enemy_tiles) - 1
             self.data_from_movement.occupied_index = start_index
-            self.data_from_movement.select_tile(occupied_enemy_tiles[start_index].row, occupied_enemy_tiles[start_index].col)
+            self.data_from_movement.select_tile(occupied_enemy_tiles[start_index].row,
+                                                occupied_enemy_tiles[start_index].col)
             selecting = True
             while selecting:
                 if self.data_from_movement.selection():
@@ -53,20 +72,8 @@ class PlayerAttackPhase(Phase):
                     #     f" Time to attack!")
                     for enemy in ENTITIES:
                         if isinstance(enemy, Enemy):
-                            if enemy.currentTile is self.data_from_movement.currentTile:
-                                # print("Enemy Before attack", end=" ")
-                                # print(enemy.health)
-                                damage_taken = self.player.attack - enemy.defense
-                                if damage_taken < 0:
-                                    damage_taken = 0
-                                enemy.health -= damage_taken
-                                animate_attack(self.player, enemy)
-                                if enemy.health < 0:
-                                    enemy.health = 0
-                                    self.remove_enemy_from_tile(enemy_tiles)
-                                    ENTITIES.remove(enemy)
-                                # print("Enemy Health after attack", end=" ")
-                                # print(enemy.health)
+                            self.attack_enemy_procedure(enemy, enemy_tiles)
+
                     self.player.selected = False
                     draw_entities()
                     selecting = False
