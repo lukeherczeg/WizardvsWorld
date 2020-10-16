@@ -1,4 +1,5 @@
 from phases.player_movement_phase import *
+from classes.user_interface import MessageBox
 import time
 
 
@@ -13,6 +14,7 @@ class PlayerAttackPhase(Phase):
         self.currentTile = player.currentTile
         self.grid = GRID
         self.data_from_movement = data_from_movement
+        self.is_tutorial = True
 
     def attack_selection(self):
         # possible_enemy_tiles = GRID.get_movement_border(self.movement_data.immovable_tiles, self.player.range)
@@ -31,6 +33,14 @@ class PlayerAttackPhase(Phase):
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.ORANGE)
 
         if enemies_within_range != 0:
+
+            # TUTORIAL
+            if self.is_tutorial:
+                MessageBox('Uh oh, enemies are close! Select one of the enemies within range by pressing ENTER'
+                                     + ' while they are in your cursor.')
+                total_refresh_drawing()
+
+
             start_index = len(occupied_enemy_tiles) - 1
             self.data_from_movement.occupied_index = start_index
             self.data_from_movement.select_tile(occupied_enemy_tiles[start_index].row, occupied_enemy_tiles[start_index].col)
@@ -45,6 +55,12 @@ class PlayerAttackPhase(Phase):
                     selecting = False
         else:
             time.sleep(1)
+
+            # TUTORIAL
+            if self.is_tutorial:
+                MessageBox('No enemies are close enough to attack. Let\'s pass for now.')
+                total_refresh_drawing()
+
             print(f"No enemies within range, back to selection!")
 
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.NONE)
@@ -59,4 +75,5 @@ class PlayerAttackPhase(Phase):
 
     def exit(self):
         self.data_from_movement.occupied_index = 0
+        self.is_tutorial = False
         print('Exiting Player Phase...')

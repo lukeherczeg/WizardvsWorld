@@ -24,8 +24,6 @@ def main():
     archer1 = Archer()
     archer2 = Archer()
 
-    message_box = MessageBox('Big long message to give to you. It\'s a very long message that should take up multiple lines lol it is such a long message')
-
     player.currentTile = GRID.game_map[1][0]
     knight.currentTile = GRID.game_map[13][5]
     knight.currentTile.occupied = True
@@ -45,8 +43,8 @@ def main():
     total_refresh_drawing()
     time.sleep(1)
 
-    message_box.draw_message_box()
-    MessageBox.confirm()
+    message_box = MessageBox(
+        'Big long message to give to you. It\'s a very long message that should take up multiple lines lol it is such a long message')
 
     player.attacking = True
     animate_attack(player, knight)

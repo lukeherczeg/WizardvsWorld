@@ -41,8 +41,10 @@ class MessageBox:
     def __init__(self, message):
         self.__font = pygame.font.Font('freesansbold.ttf', 24)
         self.__lines = self.split(message, 85) # 85 Characters Max in a line
-        self.__lines.append('Press ENTER or LEFT CLICK to continue...')
+        self.__lines.append('Press ENTER to continue...')
         self.__rendered_lines = [self.__font.render(line, True, WHITE) for line in self.__lines]
+        self.draw_message_box()
+        self.confirm()
 
     def draw_message_box(self):
         """Draw the message box over the bottom third of the screen"""

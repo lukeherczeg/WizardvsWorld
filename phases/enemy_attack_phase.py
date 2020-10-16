@@ -2,6 +2,7 @@ from classes.tile import Tile
 from classes.entity import Player, Enemy, Entity
 from draw import *
 from classes.phase import Phase
+from classes.user_interface import MessageBox
 
 
 class EnemyAICombatPhase(Phase):
@@ -15,9 +16,15 @@ class EnemyAICombatPhase(Phase):
         self.player_position = ENTITIES[0].get_position()
         self.Player = ENTITIES[0]
         self.grid = GRID
+        self.is_tutorial = True
 
     def enter(self):
         self.player_position = ENTITIES[0].currentTile
+
+        # TUTORIAL
+        if self.is_tutorial:
+            MessageBox('Now your enemies will have a chance to attack you!')
+            total_refresh_drawing()
 
         for enemy in self.Enemies:
             if isinstance(enemy, Enemy):
@@ -47,4 +54,4 @@ class EnemyAICombatPhase(Phase):
         print('Entering Attack Computation / Animation...')
 
     def exit(self):
-        print('Exiting Player Phase...')
+        self.is_tutorial = False

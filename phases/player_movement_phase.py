@@ -2,6 +2,7 @@ from draw import *
 from classes.phase import Phase
 from classes.entity import Player
 from classes.tile import Tile
+from classes.user_interface import MessageBox
 
 
 def select(row, col):
@@ -26,6 +27,7 @@ class PlayerMovementPhase(Phase):
         self.movable_tiles = None
         self.enemy_tiles = None
         self.occupied_index = 0
+        self.is_tutorial = True
 
     def cyclic_last(self, tile_list, current_tile):
         self.occupied_index -= 1
@@ -143,6 +145,13 @@ class PlayerMovementPhase(Phase):
         self.currentTile = self.player.currentTile
         print('Entering Selection Phase...')
         total_refresh_drawing()
+
+        # TUTORIAL
+        if self.is_tutorial:
+            MessageBox('You can use the arrow keys to move the cursor. ENTER will let you select a character. '
+                       + 'You are the lone wizard in blue. Please select yourself!')
+            total_refresh_drawing()
+
         select(self.currentTile.row, self.currentTile.col)
         selecting = True
         while selecting:
@@ -151,6 +160,12 @@ class PlayerMovementPhase(Phase):
                     print(f"You picked the player's location! Time to pick your move!")
                     self.player.selected = True
                     draw_entities()
+
+                    # TUTORIAL
+                    if self.is_tutorial:
+                        MessageBox('Great job! Now pick one of the blue spaces to move to.')
+                        total_refresh_drawing()
+
                     selecting = False
 
     def update(self):
@@ -159,4 +174,5 @@ class PlayerMovementPhase(Phase):
 
     def exit(self):
         self.movable_tiles = None
+        self.is_tutorial = False
         print('Exiting Player Movement Phase...')
