@@ -46,7 +46,7 @@ def main():
     animate_attack(player, knight)
     player.attacking = False
     old_knight_health = knight.health
-    knight.health = knight.health - 12
+    knight.health = knight.health - 5
     animate_damage(knight, old_knight_health)
     time.sleep(1)
 
@@ -54,7 +54,7 @@ def main():
     animate_attack(archer1, player)
     archer.attacking = False
     old_player_health = player.health
-    player.health = player.health - 12
+    player.health = player.health - 20
     animate_damage(player, old_player_health)
     time.sleep(1)
 
@@ -62,7 +62,7 @@ def main():
     animate_attack(knight, player)
     knight.attacking = False
     old_player_health = player.health
-    player.health = player.health - 12
+    player.health = player.health - 20
     animate_damage(player, old_player_health)
 
     print('Done')

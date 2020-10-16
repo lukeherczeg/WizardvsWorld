@@ -208,7 +208,7 @@ def animate_damage(victim, victim_old_hp):
         old_hp_ratio = victim_old_hp / ARCHER_HEALTH
 
     green_hp_bar_x_pos = math.floor(BAR_LENGTH * old_hp_ratio)
-    green_hp_bar_x_final = math.floor(BAR_HEIGHT * new_hp_ratio)
+    green_hp_bar_x_final = math.floor(BAR_LENGTH * new_hp_ratio)
 
     x_move_amount = [0,0,0,0,0,0,0,-1]
     x_move_index = 0
@@ -222,6 +222,42 @@ def animate_damage(victim, victim_old_hp):
         green_hp_bar_x_pos = green_hp_bar_x_pos + x_move_amount[x_move_index]
         x_move_index = 0 if x_move_index == len(x_move_amount) - 1 else x_move_index + 1
 
+def animate_death(entity):
+
+    # Create rect of moving entity
+    entity_img = _get_entity_img(entity)
+    entity_rect = entity_img.get_rect()
+    entity_rect = entity_rect.move([entity.get_position().col*BLOCK_SIZE, entity.get_position().row*BLOCK_SIZE])
+
+    # For animating perpendicular wiggle while walking
+    wiggle_index = 0
+
+    y_move_amount = [0,0,0,0,0,0,0,0,0,0,-1]
+    y_move_index = 0
+    for i in range(120):
+
+        # entity_rect = entity_rect.move([move_wiggle[wiggle_index], Y_MOVEMENT_SPEED])
+        # old_y = old_y + Y_MOVEMENT_SPEED
+
+        # wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
+
+        # # redraw the grid and entities besides the one being animated,
+        # # then draw animation frame of entity
+        # draw_grid()
+        # draw_entities(ignorables=[entity])
+        # SCREEN.blit(entity_img, entity_rect)
+        # pygame.display.flip()
+
+        # number_rect = number_rect.move([0, y_move_amount[y_move_index]])
+
+        # y_move_index = 0 if y_move_index == len(y_move_amount) - 1 else y_move_index + 1
+
+        draw_grid()
+        draw_entities(hard=False)
+        SCREEN.blit(number_text, number_rect)
+        pygame.display.flip()
+    
+    total_refresh_drawing()
 
 def animate_player_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
@@ -269,8 +305,8 @@ def animate_knight_attack():
 
 def animate_archer_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
-    trans_arrow = pygame.transform.rotate(ARROW_PNG, angle + 90)
-    trans_arrow = pygame.transform.scale(trans_arrow, (20, 20))
+    trans_arrow = pygame.transform.rotate(ARROW_PNG, angle)
+    trans_arrow = pygame.transform.scale(trans_arrow, (30, 30))
 
     while abs(start_x - target_x) >= 2 or abs(start_y - target_y) >= 2:
         # update animation position and frame
