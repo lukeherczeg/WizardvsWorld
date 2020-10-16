@@ -132,7 +132,7 @@ class PlayerMovementPhase(Phase):
                 # print(f"You picked the movable tile ({self.player.currentTile.row}, {self.player.currentTile.col})!"
                 #       f" Time to move!")
                 self.player.selected = False
-                draw_entities()
+                # draw_entities()
                 selecting = False
 
         self.player.currentTile = self.currentTile
@@ -159,7 +159,7 @@ class PlayerMovementPhase(Phase):
                 if self.currentTile == self.player.currentTile:
                     # print(f"You picked the player's location! Time to pick your move!")
                     self.player.selected = True
-                    draw_entities()
+                    # draw_entities()
 
                     # TUTORIAL
                     if self.is_tutorial:

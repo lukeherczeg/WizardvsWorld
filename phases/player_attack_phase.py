@@ -31,18 +31,9 @@ class PlayerAttackPhase(Phase):
                 damage_taken = 0
             enemy.health -= damage_taken
 
-            if isinstance(enemy, Archer):
-                if enemy.health / ARCHER_HEALTH <= .2:
-                    enemy.damaged = True
-            elif isinstance(enemy, Knight):
-                if enemy.health / KNIGHT_HEALTH <= .2:
-                    enemy.damaged = True
-
+            enemy.damaged = True
             animate_damage(enemy, enemy_health_old)
             print(f"Updated enemy health: {enemy.health}")
-
-            if enemy.health <= 20:
-                enemy.damaged = True
 
             if enemy.health <= 0:
                 enemy.health = 0
@@ -51,6 +42,7 @@ class PlayerAttackPhase(Phase):
                 ENTITIES.remove(enemy)
                 animate_death(enemy)
             elif enemy.health > 0:
+                enemy.damaged = False
                 attacker = CounterAttack(enemy, self.player, enemy_tiles)
                 attacker.attempt_counter_attack()
 

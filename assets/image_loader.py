@@ -1,4 +1,5 @@
 import wsl
+from const import TextureType
 from draw import pygame, os
 from classes.grid import Grid
 
@@ -7,10 +8,11 @@ WHITE = (255, 255, 255)
 RED = (200, 0, 0)
 BRIGHT_RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-BRIGHT_GREEN = (0,255,0)
-WINDOW_HEIGHT = 600
-WINDOW_WIDTH = 1000
-BLOCK_SIZE = 40  # Set the size of the grid block
+BRIGHT_GREEN = (0, 255, 0)
+WINDOW_HEIGHT = 600  # 675
+WINDOW_WIDTH = 1000  # 1125
+# Set the size of the grid block
+BLOCK_SIZE = 40  # 45
 wsl.set_display_to_host()
 SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.init()
@@ -24,47 +26,58 @@ move_wiggle = [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, -1, 0, -1, 0, -1, 0, -1]
 main_directory = os.path.dirname('WizardvsWorld')
 asset_path = os.path.join(main_directory, 'assets')
 
-#load textures
-DIRT_PNG = pygame.image.load(os.path.join(asset_path, 'dirt.png')).convert()
-DIRT_BLUE_PNG = pygame.image.load(os.path.join(asset_path, 'dirtBLUE.png')).convert()
-DIRT_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'dirtORANGE.png')).convert()
-DIRT_RED_PNG = pygame.image.load(os.path.join(asset_path, 'dirtRED.png')).convert()
-FLOOR_PNG = pygame.image.load(os.path.join(asset_path, 'floor.png')).convert()
-FLOOR_BLUE_PNG = pygame.image.load(os.path.join(asset_path, 'floorBLUE.png')).convert()
-FLOOR_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'floorORANGE.png')).convert()
-FLOOR_RED_PNG = pygame.image.load(os.path.join(asset_path, 'floorRED.png')).convert()
-GRASS_PNG = pygame.image.load(os.path.join(asset_path, 'grass.png')).convert()
-GRASS_BLUE_PNG = pygame.image.load(os.path.join(asset_path, 'grassBLUE.png')).convert()
-GRASS_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'grassORANGE.png')).convert()
-GRASS_RED_PNG = pygame.image.load(os.path.join(asset_path, 'grassRED.png')).convert()
-STONE_PNG = pygame.image.load(os.path.join(asset_path, 'stone.png')).convert()
-STONE_BLUE_PNG = pygame.image.load(os.path.join(asset_path, 'stoneBLUE.png')).convert()
-STONE_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'stoneORANGE.png')).convert()
-STONE_RED_PNG = pygame.image.load(os.path.join(asset_path, 'stoneRED.png')).convert()
+textures = []
 
-#load entities
-ARCHER_PNG = pygame.image.load(os.path.join(asset_path, 'archer.png')).convert_alpha()
-ARCHER_ATTACK_PNG = pygame.image.load(os.path.join(asset_path, 'archerattack.png')).convert_alpha()
-ARCHER_ATTACKABLE_PNG = pygame.image.load(os.path.join(asset_path, 'archerattackable.png')).convert_alpha()
-ARCHER_HURT_PNG = pygame.image.load(os.path.join(asset_path, 'archerhurt.png')).convert_alpha()
-KNIGHT_PNG = pygame.image.load(os.path.join(asset_path, 'knight.png')).convert_alpha()
-KNIGHT_ATTACK_PNG = pygame.image.load(os.path.join(asset_path, 'knightattack.png')).convert_alpha()
-KNIGHT_ATTACKABLE_PNG = pygame.image.load(os.path.join(asset_path, 'knightattackable.png')).convert_alpha()
-KNIGHT_HURT_PNG = pygame.image.load(os.path.join(asset_path, 'knighthurt.png')).convert_alpha()
-WIZ_PNG = pygame.image.load(os.path.join(asset_path, 'wiz.png')).convert_alpha()
-WIZ_ATTACK_PNG = pygame.image.load(os.path.join(asset_path, 'wizattack.png')).convert_alpha()
-WIZ_HURT_PNG = pygame.image.load(os.path.join(asset_path, 'wizhurt.png')).convert_alpha()
-WIZ_SELECTED_PNG = pygame.image.load(os.path.join(asset_path, 'wizselected.png')).convert_alpha()
 
-#Miscelaneous
-SELECT_PNG = pygame.image.load(os.path.join(asset_path, 'select.png')).convert_alpha()
-ARROW_PNG = pygame.image.load(os.path.join(asset_path, 'arrow.png')).convert_alpha()
+def get_texture(path, texture_type):
+    if texture_type == TextureType.TILE_TEXTURE:
+        return pygame.transform.scale(pygame.image.load(os.path.join(asset_path, path)).convert(),
+                                      (BLOCK_SIZE, BLOCK_SIZE))
+    elif texture_type == TextureType.ENTITY or texture_type == TextureType.MISC:
+        return pygame.transform.scale(pygame.image.load(os.path.join(asset_path, path)).convert_alpha(),
+                                      (BLOCK_SIZE, BLOCK_SIZE))
+
+
+# load textures
+DIRT_PNG = get_texture('dirt.png', TextureType.TILE_TEXTURE)
+DIRT_BLUE_PNG = get_texture('dirtBLUE.png', TextureType.TILE_TEXTURE)
+DIRT_ORANGE_PNG = get_texture('dirtORANGE.png', TextureType.TILE_TEXTURE)
+DIRT_RED_PNG = get_texture('dirtRED.png', TextureType.TILE_TEXTURE)
+FLOOR_PNG = get_texture('floor.png', TextureType.TILE_TEXTURE)
+FLOOR_BLUE_PNG = get_texture('floorBLUE.png', TextureType.TILE_TEXTURE)
+FLOOR_ORANGE_PNG = get_texture('floorORANGE.png', TextureType.TILE_TEXTURE)
+FLOOR_RED_PNG = get_texture('floorRED.png', TextureType.TILE_TEXTURE)
+GRASS_PNG = get_texture('grass.png', TextureType.TILE_TEXTURE)
+GRASS_BLUE_PNG = get_texture('grassBLUE.png', TextureType.TILE_TEXTURE)
+GRASS_ORANGE_PNG = get_texture('grassORANGE.png', TextureType.TILE_TEXTURE)
+GRASS_RED_PNG = get_texture('grassRED.png', TextureType.TILE_TEXTURE)
+STONE_PNG = get_texture('stone.png', TextureType.TILE_TEXTURE)
+STONE_BLUE_PNG = get_texture('stoneBLUE.png', TextureType.TILE_TEXTURE)
+STONE_ORANGE_PNG = get_texture('stoneORANGE.png', TextureType.TILE_TEXTURE)
+STONE_RED_PNG = get_texture('stoneRED.png', TextureType.TILE_TEXTURE)
+
+# Load entities
+ARCHER_PNG = get_texture('archer.png', TextureType.ENTITY)
+ARCHER_ATTACK_PNG = get_texture('archerattack.png', TextureType.ENTITY)
+ARCHER_ATTACKABLE_PNG = get_texture('archerattackable.png', TextureType.ENTITY)
+ARCHER_HURT_PNG = get_texture('archerhurt.png', TextureType.ENTITY)
+KNIGHT_PNG = get_texture('knight.png', TextureType.ENTITY)
+KNIGHT_ATTACK_PNG = get_texture('knightattack.png', TextureType.ENTITY)
+KNIGHT_ATTACKABLE_PNG = get_texture('knightattackable.png', TextureType.ENTITY)
+KNIGHT_HURT_PNG = get_texture('knighthurt.png', TextureType.ENTITY)
+WIZ_PNG = get_texture('wiz.png', TextureType.ENTITY)
+WIZ_ATTACK_PNG = get_texture('wizattack.png', TextureType.ENTITY)
+WIZ_HURT_PNG = get_texture('wizhurt.png', TextureType.ENTITY)
+WIZ_SELECTED_PNG = get_texture('wizselected.png', TextureType.ENTITY)
+
+# Miscellaneous
+SELECT_PNG = get_texture('select.png', TextureType.MISC)
+ARROW_PNG = get_texture('arrow.png', TextureType.MISC)
 FIREBALL_GIF = [
-    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_0.png')).convert_alpha(),
-    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_1.png')).convert_alpha(),
-    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_2.png')).convert_alpha(),
-    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_3.png')).convert_alpha(),
-    pygame.image.load(os.path.join(asset_path, 'fireball/fireball_4.png')).convert_alpha(),
+    get_texture('fireball/fireball_0.png', TextureType.MISC),
+    get_texture('fireball/fireball_1.png', TextureType.MISC),
+    get_texture('fireball/fireball_2.png', TextureType.MISC),
+    get_texture('fireball/fireball_3.png', TextureType.MISC),
+    get_texture('fireball/fireball_4.png', TextureType.MISC),
 ]
-ARROW_PNG = pygame.image.load(os.path.join(asset_path, 'arrow.png')).convert_alpha()
 LOGO_PNG = pygame.image.load(os.path.join(asset_path, 'logo.png')).convert_alpha()

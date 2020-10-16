@@ -2,6 +2,13 @@ from enum import Enum
 
 ENTITIES = []
 
+
+class TextureType(Enum):
+    TILE_TEXTURE = 1
+    ENTITY = 2
+    MISC = 3
+
+
 class TileTint(Enum):
     NONE = 0
     BLUE = 1
@@ -9,7 +16,7 @@ class TileTint(Enum):
     ORANGE = 3
 
 
-class TextureType(Enum):
+class TileTexture(Enum):
     NONE = -1
     GRASS = 0
     DIRT = 1

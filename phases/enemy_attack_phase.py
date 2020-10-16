@@ -17,7 +17,6 @@ class EnemyAICombatPhase(Phase):
         self.grid = GRID
         self.is_tutorial = True
 
-        
     def attack_player_procedure(self, enemy):
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
         attacker = CounterAttack(self.Player, enemy, enemy_tiles)
@@ -33,9 +32,7 @@ class EnemyAICombatPhase(Phase):
                 damage_taken = 0
             self.Player.health -= damage_taken
 
-            if self.Player.health / PLAYER_HEALTH <= .8:
-                self.Player.damaged = True
-
+            self.Player.damaged = True
             animate_damage(self.Player, player_health_old)
             print(f"Updated player health: {self.Player.health}")
 
@@ -46,6 +43,7 @@ class EnemyAICombatPhase(Phase):
                 time.sleep(2)
                 pygame.quit()
             elif self.Player.health > 0:
+                self.Player.damaged = False
                 attacker.attempt_counter_attack()
 
     def enter(self):
@@ -57,7 +55,6 @@ class EnemyAICombatPhase(Phase):
         if self.is_tutorial:
             MessageBox('Now your enemies will have a chance to attack you!')
             total_refresh_drawing()
-
 
     def update(self):
         print('Entering Enemy Attack Computation')

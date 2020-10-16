@@ -4,7 +4,7 @@ import sys
 import math
 import time
 from assets.image_loader import *
-from const import TextureType, TileTint, ENTITIES
+from const import TileTexture, TileTint, ENTITIES
 from classes.entity import Player, Archer, Knight, PLAYER_HEALTH, ARCHER_HEALTH, KNIGHT_HEALTH
 
 
@@ -254,6 +254,7 @@ def _animate_player_attack(coords):
 def _animate_knight_attack():
     draw_grid()
     draw_entities(hard=False)
+    time.sleep(0.2)
     pygame.display.flip()
     time.sleep(0.2)
 
@@ -285,7 +286,9 @@ def _animate_damage_number(victim, victim_old_hp):
     damage_diff = victim_old_hp - victim.health
 
     # create number rect
-    number_font = pygame.font.Font('freesansbold.ttf', 12)
+    number_font = pygame.font.Font('freesansbold.ttf', 14)
+    number_font.set_bold(True)
+    number_font.set_italic(True)
     number_text = number_font.render(str(damage_diff), True, RED)
     number_rect = number_text.get_rect()
     number_y_var = victim.get_position().row * BLOCK_SIZE
@@ -374,7 +377,7 @@ def _blit_alpha(target, source, location, opacity):
 
 
 def _get_tile_img(tile, tint=None):
-    if tile.texture_type == TextureType.GRASS:
+    if tile.texture_type == TileTexture.GRASS:
         if tint == TileTint.BLUE:
             return GRASS_BLUE_PNG
         elif tint == TileTint.RED:
@@ -383,7 +386,7 @@ def _get_tile_img(tile, tint=None):
             return GRASS_ORANGE_PNG
         else:
             return GRASS_PNG
-    if tile.texture_type == TextureType.DIRT:
+    if tile.texture_type == TileTexture.DIRT:
         if tint == TileTint.BLUE:
             return DIRT_BLUE_PNG
         elif tint == TileTint.RED:
@@ -392,7 +395,7 @@ def _get_tile_img(tile, tint=None):
             return DIRT_ORANGE_PNG
         else:
             return DIRT_PNG
-    elif tile.texture_type == TextureType.STONE:
+    elif tile.texture_type == TileTexture.STONE:
         if tint == TileTint.BLUE:
             return STONE_BLUE_PNG
         elif tint == TileTint.RED:
@@ -401,7 +404,7 @@ def _get_tile_img(tile, tint=None):
             return STONE_ORANGE_PNG
         else:
             return STONE_PNG
-    elif tile.texture_type == TextureType.FLOOR:
+    elif tile.texture_type == TileTexture.FLOOR:
         if tint == TileTint.BLUE:
             return FLOOR_BLUE_PNG
         elif tint == TileTint.RED:

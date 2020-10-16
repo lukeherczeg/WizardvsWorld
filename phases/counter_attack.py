@@ -10,15 +10,7 @@ def remove_enemy_from_tile_list(enemy, enemy_tiles):
 
 
 def can_attack(attacker, victim):
-    attackable_tiles = GRID.get_movement(attacker.currentTile.row, attacker.currentTile.col,
-                                         attacker.range)
-    if isinstance(attacker, Archer):
-        print(f"An archer seeks to attack!\nIt's attackable tiles: {attackable_tiles}"
-              f"\n The player is on tile: {victim.currentTile}")
-    elif isinstance(attacker, Knight):
-        print(f"A knight seeks to attack!\nIt's attackable tiles: {attackable_tiles}"
-              f"\n The player is on tile: {victim.currentTile}")
-
+    attackable_tiles = GRID.get_movement(attacker.currentTile.row, attacker.currentTile.col, attacker.range)
     if victim.currentTile in attackable_tiles:
         return True
     else:
@@ -36,11 +28,6 @@ class CounterAttack:
         self.enemy_tiles = enemy_tiles
 
     def counter_attack(self):
-        if isinstance(self.victim, Player):
-            print(f"A counterattack on the player!\nInitial player health: {self.victim.health}")
-        else:
-            print(f"A counterattack on the enemy!\nInitial enemy health: {self.victim.health}")
-
         self.attacker.attacking = True
         animate_attack(self.attacker, self.victim)
         self.attacker.attacking = False
@@ -49,6 +36,7 @@ class CounterAttack:
         if damage_taken < 0:
             damage_taken = 0
         self.victim.health -= damage_taken
+        self.victim.damaged = True
         animate_damage(self.victim, old_victim_health)
 
         if isinstance(self.victim, Player):
@@ -64,6 +52,8 @@ class CounterAttack:
                 remove_enemy_from_tile_list(enemy, self.enemy_tiles)
                 ENTITIES.remove(enemy)
                 animate_death(enemy)
+            else:
+                self.victim.damaged = False
 
         if isinstance(self.victim, Player):
             player = self.victim
@@ -73,6 +63,8 @@ class CounterAttack:
                 animate_death(player)
                 time.sleep(2)
                 pygame.quit()
+            else:
+                self.victim.damaged = False
 
     def attempt_counter_attack(self):
         time.sleep(1)

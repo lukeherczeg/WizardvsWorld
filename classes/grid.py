@@ -1,5 +1,5 @@
 from const import ENTITIES
-from classes.tile import Tile, TextureType
+from classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
 from classes.entity import Knight, Archer
@@ -212,21 +212,21 @@ class Grid:
         if layout[index] == '0' or layout[index] == 'r':
             # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
             if self.__generate_true(.7):
-                return Tile(col=col, row=row, standable=True, texture_type=TextureType.GRASS)
+                return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
             # check that, before creating non-standable tile, enemy is not spawned there
             elif not standable and not layout[index] == 'r':
-                return Tile(col=col, row=row, standable=standable, texture_type=TextureType.STONE)
+                return Tile(col=col, row=row, standable=standable, texture_type=TileTexture.STONE)
             else:
-                return Tile(col=col, row=row, standable=True, texture_type=TextureType.DIRT)
+                return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
         # load a texture based on layout
         elif layout[index] == '1' or layout[index] == 'd':
-            return Tile(col=col, row=row, standable=True, texture_type=TextureType.DIRT)
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
         elif layout[index] == '2':
-            return Tile(col=col, row=row, standable=False, texture_type=TextureType.STONE)
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.STONE)
         elif layout[index] == '3' or layout[index] == 'f':
-            return Tile(col=col, row=row, standable=True, texture_type=TextureType.FLOOR)
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
         else:
-            return Tile(col=col, row=row, standable=True, texture_type=TextureType.GRASS)
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
 
     @staticmethod
     def __generate_true(odds):

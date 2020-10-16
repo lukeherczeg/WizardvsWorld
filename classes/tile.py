@@ -1,10 +1,10 @@
-from const import TextureType
+from const import TileTexture
 
 
 class Tile:
-    _texture_type: TextureType
+    _texture_type: TileTexture
 
-    def __init__(self, col, row, standable, texture_type=TextureType.NONE):
+    def __init__(self, col, row, standable, texture_type=TileTexture.NONE):
         self._col = col
         self._row = row
         self._standable = standable #bool
