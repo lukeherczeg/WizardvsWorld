@@ -5,10 +5,9 @@ import math
 import time
 from assets.image_loader import *
 from const import TextureType, TileTint
-from classes.entity import Player, Archer, Knight
+from classes.entity import Player, Archer, Knight, PLAYER_HEALTH, ARCHER_HEALTH, KNIGHT_HEALTH
 
 ENTITIES = []
-
 
 # NOTES:
 # There are DRAW functions and ANIMATE functions.
@@ -130,7 +129,7 @@ def animate_move(entity, old_pos):
     total_refresh_drawing()
 
 
-def animate_attack(attacker, victim, victim_old_hp):
+def animate_attack(attacker, victim):
     if isinstance(attacker, Knight):
         animate_knight_attack()
     else:
@@ -161,10 +160,68 @@ def animate_attack(attacker, victim, victim_old_hp):
         elif isinstance(attacker, Archer):
             animate_archer_attack(coords)
     
-    animate_damage(victim, victim_old_hp)
-
 def animate_damage(victim, victim_old_hp):
-    return 0
+    
+    damage_diff = victim_old_hp - victim.health
+
+    #create number rect
+    number_font = pygame.font.Font('freesansbold.ttf', 12)
+    number_text = number_font.render(str(damage_diff), True, RED)
+    number_rect = number_text.get_rect()
+    number_y_var = victim.get_position().row * BLOCK_SIZE
+    number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
+    number_rect = number_rect.move([number_x_fixed, number_y_var])
+
+    #draw and animate number rect
+    y_move_amount = [0,0,0,0,0,0,0,0,0,0,-1]
+    y_move_index = 0
+    for i in range(120):
+        number_rect = number_rect.move([0, y_move_amount[y_move_index]])
+
+        y_move_index = 0 if y_move_index == len(y_move_amount) - 1 else y_move_index + 1
+
+        draw_grid()
+        draw_entities(hard=False)
+        SCREEN.blit(number_text, number_rect)
+        pygame.display.flip()
+    
+    total_refresh_drawing()
+
+    #create initial rectangles
+
+    # HP bar math 4px by 24px
+    hp_bar_y = (victim.get_position().row * BLOCK_SIZE) + 4
+    hp_bar_x = (victim.get_position().col * BLOCK_SIZE) + 4
+    BAR_LENGTH = 24
+    BAR_HEIGHT = 4
+
+    old_hp_ratio = 0
+    new_hp_ratio = 0
+    if isinstance(victim, Player):
+        new_hp_ratio = victim.health / PLAYER_HEALTH
+        old_hp_ratio = victim_old_hp / PLAYER_HEALTH
+    elif isinstance(victim, Knight):
+        new_hp_ratio = victim.health / KNIGHT_HEALTH
+        old_hp_ratio = victim_old_hp / KNIGHT_HEALTH
+    elif isinstance(victim, Archer):
+        new_hp_ratio = victim.health / ARCHER_HEALTH
+        old_hp_ratio = victim_old_hp / ARCHER_HEALTH
+
+    green_hp_bar_x_pos = math.floor(BAR_LENGTH * old_hp_ratio)
+    green_hp_bar_x_final = math.floor(BAR_HEIGHT * new_hp_ratio)
+
+    x_move_amount = [0,0,0,0,0,0,0,-1]
+    x_move_index = 0
+    while(green_hp_bar_x_pos != green_hp_bar_x_final):
+        draw_grid()
+        draw_entities(hard=False)
+        pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, BAR_LENGTH, BAR_HEIGHT))
+        pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, BAR_HEIGHT))
+        pygame.display.flip()
+
+        green_hp_bar_x_pos = green_hp_bar_x_pos + x_move_amount[x_move_index]
+        x_move_index = 0 if x_move_index == len(x_move_amount) - 1 else x_move_index + 1
+
 
 def animate_player_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords

@@ -7,6 +7,7 @@ WHITE = (255, 255, 255)
 RED = (200, 0, 0)
 BRIGHT_RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+BRIGHT_GREEN = (0,255,0)
 WINDOW_HEIGHT = 600
 WINDOW_WIDTH = 1000
 BLOCK_SIZE = 40  # Set the size of the grid block
@@ -65,3 +66,4 @@ FIREBALL_GIF = [
     pygame.image.load(os.path.join(asset_path, 'fireball/fireball_3.png')).convert_alpha(),
     pygame.image.load(os.path.join(asset_path, 'fireball/fireball_4.png')).convert_alpha(),
 ]
+ARROW_PNG = pygame.image.load(os.path.join(asset_path, 'arrow.png')).convert_alpha()
