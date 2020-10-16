@@ -16,9 +16,8 @@ def main():
     player = Player()
     player.currentTile = GRID.game_map[7][0]
     ENTITIES.append(player)
+    GRID.generate_enemies()
 
-    total_refresh_drawing()
-    time.sleep(1)
     fsm = FSM()
 
     # Declare Phases
@@ -38,8 +37,8 @@ def main():
 
     # Gameplay Loop
     while True:
+        fsm.update()
         for event in pygame.event.get():
-            fsm.update()
             if event.type == pygame.QUIT:
                 quit_game()
 

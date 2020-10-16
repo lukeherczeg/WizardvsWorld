@@ -1,6 +1,3 @@
-from classes.tile import Tile
-from classes.entity import Enemy, Entity
-from draw import *
 from classes.phase import Phase
 from phases.counter_attack import *
 from phases.counter_attack import CounterAttack
@@ -13,25 +10,18 @@ class EnemyAICombatPhase(Phase):
     grid: Grid
 
     def __init__(self):
-        self.Enemies = ENTITIES
-        self.player_position = ENTITIES[0].get_position()
+        self.Enemies = ENTITIES[1:]
         self.Player = ENTITIES[0]
+        self.player_position = self.Player.get_position()
         self.grid = GRID
-
-    def enter(self):
-        self.player_position = ENTITIES[0].currentTile
-        for enemy in self.Enemies:
-            if isinstance(enemy, Enemy):
-                if enemy.health > 0:
-                    self.attack_player_procedure(enemy)
 
     def attack_player_procedure(self, enemy):
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
+        attacker = CounterAttack(self.Player, enemy, enemy_tiles)
         time.sleep(0.25)
-        if self.can_enemy_attack(enemy, enemy.range):
+        if can_attack(enemy, self.Player):
             enemy.attacking = True
-            print("Player Health A ", end="")
-            print(self.Player.health)
+            print(f"Player has been attacked!\nInitial player health: {self.Player.health}")
             animate_attack(enemy, self.Player)
             enemy.attacking = False
             player_health_old = self.Player.health
@@ -39,24 +29,32 @@ class EnemyAICombatPhase(Phase):
             if damage_taken < 0:
                 damage_taken = 0
             self.Player.health -= damage_taken
+
+            if self.Player.health / PLAYER_HEALTH <= .8:
+                self.Player.damaged = True
+
             animate_damage(self.Player, player_health_old)
+            print(f"Updated player health: {self.Player.health}")
 
-            print("Player Health B ", end="")
-            counter_attack = CounterAttack(self.Player, enemy, enemy_tiles)
-            counter_attack.enter()
-            print(self.Player.health)
+            if self.Player.health <= 0:
+                self.Player.health = 0
+                ENTITIES.remove(self.Player.health)
+                animate_death(self.Player.health)
+                time.sleep(2)
+                pygame.quit()
+            elif self.Player.health > 0:
+                attacker.attempt_counter_attack()
 
-    def can_enemy_attack(self, enemy, fight_range):
-        p1 = [self.player_position.row, self.player_position.col]
-        p2 = [enemy.currentTile.row, enemy.currentTile.col]
-        distance1 = int(math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2)))
-        if distance1 <= fight_range:
-            return True
-        else:
-            return False
+    def enter(self):
+        self.Enemies = ENTITIES[1:]
+        print('Entering Enemy Attack Selection')
+        self.player_position = self.Player.currentTile
 
     def update(self):
-        print('Entering Enemy Attack Computation / Animation...')
+        print('Entering Enemy Attack Computation')
+        for enemy in self.Enemies:
+            if isinstance(enemy, Enemy):
+                self.attack_player_procedure(enemy)
 
     def exit(self):
-        print('Exiting Player Phase...')
+        print('Exiting Enemy Phase...')

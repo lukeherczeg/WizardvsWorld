@@ -45,7 +45,7 @@ class PlayerMovementPhase(Phase):
             if self.grid.is_valid_standable_tile(row, col):
                 draw_tile(self.currentTile)
                 self.currentTile = self.grid.game_map[row][col]
-                print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
+                # print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
                 select(self.currentTile.row, self.currentTile.col)
                 draw_entities()
             else:
@@ -54,7 +54,7 @@ class PlayerMovementPhase(Phase):
         elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
             draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
             self.currentTile = self.grid.game_map[row][col]
-            print(f"You are selecting the move to the tile at ({self.currentTile.row}, {self.currentTile.col})")
+            # print(f"You are selecting the move to the tile at ({self.currentTile.row}, {self.currentTile.col})")
             select(self.currentTile.row, self.currentTile.col)
 
         elif self.enemy_tiles and self.grid.is_valid_tile_in_list(row, col, self.enemy_tiles):

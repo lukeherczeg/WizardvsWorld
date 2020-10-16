@@ -3,13 +3,26 @@ from classes.tile import Tile
 from classes.entity import Entity, Enemy
 
 
-def remove_enemy_from_tile(enemy_tiles):
-    for enemy in ENTITIES:
-        for tile in enemy_tiles:
-            if enemy.currentTile is tile:
-                if enemy.health == 0:
-                    tile.occupied = False
-                    enemy_tiles.remove(tile)
+def remove_enemy_from_tile_list(enemy, enemy_tiles):
+    if enemy.health == 0:
+        enemy.currentTile.occupied = False
+        enemy_tiles.remove(enemy.currentTile)
+
+
+def can_attack(attacker, victim):
+    attackable_tiles = GRID.get_movement(attacker.currentTile.row, attacker.currentTile.col,
+                                         attacker.range)
+    if isinstance(attacker, Archer):
+        print(f"An archer seeks to attack!\nIt's attackable tiles: {attackable_tiles}"
+              f"\n The player is on tile: {victim.currentTile}")
+    elif isinstance(attacker, Knight):
+        print(f"A knight seeks to attack!\nIt's attackable tiles: {attackable_tiles}"
+              f"\n The player is on tile: {victim.currentTile}")
+
+    if victim.currentTile in attackable_tiles:
+        return True
+    else:
+        return False
 
 
 class CounterAttack:
@@ -22,19 +35,12 @@ class CounterAttack:
         self.victim = victim
         self.enemy_tiles = enemy_tiles
 
-    def can_attack(self):
-        p1 = [self.attacker.currentTile.row, self.attacker.currentTile.col]
-        p2 = [self.victim.currentTile.row, self.victim.currentTile.col]
-        distance1 = int(math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2)))
-        if distance1 <= self.attacker.range:
-            return True
-        else:
-            return False
-
     def counter_attack(self):
-        time.sleep(1)
-        print("victim health", end=" ")
-        print(self.victim.health)
+        if isinstance(self.victim, Player):
+            print(f"A counterattack on the player!\nInitial player health: {self.victim.health}")
+        else:
+            print(f"A counterattack on the enemy!\nInitial enemy health: {self.victim.health}")
+
         self.attacker.attacking = True
         animate_attack(self.attacker, self.victim)
         self.attacker.attacking = False
@@ -45,14 +51,34 @@ class CounterAttack:
         self.victim.health -= damage_taken
         animate_damage(self.victim, old_victim_health)
 
+        if isinstance(self.victim, Player):
+            print(f"Updated player health: {self.victim.health}")
+        else:
+            print(f"Updated enemy health: {self.victim.health}")
+
         if isinstance(self.victim, Enemy):
-            if self.victim.health <= 0:
-                self.victim.health = 0
-                remove_enemy_from_tile(self.enemy_tiles)
-                ENTITIES.remove(self.victim)
+            enemy = self.victim
+            print(f"Enemy died in counter attack!: {self.victim.health}")
+            if enemy.health <= 0:
+                enemy.health = 0
+                remove_enemy_from_tile_list(enemy, self.enemy_tiles)
+                animate_death(enemy)
+                ENTITIES.remove(enemy)
 
-        print("attacker health after", end=" ")
-        print(self.victim.health)
+        if isinstance(self.victim, Player):
+            player = self.victim
+            if player.health <= 0:
+                player.health = 0
+                ENTITIES.remove(player)
+                animate_death(player)
+                time.sleep(2)
+                pygame.quit()
 
-    def enter(self):
-        self.counter_attack()
+    def attempt_counter_attack(self):
+        time.sleep(1)
+        if isinstance(self.attacker, Enemy):
+            if can_attack(self.attacker, self.victim):
+                print("Ye the knight is goin for it")
+                self.counter_attack()
+        else:
+            self.counter_attack()

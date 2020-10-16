@@ -1,8 +1,7 @@
 from classes.tile import Tile
-from classes.entity import Player, Enemy, Entity
+from classes.entity import Enemy, Entity
 from draw import *
 from classes.phase import Phase
-from phases import enemy_attack_phase
 import random
 import math
 
@@ -13,38 +12,10 @@ class EnemyAIMovement(Phase):
     grid: Grid
 
     def __init__(self):
-        self.Enemies = ENTITIES
-        self.player_position = ENTITIES[0].get_position()
+        self.Enemies = ENTITIES[1:]
         self.Player = ENTITIES[0]
+        self.player_position = self.Player.get_position()
         self.grid = GRID
-
-    def enter(self):
-        self.player_position = ENTITIES[0].currentTile
-
-        for enemy in self.Enemies:
-            if isinstance(enemy, Enemy):
-                if enemy.health > 0:
-                    movable_tiles = GRID.get_movement(enemy.currentTile.row, enemy.currentTile.col, enemy.max_Movement)
-                    for tile in movable_tiles:
-                        if tile.occupied or tile is self.player_position:
-                            movable_tiles.remove(tile)
-
-                    init_post = enemy.currentTile.col, enemy.currentTile.row
-                    new_tile = random.randint(0, len(movable_tiles)-1)
-                    cannot_move = True
-                    # print(movable_tiles)
-                    if len(movable_tiles) == 1:
-                        continue
-                    while cannot_move:
-                        cannot_move = self.gets_closer(enemy, movable_tiles[new_tile])
-                        if cannot_move:
-                            new_tile = random.randint(0, len(movable_tiles)-1)
-
-                    enemy.currentTile.occupied = False
-                    enemy.currentTile = movable_tiles[new_tile]
-                    enemy.currentTile.occupied = True
-                    time.sleep(0.5)
-                    animate_move(enemy, init_post)
 
     def gets_closer(self, enemy, new_position):
         if new_position.standable and not new_position.occupied and new_position is not self.player_position:
@@ -58,8 +29,39 @@ class EnemyAIMovement(Phase):
         else:
             return True
 
+    def move_enemy(self, enemy):
+        if enemy.health > 0:
+            movable_tiles = GRID.get_movement(enemy.currentTile.row, enemy.currentTile.col, enemy.max_Movement)
+            for tile in movable_tiles:
+                if tile.occupied or tile is self.player_position:
+                    movable_tiles.remove(tile)
+
+            init_post = enemy.currentTile.col, enemy.currentTile.row
+            new_tile = random.randint(0, len(movable_tiles) - 1)
+            cannot_move = True
+
+            if len(movable_tiles) == 1:
+                return
+            while cannot_move:
+                cannot_move = self.gets_closer(enemy, movable_tiles[new_tile])
+                if cannot_move:
+                    new_tile = random.randint(0, len(movable_tiles) - 1)
+
+            enemy.currentTile.occupied = False
+            enemy.currentTile = movable_tiles[new_tile]
+            enemy.currentTile.occupied = True
+            time.sleep(0.5)
+            animate_move(enemy, init_post)
+
+    def enter(self):
+        print('Entering Enemy Movement Selection...')
+        self.player_position = ENTITIES[0].currentTile
+
     def update(self):
         print('Entering Enemy Movement Computation / Animation...')
+        for enemy in self.Enemies:
+            if isinstance(enemy, Enemy):
+                self.move_enemy(enemy)
 
     def exit(self):
         print('Exiting Player Phase...')
