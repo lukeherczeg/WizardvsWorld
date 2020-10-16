@@ -27,9 +27,9 @@ def main():
     knight.currentTile.occupied = True
     archer.currentTile = GRID.game_map[0][0]
     archer.currentTile.occupied = True
-    archer1.currentTile = GRID.game_map[0][1]
+    archer1.currentTile = GRID.game_map[8][1]
     archer1.currentTile.occupied = True
-    archer2.currentTile = GRID.game_map[1][2]
+    archer2.currentTile = GRID.game_map[9][2]
     archer2.currentTile.occupied = True
 
     ENTITIES.append(player)
