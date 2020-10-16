@@ -212,7 +212,7 @@ class Grid:
         if layout[index] == '0' or layout[index] == 'r':
             # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
             if self.__generate_true(.7):
-                return Tile(col=col, row=row, standable=standable, texture_type=TextureType.GRASS)
+                return Tile(col=col, row=row, standable=True, texture_type=TextureType.GRASS)
             elif not standable and not layout[index] == 'r':  # check that before creating non-standable tile enemy is not spawned there
                 return Tile(col=col, row=row, standable=standable, texture_type=TextureType.STONE)
             else:
