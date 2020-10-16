@@ -4,10 +4,9 @@ import pygame
 import math
 import time
 from assets.image_loader import *
-from const import TextureType, TileTint
+from const import TextureType, TileTint, ENTITIES
 from classes.entity import Player, Archer, Knight, PLAYER_HEALTH, ARCHER_HEALTH, KNIGHT_HEALTH
 
-ENTITIES = []
 
 # NOTES:
 # There are DRAW functions and ANIMATE functions.
@@ -171,7 +170,8 @@ def animate_attack(attacker, victim):
         else:
             y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x)))
 
-        coords = (start_x,start_y,target_x,target_y,x_diff,y_diff,angle)
+        coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
+
         if isinstance(attacker, Player):
             _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
@@ -186,15 +186,11 @@ def animate_damage(victim, victim_old_hp):
 
     _animate_damage_bar(victim, victim_old_hp)
 
-
-def animate_death(entity):
-
     entity_img = _get_entity_img(entity)
     wiggle_index = 0
     opacity = 250
 
     while opacity != 0:
-
         draw_grid()
         draw_entities()
         _blit_alpha(SCREEN, entity_img,(entity.get_position().col*BLOCK_SIZE + move_wiggle[wiggle_index], entity.get_position().row*BLOCK_SIZE), opacity)
@@ -247,7 +243,8 @@ def _animate_knight_attack():
     draw_grid()
     draw_entities(hard=False)
     pygame.display.flip()
-    time.sleep(0.2)
+    time.sleep(0.5)
+
 
 def _animate_archer_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
@@ -371,6 +368,7 @@ def _blit_alpha(target, source, location, opacity):
     temp.set_alpha(opacity)      
     target.blit(temp, location)
 
+    
 def _get_tile_img(tile, tint=None):
     if tile.texture_type == TextureType.GRASS:
         if tint == TileTint.BLUE:

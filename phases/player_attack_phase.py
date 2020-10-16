@@ -22,11 +22,16 @@ class PlayerAttackPhase(Phase):
             print("Enemy Before attack", end=" ")
             print(enemy.health)
             damage_taken = self.player.attack - enemy.defense
+            self.player.attacking = True
+            animate_attack(self.player, enemy)
+            self.player.attacking = False
+            enemy_health_old = enemy.health
             if damage_taken < 0:
                 damage_taken = 0
             enemy.health -= damage_taken
-            animate_attack(self.player, enemy)
-            if enemy.health < 0:
+            animate_damage(enemy, enemy_health_old)
+
+            if enemy.health <= 0:
                 enemy.health = 0
                 remove_enemy_from_tile(enemy_tiles)
                 ENTITIES.remove(enemy)

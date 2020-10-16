@@ -14,37 +14,45 @@ def remove_enemy_from_tile(enemy_tiles):
 
 class CounterAttack:
     enemy_tiles: [Tile]
-    entity1: Entity
-    entity2: Entity
+    attacker: Entity
+    victim: Entity
 
-    def __init__(self, entity1, entity2, enemy_tiles=None):
-        self.entity1 = entity1
-        self.entity2 = entity2
+    def __init__(self, attacker, victim, enemy_tiles=None):
+        self.attacker = attacker
+        self.victim = victim
         self.enemy_tiles = enemy_tiles
 
     def can_attack(self):
-        p1 = [self.entity1.currentTile.row, self.entity1.currentTile.col]
-        p2 = [self.entity2.currentTile.row, self.entity2.currentTile.col]
+        p1 = [self.attacker.currentTile.row, self.attacker.currentTile.col]
+        p2 = [self.victim.currentTile.row, self.victim.currentTile.col]
         distance1 = int(math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2)))
-        if distance1 <= self.entity1.range:
+        if distance1 <= self.attacker.range:
             return True
         else:
             return False
 
     def counter_attack(self):
-        print("Entity2 health", end=" ")
-        print(self.entity2.health)
-        damage_taken = self.entity1.attack - self.entity2.defense
+        time.sleep(1)
+        print("victim health", end=" ")
+        print(self.victim.health)
+        self.attacker.attacking = True
+        animate_attack(self.attacker, self.victim)
+        self.attacker.attacking = False
+        old_victim_health = self.victim.health
+        damage_taken = self.attacker.attack - self.victim.defense
         if damage_taken < 0:
             damage_taken = 0
-        self.entity2.health -= damage_taken
-        if isinstance(self.entity2, Enemy):
-            self.entity2.health = 0
-            remove_enemy_from_tile(self.enemy_tiles)
-            ENTITIES.remove(self.entity2)
+        self.victim.health -= damage_taken
+        animate_damage(self.victim, old_victim_health)
 
-        print("Entity1 health after", end=" ")
-        print(self.entity2.health)
+        if isinstance(self.victim, Enemy):
+            if self.victim.health <= 0:
+                self.victim.health = 0
+                remove_enemy_from_tile(self.enemy_tiles)
+                ENTITIES.remove(self.victim)
+
+        print("attacker health after", end=" ")
+        print(self.victim.health)
 
     def enter(self):
         self.counter_attack()

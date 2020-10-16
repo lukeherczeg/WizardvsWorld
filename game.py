@@ -14,9 +14,12 @@ print(f'Grid Width: {GRID.GRID_WIDTH}; Grid Height: {GRID.GRID_HEIGHT}')
 
 def main():
     pygame.init()
-
-    ######################### DEMO ########################
     player = Player()
+    player.currentTile = GRID.game_map[7][0]
+    ENTITIES.append(player)
+    '''
+    ######################### DEMO ########################
+    
     knight = Knight()
     archer1 = Archer()
     archer2 = Archer()
@@ -34,9 +37,7 @@ def main():
     ENTITIES.append(archer1)
     ENTITIES.append(archer2)
 
-
-    total_refresh_drawing()
-    time.sleep(1)
+    
 
     archer1.attacking = True
     animate_attack(archer1, player)
@@ -103,8 +104,10 @@ def main():
     time.sleep(2)
 
     print('Done')
+    '''
     ######################### DEMO ########################
-
+    total_refresh_drawing()
+    time.sleep(1)
     fsm = FSM()
 
     # Declare Phases
