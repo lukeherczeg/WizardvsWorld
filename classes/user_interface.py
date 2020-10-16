@@ -27,10 +27,11 @@ class Button:
 
             # Check for clicks
             if is_pressed[0] and self.__on_click is not None:
-                pygame.time.delay(25)
-                for event in pygame.event.get():
-                    if event.type == pygame.MOUSEBUTTONUP:
-                        self.__on_click()
+                self.__on_click()
+                # pygame.time.delay(25)
+                # for event in pygame.event.get():
+                #     if event.type == pygame.MOUSEBUTTONUP:
+                #         self.__on_click()
         # Button isn't hovered
         else:
             pygame.draw.rect(SCREEN, self.__color_inactive, (self.__pos_x, self.__pos_y, self.__width, self.__height))

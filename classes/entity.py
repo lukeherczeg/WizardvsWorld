@@ -66,7 +66,7 @@ class Archer(Enemy):
         super().__init__()
         self.currentTile = GRID.game_map[0][2]
         self.health = 30
-        self.attack = 15
+        self.attack = 10
         self.defense = 0
         self.range = 2
         self.attackable = False

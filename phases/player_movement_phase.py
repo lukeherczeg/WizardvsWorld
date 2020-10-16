@@ -5,7 +5,7 @@ from classes.tile import Tile
 
 
 def select(row, col):
-    print(f"Highlighting ({row}, {col}).")
+    # print(f"Highlighting ({row}, {col}).")
     draw_selected_tile(GRID.game_map[row][col])
 
 
@@ -127,8 +127,8 @@ class PlayerMovementPhase(Phase):
         selecting = True
         while selecting:
             if self.selection():
-                print(f"You picked the movable tile ({self.player.currentTile.row}, {self.player.currentTile.col})!"
-                      f" Time to move!")
+                # print(f"You picked the movable tile ({self.player.currentTile.row}, {self.player.currentTile.col})!"
+                #       f" Time to move!")
                 self.player.selected = False
                 draw_entities()
                 selecting = False
@@ -136,19 +136,19 @@ class PlayerMovementPhase(Phase):
         self.player.currentTile = self.currentTile
 
         animate_move(self.player, initial_pos)
-        print("Okay, time to ATTACK!")
+        # print("Okay, time to ATTACK!")
 
     def enter(self):
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
-        print('Entering Selection Phase...')
+        # print('Entering Selection Phase...')
         total_refresh_drawing()
         select(self.currentTile.row, self.currentTile.col)
         selecting = True
         while selecting:
             if self.selection():
                 if self.currentTile == self.player.currentTile:
-                    print(f"You picked the player's location! Time to pick your move!")
+                    # print(f"You picked the player's location! Time to pick your move!")
                     self.player.selected = True
                     draw_entities()
                     selecting = False
