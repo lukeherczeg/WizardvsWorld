@@ -3,10 +3,10 @@ import os
 import pygame
 import math
 from assets.image_loader import *
-from const import TextureType, TileTint
+from const import TextureType, TileTint, ENTITIES
 from classes.entity import Player, Archer, Knight
 
-ENTITIES = []
+
 # NOTES:
 # There are DRAW functions and ANIMATE functions.
 # DRAW - code runs almost instantly and repaints screen

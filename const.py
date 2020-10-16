@@ -1,5 +1,7 @@
 from enum import Enum
 
+ENTITIES = []
+
 class TileTint(Enum):
     NONE = 0
     BLUE = 1

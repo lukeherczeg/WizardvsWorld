@@ -1,21 +1,20 @@
+from const import ENTITIES
 from classes.tile import Tile, TextureType
 from random import random
 import os #importing for reading maps inside of /maps
-
-LEVEL = 0
+from classes.entity import Knight, Archer
 
 class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
 
-    def __init__(self, width, height, map_layout=None):
+    def __init__(self, width, height, level=-1):
         self.GRID_WIDTH = width
         self.GRID_HEIGHT = height
-        if map_layout is None:
-            self.map_layout = self.update_layout(LEVEL)
-        else:
-            self.map_layout = map_layout
+        self.level = level
+        self.map_layout = self.update_layout()
         # INDEX WITH [ROW][COL]
         self._game_map = [[self.__generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
+        self.generate_enemies()
 
     @property
     def game_map(self):
@@ -206,21 +205,24 @@ class Grid:
         #we need to calculate the index for the tile value once the string is read from file
         index = col + (row * 25)
         layout = self.map_layout
+
         #if the value is 0 (most tiles) randomly generate that tile
-        if layout[index] == '0':
+        #letters signify that an enemy is to be spawned on the texture type initial "f" or "d" or "g" etc.
+        #r means it is a random texture type
+        if layout[index] == '0' or layout[index] == 'r':
             # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
-            if standable:
-                if self.__generate_true(.7):
-                    return Tile(col=col, row=row, standable=standable, texture_type=TextureType.GRASS)
-                else:
-                    return Tile(col=col, row=row, standable=standable, texture_type=TextureType.DIRT)
-            else:
+            if self.__generate_true(.7):
+                return Tile(col=col, row=row, standable=standable, texture_type=TextureType.GRASS)
+            elif not standable and not layout[index] == 'r':  # check that before creating non-standable tile enemy is not spawned there
                 return Tile(col=col, row=row, standable=standable, texture_type=TextureType.STONE)
-        elif layout[index] == '1':
+            else:
+                return Tile(col=col, row=row, standable=True, texture_type=TextureType.DIRT)
+        #load a texture based on layout
+        elif layout[index] == '1' or layout[index] == 'd':
             return Tile(col=col, row=row, standable=True, texture_type=TextureType.DIRT)
         elif layout[index] == '2':
             return Tile(col=col, row=row, standable=False, texture_type=TextureType.STONE)
-        elif layout[index] == '3':
+        elif layout[index] == '3' or layout[index] == 'f':
             return Tile(col=col, row=row, standable=True, texture_type=TextureType.FLOOR)
         else:
             return Tile(col=col, row=row, standable=True, texture_type=TextureType.GRASS)
@@ -229,16 +231,44 @@ class Grid:
     def __generate_true(odds):
         return True if random() < odds else False
 
+    #spawns enemies, needs to be called somewhere for new a level so that new enemies are spawned
+    def generate_enemies(self):
+        #spawn 30% knight 70% archer
+        layout = self.map_layout
+        index = 0
+        x = 0
+        y = 0
+        while index < len(layout):
+            if layout[index] == 'r' or layout[index] == 'd' or layout[index] == 'f' or layout[index] == 'g':
+                #need to translate index into a set of coordinates
+                x = index % self.GRID_WIDTH
+                y = index // self.GRID_WIDTH
+                if self.__generate_true(.7): #create archer
+                    archer = Archer()
+                    archer.currentTile = self.game_map[y][x]
+                    archer.currentTile.occupied = True
+                    ENTITIES.append(archer)
+                else: #creat knight
+                    knight = Knight()
+                    knight.currentTile = self.game_map[y][x]
+                    knight.currentTile.occupied = True
+                    ENTITIES.append(knight)
+            index += 1
+
+
+
     #function used in init to get path to file names for map layouts
-    def update_layout(self, level):
-        lev = str(level)
+    def update_layout(self):
+        self.level += 1
+        lev = str(self.level)
+        #get the path of the map
         main_directory = os.path.dirname('WizardvsWorld')
         asset_path = os.path.join(main_directory, 'maps')
         map = os.path.join(asset_path, 'map')
         map += lev
         map += '.txt'
+        #turn map into single string
         with open(map, 'r') as file:
             string = file.read().replace('\n', '')
             self.map_layout = string
         return string
-
