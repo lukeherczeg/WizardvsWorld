@@ -43,6 +43,7 @@ class EnemyAIMovement(Phase):
                     enemy.currentTile.occupied = False
                     enemy.currentTile = movable_tiles[new_tile]
                     enemy.currentTile.occupied = True
+                    time.sleep(0.5)
                     animate_move(enemy, init_post)
 
     def gets_closer(self, enemy, new_position):

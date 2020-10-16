@@ -9,6 +9,7 @@ from classes.entity import Player, Archer, Knight, PLAYER_HEALTH, ARCHER_HEALTH,
 
 ENTITIES = []
 
+
 # NOTES:
 # There are DRAW functions and ANIMATE functions.
 # DRAW - code runs almost instantly and repaints screen
@@ -153,18 +154,18 @@ def animate_attack(attacker, victim):
         else:
             y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x)))
 
-        coords = (start_x,start_y,target_x,target_y,x_diff,y_diff,angle)
+        coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
 
         if isinstance(attacker, Player):
             animate_player_attack(coords)
         elif isinstance(attacker, Archer):
             animate_archer_attack(coords)
-    
+
+
 def animate_damage(victim, victim_old_hp):
-    
     damage_diff = victim_old_hp - victim.health
 
-    #create number rect
+    # create number rect
     number_font = pygame.font.Font('freesansbold.ttf', 12)
     number_text = number_font.render(str(damage_diff), True, RED)
     number_rect = number_text.get_rect()
@@ -172,8 +173,8 @@ def animate_damage(victim, victim_old_hp):
     number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
     number_rect = number_rect.move([number_x_fixed, number_y_var])
 
-    #draw and animate number rect
-    y_move_amount = [0,0,0,0,0,0,0,0,0,0,-1]
+    # draw and animate number rect
+    y_move_amount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]
     y_move_index = 0
     for i in range(120):
         number_rect = number_rect.move([0, y_move_amount[y_move_index]])
@@ -184,10 +185,10 @@ def animate_damage(victim, victim_old_hp):
         draw_entities(hard=False)
         SCREEN.blit(number_text, number_rect)
         pygame.display.flip()
-    
+
     total_refresh_drawing()
 
-    #create initial rectangles
+    # create initial rectangles
 
     # HP bar math 4px by 24px
     hp_bar_y = (victim.get_position().row * BLOCK_SIZE) + 4
@@ -210,9 +211,9 @@ def animate_damage(victim, victim_old_hp):
     green_hp_bar_x_pos = math.floor(BAR_LENGTH * old_hp_ratio)
     green_hp_bar_x_final = math.floor(BAR_LENGTH * new_hp_ratio)
 
-    x_move_amount = [0,0,0,0,0,0,0,-1]
+    x_move_amount = [0, 0, 0, 0, 0, 0, 0, -1]
     x_move_index = 0
-    while(green_hp_bar_x_pos != green_hp_bar_x_final):
+    while (green_hp_bar_x_pos != green_hp_bar_x_final):
         draw_grid()
         draw_entities(hard=False)
         pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, BAR_LENGTH, BAR_HEIGHT))
@@ -222,20 +223,19 @@ def animate_damage(victim, victim_old_hp):
         green_hp_bar_x_pos = green_hp_bar_x_pos + x_move_amount[x_move_index]
         x_move_index = 0 if x_move_index == len(x_move_amount) - 1 else x_move_index + 1
 
-def animate_death(entity):
 
+def animate_death(entity):
     # Create rect of moving entity
     entity_img = _get_entity_img(entity)
     entity_rect = entity_img.get_rect()
-    entity_rect = entity_rect.move([entity.get_position().col*BLOCK_SIZE, entity.get_position().row*BLOCK_SIZE])
+    entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
 
     # For animating perpendicular wiggle while walking
     wiggle_index = 0
 
-    y_move_amount = [0,0,0,0,0,0,0,0,0,0,-1]
+    y_move_amount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]
     y_move_index = 0
     for i in range(120):
-
         # entity_rect = entity_rect.move([move_wiggle[wiggle_index], Y_MOVEMENT_SPEED])
         # old_y = old_y + Y_MOVEMENT_SPEED
 
@@ -256,8 +256,9 @@ def animate_death(entity):
         draw_entities(hard=False)
         SCREEN.blit(number_text, number_rect)
         pygame.display.flip()
-    
+
     total_refresh_drawing()
+
 
 def animate_player_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
@@ -297,11 +298,13 @@ def animate_player_attack(coords):
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
 
+
 def animate_knight_attack():
     draw_grid()
     draw_entities(hard=False)
     pygame.display.flip()
-    time.sleep(0.2)
+    time.sleep(0.5)
+
 
 def animate_archer_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
@@ -333,6 +336,7 @@ def animate_archer_attack(coords):
 
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
+
 
 def _get_tile_img(tile, tint=None):
     if tile.texture_type == TextureType.GRASS:
