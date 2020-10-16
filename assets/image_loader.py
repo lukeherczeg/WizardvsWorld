@@ -61,7 +61,7 @@ FIREBALL_GIF = [
     pygame.image.load(os.path.join(asset_path, 'fireball/fireball_3.png')).convert_alpha(),
     pygame.image.load(os.path.join(asset_path, 'fireball/fireball_4.png')).convert_alpha(),
 ]
-
+ARROW_PNG = pygame.image.load(os.path.join(asset_path, 'arrow.png')).convert_alpha()
 
 #Miscelaneous
 SELECT_PNG = pygame.image.load(os.path.join(asset_path, 'select.png')).convert_alpha()

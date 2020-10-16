@@ -17,8 +17,6 @@ class PlayerAttackPhase(Phase):
         self.grid = GRID
         self.data_from_movement = data_from_movement
 
-
-
     def attack_enemy_procedure(self, enemy, enemy_tiles):
         if enemy.currentTile is self.data_from_movement.currentTile:
             print("Enemy Before attack", end=" ")
