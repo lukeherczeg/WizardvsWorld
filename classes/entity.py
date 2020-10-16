@@ -47,6 +47,8 @@ class Enemy(Entity):
 
 
 class Knight(Enemy):
+    max_Movement = 3
+
     def __init__(self):
         super().__init__()
         self.currentTile = GRID.game_map[0][1]
@@ -58,6 +60,8 @@ class Knight(Enemy):
 
 
 class Archer(Enemy):
+    max_Movement = 1
+
     def __init__(self):
         super().__init__()
         self.currentTile = GRID.game_map[0][2]

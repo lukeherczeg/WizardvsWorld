@@ -142,7 +142,7 @@ class PlayerMovementPhase(Phase):
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
         print('Entering Selection Phase...')
-        draw_entities()
+        total_refresh_drawing()
         select(self.currentTile.row, self.currentTile.col)
         selecting = True
         while selecting:
