@@ -62,8 +62,8 @@ class CounterAttack:
             if enemy.health <= 0:
                 enemy.health = 0
                 remove_enemy_from_tile_list(enemy, self.enemy_tiles)
-                animate_death(enemy)
                 ENTITIES.remove(enemy)
+                animate_death(enemy)
 
         if isinstance(self.victim, Player):
             player = self.victim

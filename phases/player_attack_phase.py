@@ -46,8 +46,8 @@ class PlayerAttackPhase(Phase):
                 enemy.health = 0
                 remove_enemy_from_tile_list(enemy, enemy_tiles)
                 print("Enemy died!")
-                animate_death(enemy)
                 ENTITIES.remove(enemy)
+                animate_death(enemy)
             elif enemy.health > 0:
                 attacker = CounterAttack(enemy, self.player, enemy_tiles)
                 attacker.attempt_counter_attack()
