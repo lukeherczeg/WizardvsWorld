@@ -82,8 +82,8 @@ def draw_entities(ignorables=None, hard=True):
 
 def draw_text(message, size, tile=None, offset=None, color=WHITE):
     # GOTO provided tile
-    x_pos = tile.get_position().col if tile is not None else 0
-    y_pos = tile.get_position().row if tile is not None else 0
+    x_pos = tile.col if tile is not None else 0
+    y_pos = tile.row if tile is not None else 0
 
     # ADD offset to coords
     x_offset, y_offset = offset if offset is not None else (0, 0)
@@ -93,7 +93,7 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
     message_rect = message_text.get_rect()
-    message_rect = message_rect.move([x_pos, y_pos])
+    message_rect = message_rect.move([x_pos * BLOCK_SIZE, y_pos * BLOCK_SIZE])
     SCREEN.blit(message_text, message_rect)
     pygame.display.flip()
 
