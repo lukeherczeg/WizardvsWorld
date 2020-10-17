@@ -49,7 +49,6 @@ class EnemyAICombatPhase(Phase):
 
     def enter(self):
         self.Enemies = ENTITIES[1:]
-        print('Entering Enemy Attack Selection')
         self.player_position = self.Player.currentTile
 
         # TUTORIAL

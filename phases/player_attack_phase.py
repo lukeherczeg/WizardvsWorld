@@ -1,7 +1,6 @@
+import time
 from phases.player_movement_phase import *
 from classes.user_interface import MessageBox
-import time
-from classes.entity import Enemy
 from phases.counter_attack import CounterAttack
 
 
@@ -68,6 +67,8 @@ class PlayerAttackPhase(Phase):
                            + ' while they are in your selector.')
                 total_refresh_drawing()
 
+            self.is_tutorial = False
+
             start_index = len(occupied_enemy_tiles) - 1
             self.data_from_movement.occupied_index = start_index
             self.data_from_movement.select_tile(occupied_enemy_tiles[start_index].row,
@@ -75,13 +76,8 @@ class PlayerAttackPhase(Phase):
             selecting = True
             while selecting:
                 if self.data_from_movement.selection():
-                    print(
-                        f"You picked the attackable tile ({self.data_from_movement.currentTile.row}, "
-                        f"{self.data_from_movement.currentTile.col})!"
-                        f" Time to attack!")
-
                     # A less than ideal line, setting our currentTile to the one
-                    # found from ENEMY selection, so this is setting the currenTile
+                    # found from ENEMY selection, so this is setting the currentTile
                     # as the tile of the chosen ENEMY.
 
                     self.enemyTile = self.data_from_movement.currentTile
@@ -113,5 +109,4 @@ class PlayerAttackPhase(Phase):
 
     def exit(self):
         self.data_from_movement.occupied_index = 0
-        self.is_tutorial = False
         print('Exiting Player Phase...')

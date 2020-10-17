@@ -54,7 +54,6 @@ class EnemyAIMovement(Phase):
             time.sleep(0.5)
 
     def enter(self):
-        print('Entering Enemy Movement Selection...')
         self.player_position = ENTITIES[0].currentTile
 
     def update(self):
@@ -64,7 +63,7 @@ class EnemyAIMovement(Phase):
                 self.move_enemy(enemy)
 
     def exit(self):
-        print('Exiting Player Phase...')
+        print('Exiting Enemy Phase...')
 
 
 

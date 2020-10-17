@@ -65,7 +65,6 @@ class CounterAttack:
         time.sleep(1)
         if isinstance(self.attacker, Enemy):
             if can_attack(self.attacker, self.victim):
-                print("Ye the knight is goin for it")
                 self.counter_attack()
         else:
             self.counter_attack()

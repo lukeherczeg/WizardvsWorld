@@ -6,7 +6,6 @@ from classes.user_interface import MessageBox
 
 
 def select(row, col, enemy=None):
-    # print(f"Highlighting ({row}, {col}).")
     if enemy is None:
         draw_selected_tile(GRID.game_map[row][col])
     else:
@@ -51,21 +50,16 @@ class PlayerMovementPhase(Phase):
                 draw_tile(self.currentTile)
                 draw_entities()
                 self.currentTile = self.grid.game_map[row][col]
-                # print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
                 select(self.currentTile.row, self.currentTile.col)
-            else:
-                print(f"The tile at ({row}, {col}) is invalid.")
 
         elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
             draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
             self.currentTile = self.grid.game_map[row][col]
-            # print(f"You are selecting the move to the tile at ({self.currentTile.row}, {self.currentTile.col})")
             select(self.currentTile.row, self.currentTile.col)
 
         elif self.enemy_tiles and self.grid.is_valid_tile_in_list(row, col, self.enemy_tiles):
             draw_tinted_tiles(self.enemy_tiles, self.player, TileTint.ORANGE)
             self.currentTile = self.grid.game_map[row][col]
-            print(f"You are selecting to attack to the tile at ({self.currentTile.row}, {self.currentTile.col})")
             select(self.currentTile.row, self.currentTile.col)
 
             # If we want to use enemy specific selection tiles:
@@ -139,21 +133,16 @@ class PlayerMovementPhase(Phase):
         selecting = True
         while selecting:
             if self.selection():
-                # print(f"You picked the movable tile ({self.player.currentTile.row}, {self.player.currentTile.col})!"
-                #       f" Time to move!")
                 self.player.selected = False
-                # draw_entities()
                 selecting = False
 
         self.player.currentTile = self.currentTile
 
         animate_entity_movement(self.player, initial_tile)
-        # print("Okay, time to ATTACK!")
 
     def enter(self):
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
-        # print('Entering Selection Phase...')
         total_refresh_drawing()
 
         # TUTORIAL
@@ -167,9 +156,7 @@ class PlayerMovementPhase(Phase):
         while selecting:
             if self.selection():
                 if self.currentTile == self.player.currentTile:
-                    # print(f"You picked the player's location! Time to pick your move!")
                     self.player.selected = True
-                    # draw_entities()
 
                     # TUTORIAL
                     if self.is_tutorial:
@@ -179,10 +166,8 @@ class PlayerMovementPhase(Phase):
                     selecting = False
 
     def update(self):
-        print('Entering Player Movement Selection...')
         self.movement()
 
     def exit(self):
         self.movable_tiles = None
         self.is_tutorial = False
-        print('Exiting Player Movement Phase...')
