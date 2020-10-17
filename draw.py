@@ -75,7 +75,8 @@ def draw_entities(ignorables=None, hard=True):
         entity_rect = entity_img.get_rect()
         entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
         SCREEN.blit(entity_img, entity_rect)
-        if hard: pygame.display.update(entity_rect)
+        
+    if hard: pygame.display.update(entity_rect)
 
 
 def draw_text(message, size, tile=None, offset=None, color=WHITE):
