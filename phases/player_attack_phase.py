@@ -2,7 +2,7 @@ from phases.player_movement_phase import *
 from classes.user_interface import MessageBox
 import time
 from classes.entity import Enemy
-from phases.counter_attack import CounterAttack, remove_enemy_from_tile_list
+from phases.counter_attack import CounterAttack
 
 
 class PlayerAttackPhase(Phase):
@@ -37,14 +37,14 @@ class PlayerAttackPhase(Phase):
 
             if enemy.health <= 0:
                 enemy.health = 0
-                remove_enemy_from_tile_list(enemy, enemy_tiles)
-                print("Enemy died!")
+                enemy.currentTile.occupied = False
                 ENTITIES.remove(enemy)
                 animate_death(enemy)
             elif enemy.health > 0:
                 enemy.damaged = False
                 attacker = CounterAttack(enemy, self.player, enemy_tiles)
                 attacker.attempt_counter_attack()
+                time.sleep(1)
 
     def attack_selection(self):
         enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, self.player.range)

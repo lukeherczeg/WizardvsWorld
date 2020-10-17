@@ -55,20 +55,20 @@ class Knight(Enemy):
         super().__init__()
         self.currentTile = None
         self.health = 50
-        self.attack = 10
+        self.attack = 100
         self.defense = 5
         self.range = 1
         self.attackable = False
 
 
 class Archer(Enemy):
-    max_Movement = 1
+    max_Movement = 4
 
     def __init__(self):
         super().__init__()
         self.currentTile = None
         self.health = 30
-        self.attack = 10
+        self.attack = 30
         self.defense = 0
         self.range = 2
         self.attackable = False

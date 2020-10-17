@@ -19,9 +19,8 @@ class EnemyAICombatPhase(Phase):
 
     def attack_player_procedure(self, enemy):
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
-        attacker = CounterAttack(self.Player, enemy, enemy_tiles)
-        time.sleep(0.25)
         if can_attack(enemy, self.Player):
+            time.sleep(0.25)
             enemy.attacking = True
             print(f"Player has been attacked!\nInitial player health: {self.Player.health}")
             animate_attack(enemy, self.Player)
@@ -38,12 +37,14 @@ class EnemyAICombatPhase(Phase):
 
             if self.Player.health <= 0:
                 self.Player.health = 0
-                ENTITIES.remove(self.Player.health)
-                animate_death(self.Player.health)
+                ENTITIES.remove(self.Player)
+                animate_death(self.Player)
                 time.sleep(2)
                 pygame.quit()
+                sys.exit()
             elif self.Player.health > 0:
                 self.Player.damaged = False
+                attacker = CounterAttack(self.Player, enemy, enemy_tiles)
                 attacker.attempt_counter_attack()
 
     def enter(self):

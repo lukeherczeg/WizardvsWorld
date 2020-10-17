@@ -3,12 +3,6 @@ from classes.tile import Tile
 from classes.entity import Entity, Enemy
 
 
-def remove_enemy_from_tile_list(enemy, enemy_tiles):
-    if enemy.health == 0:
-        enemy.currentTile.occupied = False
-        enemy_tiles.remove(enemy.currentTile)
-
-
 def can_attack(attacker, victim):
     attackable_tiles = GRID.get_movement(attacker.currentTile.row, attacker.currentTile.col, attacker.range)
     if victim.currentTile in attackable_tiles:
@@ -39,6 +33,7 @@ class CounterAttack:
         self.victim.damaged = True
         animate_damage(self.victim, old_victim_health)
 
+        time.sleep(.25)
         if isinstance(self.victim, Player):
             print(f"Updated player health: {self.victim.health}")
         else:
@@ -49,7 +44,7 @@ class CounterAttack:
             print(f"Enemy died in counter attack!: {self.victim.health}")
             if enemy.health <= 0:
                 enemy.health = 0
-                remove_enemy_from_tile_list(enemy, self.enemy_tiles)
+                enemy.currentTile.occupied = False
                 ENTITIES.remove(enemy)
                 animate_death(enemy)
             else:
