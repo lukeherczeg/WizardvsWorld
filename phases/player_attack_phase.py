@@ -101,7 +101,9 @@ class PlayerAttackPhase(Phase):
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.NONE)
 
     def enter(self):
-        print('Entering Attack Selection...')
+        draw_text_abs('Player Attack', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+        pygame.time.delay(2000)
+        total_refresh_drawing() # Attack radius can overwrite text
         self.attack_selection()
 
     def update(self):

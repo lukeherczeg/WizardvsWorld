@@ -48,7 +48,8 @@ class EnemyAICombatPhase(Phase):
 
     def enter(self):
         self.Enemies = ENTITIES[1:]
-        print('Entering Enemy Attack Selection')
+        draw_text_abs('Enemy Attack', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+        pygame.time.delay(2000)
         self.player_position = self.Player.currentTile
 
         # TUTORIAL

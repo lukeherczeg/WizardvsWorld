@@ -54,7 +54,8 @@ class EnemyAIMovement(Phase):
             time.sleep(0.5)
 
     def enter(self):
-        print('Entering Enemy Movement Selection...')
+        draw_text_abs('Enemy Movement', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+        pygame.time.delay(2000)
         self.player_position = ENTITIES[0].currentTile
 
     def update(self):
