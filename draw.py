@@ -97,6 +97,15 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     SCREEN.blit(message_text, message_rect)
     pygame.display.flip()
 
+def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
+    # Draw text
+    message_font = pygame.font.Font('freesansbold.ttf', size)
+    message_text = message_font.render(str(message), True, color)
+    message_rect = message_text.get_rect()
+    message_rect.center = (x_pos, y_pos)
+    SCREEN.blit(message_text, message_rect)
+    pygame.display.flip()
+
 
 # TODO
 def animate_text(message, size, tile=None, offset=None, color=WHITE, time=0):

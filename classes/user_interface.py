@@ -44,7 +44,7 @@ class MessageBox:
     # TODO: PUT A DARK TRANSPARENT OVERLAY ON THE TOP OF THE SCREEN TO FOCUS PLAYER
     def __init__(self, message):
         self.__font = pygame.font.Font('freesansbold.ttf', 24)
-        self.__lines = self.split(message, 80)  # 85 Characters Max in a line
+        self.__lines = self.split(message, 80)  # 80 Characters Max in a line
         self.__lines.append('Press ENTER to continue...')
         self.__rendered_lines = [self.__font.render(line, True, WHITE) for line in self.__lines]
         self.draw_message_box()
@@ -70,8 +70,7 @@ class MessageBox:
     def confirm():
         while True:
             for event in pygame.event.get():
-                if (
-                        event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN) or event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     return True
                 elif event.type == pygame.QUIT:
                     quit_game()

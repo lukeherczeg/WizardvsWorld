@@ -145,6 +145,10 @@ class PlayerMovementPhase(Phase):
         self.currentTile = self.player.currentTile
         total_refresh_drawing()
 
+        draw_text_abs('Player Movement', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+        pygame.time.delay(2000)
+        total_refresh_drawing()
+
         # TUTORIAL
         if self.is_tutorial:
             MessageBox('You can use the arrow keys to move the cursor. ENTER will let you select a character. '
