@@ -19,31 +19,33 @@ class PlayerAttackPhase(Phase):
         self.is_tutorial = True
 
     def attack_enemy_procedure(self, enemy, enemy_tiles):
-        if enemy.currentTile is self.enemyTile:
-            print(f"Enemy has been attacked!\nInitial enemy health: {enemy.health}")
-            damage_taken = self.player.attack - enemy.defense
-            self.player.attacking = True
-            animate_attack(self.player, enemy)
-            self.player.attacking = False
-            enemy_health_old = enemy.health
-            if damage_taken < 0:
-                damage_taken = 0
-            enemy.health -= damage_taken
+        if not isinstance(enemy, Boss):
+            if enemy.currentTile is self.enemyTile:
+                print(f"Enemy has been attacked!\nInitial enemy health: {enemy.health}")
+                damage_taken = self.player.attack - enemy.defense
+                self.player.attacking = True
+                animate_attack(self.player, enemy)
+                self.player.attacking = False
+                enemy_health_old = enemy.health
+                if damage_taken < 0:
+                    damage_taken = 0
+                enemy.health -= damage_taken
 
-            enemy.damaged = True
-            animate_damage(enemy, enemy_health_old)
-            print(f"Updated enemy health: {enemy.health}")
+                enemy.damaged = True
+                animate_damage(enemy, enemy_health_old)
+                print(f"Updated enemy health: {enemy.health}")
 
-            if enemy.health <= 0:
-                enemy.health = 0
-                enemy.currentTile.occupied = False
-                ENTITIES.remove(enemy)
-                animate_death(enemy)
-            elif enemy.health > 0:
-                enemy.damaged = False
-                attacker = CounterAttack(enemy, self.player, enemy_tiles)
-                attacker.attempt_counter_attack()
-                time.sleep(1)
+                if enemy.health <= 0:
+                    enemy.health = 0
+                    enemy.currentTile.occupied = False
+                    ENTITIES.remove(enemy)
+                    animate_death(enemy)
+                elif enemy.health > 0:
+                    enemy.damaged = False
+                    attacker = CounterAttack(enemy, self.player, enemy_tiles)
+                    attacker.attempt_counter_attack()
+                    time.sleep(1)
+            
 
     def attack_selection(self):
         enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, self.player.range)

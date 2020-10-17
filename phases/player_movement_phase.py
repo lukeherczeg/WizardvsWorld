@@ -1,6 +1,6 @@
 from draw import *
 from classes.phase import Phase
-from classes.entity import Player
+from classes.entity import Player, Boss
 from classes.tile import Tile
 from classes.user_interface import MessageBox
 

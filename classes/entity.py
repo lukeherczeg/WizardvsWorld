@@ -9,6 +9,7 @@ PLAYER_HEALTH = 100
 KNIGHT_HEALTH = 50
 ARCHER_HEALTH = 30
 
+
 # entity will have various shared data types
 class Entity:
     currentTile: Tile
@@ -18,6 +19,7 @@ class Entity:
     max_Movement: int = 5
     cur_Movement: int
     range: int
+    critical: int
 
     def __init__(self):
         self.damaged = False
@@ -41,6 +43,7 @@ class Player(Entity):
         self.defense = 5
         self.range = 3
         self.selected = False
+
 
 
 class Enemy(Entity):
@@ -72,3 +75,12 @@ class Archer(Enemy):
         self.defense = 0
         self.range = 2
         self.attackable = False
+
+
+class Boss(Enemy):
+    ranged: bool
+    tiles: [Tile]
+
+
+class GreatKnight(Boss):
+    range = 1

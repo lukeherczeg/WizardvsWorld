@@ -22,10 +22,21 @@ class EnemyAIMovement(Phase):
             p1 = [self.player_position.row, self.player_position.col]
             p2 = [enemy.currentTile.row, enemy.currentTile.col]
             p3 = [new_position.row, new_position.col]
-            distance1 = int(math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2)))
-            distance2 = int(math.sqrt(((p1[0] - p3[0]) ** 2) + ((p1[1] - p3[1]) ** 2)))
-            if distance1 > distance2:
+            distance1 = int(math.sqrt(((p2[0] - p1[0]) ** 2) + ((p2[1] - p1[1]) ** 2)))
+            distance2 = int(math.sqrt(((p3[0] - p1[0]) ** 2) + ((p3[1] - p1[1]) ** 2)))
+            if distance1 >= distance2:
                 return False
+            else:
+                return True
+        else:
+            return True
+
+    def can_move(self, enemy):
+        p1 = [self.player_position.row, self.player_position.col]
+        p2 = [enemy.currentTile.row, enemy.currentTile.col]
+        distance = int(math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2)))
+        if distance > 4:
+            return False
         else:
             return True
 
@@ -33,7 +44,9 @@ class EnemyAIMovement(Phase):
         if enemy.health > 0:
             movable_tiles = GRID.get_movement(enemy.currentTile.row, enemy.currentTile.col, enemy.max_Movement)
             for tile in movable_tiles:
-                if tile.occupied or tile is self.player_position:
+                if self.gets_closer(enemy, tile):
+                    movable_tiles.remove(tile)
+                elif tile.occupied or tile is self.player_position:
                     movable_tiles.remove(tile)
 
             init_tile = enemy.get_position()
@@ -60,7 +73,8 @@ class EnemyAIMovement(Phase):
         print('Entering Enemy Movement Computation / Animation...')
         for enemy in self.Enemies:
             if isinstance(enemy, Enemy):
-                self.move_enemy(enemy)
+                if self.can_move(enemy):
+                    self.move_enemy(enemy)
 
     def exit(self):
         print('Exiting Enemy Phase...')
