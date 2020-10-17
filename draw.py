@@ -70,11 +70,13 @@ def draw_entities(ignorables=None, hard=True):
     else:
         entities = filter(lambda entity: entity not in ignorables, ENTITIES)
 
+    entity_rect = None
     for entity in entities:
         entity_img = _get_entity_img(entity)
         entity_rect = entity_img.get_rect()
         entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
         SCREEN.blit(entity_img, entity_rect)
+
         if hard: pygame.display.update(entity_rect)
 
 
@@ -95,18 +97,18 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     SCREEN.blit(message_text, message_rect)
     pygame.display.flip()
 
-#TODO
+
+# TODO
 def animate_text(message, size, tile=None, offset=None, color=WHITE, time=0):
     return 0
 
 
 def animate_entity_movement(entity, prev_tile):
-
     tile_list = GRID.path_to(prev_tile, entity.get_position())
 
-    for i in range(len(tile_list)-1):
-        old_pos = (tile_list[i].col*BLOCK_SIZE, tile_list[i].row*BLOCK_SIZE)
-        new_pos = (tile_list[i+1].col*BLOCK_SIZE, tile_list[i+1].row*BLOCK_SIZE)
+    for i in range(len(tile_list) - 1):
+        old_pos = (tile_list[i].col * BLOCK_SIZE, tile_list[i].row * BLOCK_SIZE)
+        new_pos = (tile_list[i + 1].col * BLOCK_SIZE, tile_list[i + 1].row * BLOCK_SIZE)
         animate_move(entity, old_pos, new_pos)
 
     # this is done to re-center the final animation sprite and ensure game state is up to date
@@ -126,7 +128,7 @@ def animate_move(entity, old_pos, new_pos):
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
 
-    #move horizontally
+    # move horizontally
     while old_x != target_x:
         if old_x < target_x:
             entity_rect = entity_rect.move([MOVEMENT_SPEED, move_wiggle[wiggle_index]])

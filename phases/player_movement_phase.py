@@ -49,10 +49,10 @@ class PlayerMovementPhase(Phase):
         if self.movable_tiles is None and self.enemy_tiles is None:
             if self.grid.is_valid_standable_tile(row, col):
                 draw_tile(self.currentTile)
+                draw_entities()
                 self.currentTile = self.grid.game_map[row][col]
                 # print(f"You moved to the tile at ({self.currentTile.row}, {self.currentTile.col})")
                 select(self.currentTile.row, self.currentTile.col)
-                draw_entities()
             else:
                 print(f"The tile at ({row}, {col}) is invalid.")
 
