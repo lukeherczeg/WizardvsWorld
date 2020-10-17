@@ -180,10 +180,11 @@ class Grid:
                 solution.append(start_tile)
                 solution.reverse()
                 return solution
-
+            # get_movement will also return the current tile, so we remove it from edges.
             edges = self.get_movement(current.row, current.col, 1)
+            edges.remove(current)
             for edge in edges:
-                if edge not in visited:
+                if edge.standable and not edge.occupied and edge not in visited:
                     visited[edge] = current
                     to_visit.append(edge)
 

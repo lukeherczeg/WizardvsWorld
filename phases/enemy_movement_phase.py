@@ -49,9 +49,9 @@ class EnemyAIMovement(Phase):
 
             enemy.currentTile.occupied = False
             enemy.currentTile = movable_tiles[new_tile]
+            animate_entity_movement(enemy, init_tile)
             enemy.currentTile.occupied = True
             time.sleep(0.5)
-            animate_entity_movement(enemy, init_tile)
 
     def enter(self):
         print('Entering Enemy Movement Selection...')
