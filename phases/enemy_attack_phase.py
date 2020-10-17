@@ -2,6 +2,8 @@ from classes.phase import Phase
 from phases.counter_attack import *
 from phases.counter_attack import CounterAttack
 from classes.user_interface import MessageBox
+import random
+import math
 
 
 class EnemyAICombatPhase(Phase):
@@ -26,7 +28,12 @@ class EnemyAICombatPhase(Phase):
             animate_attack(enemy, self.Player)
             enemy.attacking = False
             player_health_old = self.Player.health
-            damage_taken = enemy.attack - self.Player.defense
+            chance = random.randint(0, 100)
+            if chance <= enemy.critical_chance:
+                damage_taken = math.ceil((enemy.attack * 1.5)) - self.Player.defense
+            else:
+                damage_taken = enemy.attack - self.Player.defense
+
             if damage_taken < 0:
                 damage_taken = 0
             self.Player.health -= damage_taken

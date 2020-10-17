@@ -2,7 +2,8 @@ import time
 from phases.player_movement_phase import *
 from classes.user_interface import MessageBox
 from phases.counter_attack import CounterAttack
-
+import random
+import math
 
 class PlayerAttackPhase(Phase):
     player: Player
@@ -22,7 +23,11 @@ class PlayerAttackPhase(Phase):
         if not isinstance(enemy, Boss):
             if enemy.currentTile is self.enemyTile:
                 print(f"Enemy has been attacked!\nInitial enemy health: {enemy.health}")
-                damage_taken = self.player.attack - enemy.defense
+                chance = random.randint(0, 100)
+                if chance <= self.player.critical_chance:
+                    damage_taken = math.ceil((self.player.attack * 1.5)) - enemy.defense
+                else:
+                    damage_taken = self.player.attack - enemy.defense
                 self.player.attacking = True
                 animate_attack(self.player, enemy)
                 self.player.attacking = False
@@ -45,7 +50,6 @@ class PlayerAttackPhase(Phase):
                     attacker = CounterAttack(enemy, self.player, enemy_tiles)
                     attacker.attempt_counter_attack()
                     time.sleep(1)
-            
 
     def attack_selection(self):
         enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, self.player.range)

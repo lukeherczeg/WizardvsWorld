@@ -244,12 +244,12 @@ class Grid:
                 x = index % self.GRID_WIDTH
                 y = index // self.GRID_WIDTH
                 if self.__generate_true(.7):  # create archer
-                    archer = Archer()
+                    archer = Archer(0)
                     archer.currentTile = self.game_map[y][x]
                     archer.currentTile.occupied = True
                     ENTITIES.append(archer)
                 else:  # create knight
-                    knight = Knight()
+                    knight = Knight(0)
                     knight.currentTile = self.game_map[y][x]
                     knight.currentTile.occupied = True
                     ENTITIES.append(knight)

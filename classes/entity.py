@@ -19,7 +19,8 @@ class Entity:
     max_Movement: int = 5
     cur_Movement: int
     range: int
-    critical: int
+    critical_chance: int
+    level: int
 
     def __init__(self):
         self.damaged = False
@@ -43,7 +44,14 @@ class Player(Entity):
         self.defense = 5
         self.range = 3
         self.selected = False
+        self.level = 1
+        self.critical_chance = 25
 
+    def level_up(self, new_level):
+        self.level = new_level
+        self.health += 15
+        self.attack += 5
+        self.defense += 1
 
 
 class Enemy(Entity):
@@ -54,25 +62,27 @@ class Enemy(Entity):
 class Knight(Enemy):
     max_Movement = 3
 
-    def __init__(self):
+    def __init__(self, level):
         super().__init__()
         self.currentTile = None
-        self.health = 50
-        self.attack = 100
-        self.defense = 5
+        self.health = 50 + (level * 5)
+        self.attack = 60 + (level * 2)
+        self.defense = 5 + (level * 1)
         self.range = 1
+        self.critical_chance = 10
         self.attackable = False
 
 
 class Archer(Enemy):
     max_Movement = 4
 
-    def __init__(self):
+    def __init__(self, level):
         super().__init__()
         self.currentTile = None
-        self.health = 30
-        self.attack = 30
-        self.defense = 0
+        self.health = 30 + (level * 2)
+        self.attack = 30 + (level * 3)
+        self.defense = 0 + (level * 1)
+        self.critical_chance = 15
         self.range = 2
         self.attackable = False
 
@@ -80,6 +90,9 @@ class Archer(Enemy):
 class Boss(Enemy):
     ranged: bool
     tiles: [Tile]
+
+    def __init__(self, level):
+        super().__init__()
 
 
 class GreatKnight(Boss):
