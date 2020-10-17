@@ -144,20 +144,25 @@ class Grid:
         if num_moves == 0:
             return tile_list
 
+        top_tile = self._game_map[row - 1][col]
+        left_tile = self._game_map[row][col - 1]
+        bottom_tile = self._game_map[row + 1][col]
+        right_tile = self._game_map[row][col + 1]
+
         # proceed top if not at border, above tile is standable
-        if row != 0 and self._game_map[row - 1][col].standable:
+        if row != 0 and top_tile.standable and not top_tile.occupied:
             tile_list.extend(self.get_movement(row - 1, col, num_moves - 1))
 
         # proceed left if not at border, left tile is standable
-        if col != 0 and self._game_map[row][col - 1].standable:
+        if col != 0 and left_tile.standable and not left_tile.occupied:
             tile_list.extend(self.get_movement(row, col - 1, num_moves - 1))
 
         # proceed bottom if not at border, lower tile is standable
-        if row != self.GRID_HEIGHT - 1 and self._game_map[row + 1][col].standable:
+        if row != self.GRID_HEIGHT - 1 and bottom_tile.standable and not bottom_tile.occupied:
             tile_list.extend(self.get_movement(row + 1, col, num_moves - 1))
 
         # proceed right if not at border, right tile is standable
-        if col != self.GRID_WIDTH - 1 and self._game_map[row][col + 1].standable:
+        if col != self.GRID_WIDTH - 1 and right_tile.standable and not right_tile.occupied:
             tile_list.extend(self.get_movement(row, col + 1, num_moves - 1))
 
         # array syntax flattens and dict.fromKeys removes duplicates

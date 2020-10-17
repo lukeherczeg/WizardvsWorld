@@ -75,8 +75,7 @@ def draw_entities(ignorables=None, hard=True):
         entity_rect = entity_img.get_rect()
         entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
         SCREEN.blit(entity_img, entity_rect)
-        
-    if hard: pygame.display.update(entity_rect)
+        if hard: pygame.display.update(entity_rect)
 
 
 def draw_text(message, size, tile=None, offset=None, color=WHITE):
@@ -126,19 +125,17 @@ def animate_move(entity, old_pos, new_pos):
 
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
-    move_speed_index = 0
 
     #move horizontally
     while old_x != target_x:
         if old_x < target_x:
-            entity_rect = entity_rect.move([X_MOVEMENT_SPEED[move_speed_index], move_wiggle[wiggle_index]])
-            old_x = old_x + X_MOVEMENT_SPEED[move_speed_index]
+            entity_rect = entity_rect.move([MOVEMENT_SPEED, move_wiggle[wiggle_index]])
+            old_x = old_x + MOVEMENT_SPEED
         elif old_x > target_x:
-            entity_rect = entity_rect.move([-X_MOVEMENT_SPEED[move_speed_index], move_wiggle[wiggle_index]])
-            old_x = old_x - X_MOVEMENT_SPEED[move_speed_index]
+            entity_rect = entity_rect.move([-MOVEMENT_SPEED, move_wiggle[wiggle_index]])
+            old_x = old_x - MOVEMENT_SPEED
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
-        move_speed_index = 0 if move_speed_index == len(X_MOVEMENT_SPEED) - 1 else move_speed_index + 1
 
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity
@@ -150,14 +147,13 @@ def animate_move(entity, old_pos, new_pos):
     # TO BE CHANGED, move vertically
     while old_y != target_y:
         if old_y < target_y:
-            entity_rect = entity_rect.move([move_wiggle[wiggle_index], Y_MOVEMENT_SPEED[move_speed_index]])
-            old_y = old_y + Y_MOVEMENT_SPEED[move_speed_index]
+            entity_rect = entity_rect.move([move_wiggle[wiggle_index], MOVEMENT_SPEED])
+            old_y = old_y + MOVEMENT_SPEED
         elif old_y > target_y:
-            entity_rect = entity_rect.move([move_wiggle[wiggle_index], -Y_MOVEMENT_SPEED[move_speed_index]])
-            old_y = old_y - Y_MOVEMENT_SPEED[move_speed_index]
+            entity_rect = entity_rect.move([move_wiggle[wiggle_index], -MOVEMENT_SPEED])
+            old_y = old_y - MOVEMENT_SPEED
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
-        move_speed_index = 0 if move_speed_index == len(X_MOVEMENT_SPEED) - 1 else move_speed_index + 1
 
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity
