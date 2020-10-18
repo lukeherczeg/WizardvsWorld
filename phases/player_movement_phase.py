@@ -189,9 +189,9 @@ class PlayerMovementPhase(Phase):
     def exit(self):
         if self.level_complete:
             upgrade_menu = SelectionMenu('Choose an Upgrade', [
-                ('Health', 'Increase your health by 15', print),
-                ('Attack', 'Increase your Attack by 25', print),
-                ('Movement', 'Increase your Movement by 1', print)])
+                ('Health', 'Increase your health by 15', self.player.boost_health),
+                ('Attack', 'Increase your Attack by 25', self.player.boost_attack),
+                ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
             upgrade_menu.draw_menu()
             upgrade_menu.await_response()
             draw_text("You WIN!!!", 50)

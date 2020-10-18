@@ -140,7 +140,7 @@ class SelectionMenu:
                     self.selected -= 1
                     update = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    self.options[self.selected][2]('hello') # Call the on_click function of the option
+                    self.options[self.selected][2]() # Call the on_click function of the option
                     total_refresh_drawing()
                     return True
                 elif event.type == pygame.QUIT:
