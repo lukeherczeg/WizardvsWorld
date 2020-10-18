@@ -7,7 +7,7 @@ from math import ceil
 
 
 def can_attack(attacker, victim):
-    attackable_tiles = GRID.get_movement(attacker.currentTile.row, attacker.currentTile.col, attacker.range)
+    attackable_tiles = GRID.get_attack(attacker.currentTile.row, attacker.currentTile.col, attacker.range)
     if victim.currentTile in attackable_tiles:
         return True
     else:

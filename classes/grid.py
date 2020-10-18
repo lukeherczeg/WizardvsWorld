@@ -113,32 +113,32 @@ class Grid:
         tile_list.extend(non_standable_tiles)
         return tile_list
 
-    def get_attack(self, row, col, num_moves):
+    def get_attack(self, row, col, range):
 
         tile_list = [self._game_map[row][col]]
-        if num_moves == 0:
+        if range == 0:
             return tile_list
 
         # proceed top if not at border
         if row != 0:
-            tile_list.extend(self.get_attack(row - 1, col, num_moves - 1))
+            tile_list.extend(self.get_attack(row - 1, col, range - 1))
 
         # proceed left if not at border
         if col != 0:
-            tile_list.extend(self.get_attack(row, col - 1, num_moves - 1))
+            tile_list.extend(self.get_attack(row, col - 1, range - 1))
 
         # proceed bottom if not at border
         if row != self.GRID_HEIGHT - 1:
-            tile_list.extend(self.get_attack(row + 1, col, num_moves - 1))
+            tile_list.extend(self.get_attack(row + 1, col, range - 1))
 
         # proceed right if not at border
         if col != self.GRID_WIDTH - 1:
-            tile_list.extend(self.get_attack(row, col + 1, num_moves - 1))
+            tile_list.extend(self.get_attack(row, col + 1, range - 1))
 
         # array syntax flattens and dict.fromKeys removes duplicates
         return list(dict.fromkeys(tile_list))
 
-    def get_movement(self, row, col, num_moves):
+    def get_movement(self, row, col, num_moves, player=None):
 
         tile_list = [self._game_map[row][col]]
         if num_moves == 0:
@@ -146,19 +146,39 @@ class Grid:
 
         # proceed top if not at border, above tile is standable
         if row != 0 and self._game_map[row - 1][col].standable and not self._game_map[row - 1][col].occupied:
-            tile_list.extend(self.get_movement(row - 1, col, num_moves - 1))
+            tile_not_player_occupied = (player is not None and self._game_map[row - 1][col] is not player.currentTile)
+
+            if player is None:
+                tile_list.extend(self.get_movement(row - 1, col, num_moves - 1))
+            elif tile_not_player_occupied:
+                tile_list.extend(self.get_movement(row - 1, col, num_moves - 1, player))
 
         # proceed left if not at border, left tile is standable
         if col != 0 and self._game_map[row][col - 1].standable and not self._game_map[row][col - 1].occupied:
-            tile_list.extend(self.get_movement(row, col - 1, num_moves - 1))
+            tile_not_player_occupied = (player is not None and self._game_map[row][col - 1] is not player.currentTile)
+
+            if player is None:
+                tile_list.extend(self.get_movement(row, col - 1, num_moves - 1))
+            elif tile_not_player_occupied:
+                tile_list.extend(self.get_movement(row, col - 1, num_moves - 1, player))
 
         # proceed bottom if not at border, lower tile is standable
         if row != self.GRID_HEIGHT - 1 and self._game_map[row + 1][col].standable and not self._game_map[row + 1][col].occupied:
-            tile_list.extend(self.get_movement(row + 1, col, num_moves - 1))
+            tile_not_player_occupied = (player is not None and self._game_map[row + 1][col] is not player.currentTile)
+
+            if player is None:
+                tile_list.extend(self.get_movement(row + 1, col, num_moves - 1))
+            elif tile_not_player_occupied:
+                tile_list.extend(self.get_movement(row + 1, col, num_moves - 1, player))
 
         # proceed right if not at border, right tile is standable
         if col != self.GRID_WIDTH - 1 and self._game_map[row][col + 1].standable and not self._game_map[row][col + 1].occupied:
-            tile_list.extend(self.get_movement(row, col + 1, num_moves - 1))
+            tile_not_player_occupied = (player is not None and self._game_map[row][col + 1] is not player.currentTile)
+
+            if player is None:
+                tile_list.extend(self.get_movement(row, col + 1, num_moves - 1))
+            elif tile_not_player_occupied:
+                tile_list.extend(self.get_movement(row, col + 1, num_moves - 1, player))
 
         # array syntax flattens and dict.fromKeys removes duplicates
         return list(dict.fromkeys(tile_list))
@@ -267,7 +287,6 @@ class Grid:
         boss.tiles = boss.currentTile
         boss.currentTile.occupied = True
         ENTITIES.append(boss)
-
 
     # function used in init to get path to file names for map layouts
     def update_layout(self):

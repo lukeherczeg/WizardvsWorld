@@ -40,7 +40,7 @@ class EnemyAIMovement(Phase):
             return True
 
     def move_enemy(self, enemy):
-        movable_tiles = GRID.get_movement(enemy.currentTile.row, enemy.currentTile.col, enemy.max_movement)
+        movable_tiles = GRID.get_movement(enemy.currentTile.row, enemy.currentTile.col, enemy.max_movement, self.Player)
         movable_tiles.remove(enemy.currentTile)
 
         # Here we copy the movable_tiles array so that we can safely remove elements.
@@ -55,6 +55,9 @@ class EnemyAIMovement(Phase):
         # If we are right next to the player, there are no tiles closer; so stay there!
         if len(movable_tiles) == 0:
             return
+
+        draw_tinted_tiles(movable_tiles, enemy, TileTint.BLUE)
+        time.sleep(.5)
 
         # Otherwise, we pick one of the closer tiles at random.
         init_tile = enemy.get_position()

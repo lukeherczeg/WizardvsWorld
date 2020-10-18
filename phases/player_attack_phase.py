@@ -32,10 +32,11 @@ class PlayerAttackPhase(Phase):
 
     def attack_enemy_procedure(self, enemy, enemy_tiles):
         # If the enemy isn't a boss, or if it is but it only occupies one tile
-        if not isinstance(enemy, Boss) or isinstance(enemy.tiles, Tile):
+        is_boss = isinstance(enemy, Boss)
+        if not is_boss or (is_boss and isinstance(enemy.tiles, Tile)):
             if enemy.currentTile is self.enemyTile:
                 self.attack(enemy, enemy_tiles)
-        else:
+        elif is_boss:
             for tile in enemy.tiles:
                 if tile is self.enemyTile:
                     self.attack(enemy, enemy_tiles)
