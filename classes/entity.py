@@ -8,7 +8,7 @@ class Entity:
     max_health: int
     attack: int  # these variables may change based on how we want to do combat
     defense: int
-    max_movement: int = 10
+    max_movement: int = 5
     range: int
     critical_chance: int
     level: int
