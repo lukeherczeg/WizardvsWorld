@@ -2,7 +2,7 @@ from draw import *
 from classes.phase import Phase
 from classes.entity import Player, Boss
 from classes.tile import Tile
-from classes.user_interface import MessageBox
+from classes.user_interface import MessageBox, SelectionMenu
 
 
 def select(row, col, enemy=None):
@@ -165,6 +165,13 @@ class PlayerMovementPhase(Phase):
 
         # TUTORIAL
         if self.is_tutorial:
+
+            upgrade_menu = SelectionMenu('Choose an Upgrade', [
+                                        ('Health', 'Increase your health by 15', None),
+                                        ('Attack', 'Increase your Attack by 25', None),
+                                        ('Movement', 'Increase your Movement by 1', None)])
+            upgrade_menu.draw_menu()
+
             MessageBox('You can use the arrow keys to move the cursor. ENTER will let you select a character. '
                        + 'You are the lone wizard in blue. Please select yourself!')
             total_refresh_drawing()

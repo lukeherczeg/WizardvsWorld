@@ -1,5 +1,5 @@
 from assets.image_loader import pygame, SCREEN, RED, WHITE, WINDOW_HEIGHT, WINDOW_WIDTH
-from draw import quit_game
+from draw import quit_game, draw_text_abs
 
 
 class Button:
@@ -91,3 +91,32 @@ class MessageBox:
                 line = ''
         lines.append(line)
         return lines
+
+
+class SelectionMenu:
+    """Overlay the current screen with selection menu.
+
+    :param header: the title of the menu
+    :param options: a list of 3-tuples: (name: str, description: str, on_click: function)
+
+    """
+
+    def __init__(self, header, options):
+        self.header = header
+        self.options = options
+        if options:
+            self.selected = options[0]
+        else:
+            self.selected = None
+
+    def add_option(self, option):
+        self.options.append(option)
+
+    def draw_menu(self):
+        draw_text_abs(self.header, 36, WINDOW_WIDTH // 2, 50)
+        option_number = 0
+        for option in self.options:
+            pygame.draw.rect(SCREEN, RED, (20, 100 * option_number + 100, WINDOW_WIDTH - 40, 75))
+            draw_text_abs(option[0], 18, WINDOW_WIDTH // 2, 100 * option_number + 115)
+            draw_text_abs(option[1], 14, WINDOW_WIDTH // 2, 100 * option_number + 150)
+            option_number += 1
