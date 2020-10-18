@@ -30,6 +30,8 @@ class PlayerMovementPhase(Phase):
         self.enemy_tiles = None
         self.occupied_index = 0
         self.is_tutorial = True
+        self.all_bosses_defeated = False
+        self.level_complete = False
 
     def cyclic_last(self, tile_list, current_tile):
         self.occupied_index -= 1
@@ -113,6 +115,8 @@ class PlayerMovementPhase(Phase):
                         return True
                     elif self.movable_tiles:
                         if self.currentTile in self.movable_tiles:
+                            if self.all_bosses_defeated and self.currentTile == LEVEL_WIN_TILE:
+                                self.level_complete = True
                             return True
                     elif self.enemy_tiles:
                         if self.currentTile in self.enemy_tiles and self.currentTile.occupied:
@@ -121,7 +125,7 @@ class PlayerMovementPhase(Phase):
                 self.select_by_keypress(event)
 
     def movement(self):
-        movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_Movement)
+        movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_movement)
         self.immovable_tiles = GRID.get_movement_border(movable_tiles, self.player.range)
         self.movable_tiles = list(set(movable_tiles).difference(set(self.immovable_tiles)))
         draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
@@ -141,6 +145,16 @@ class PlayerMovementPhase(Phase):
         animate_entity_movement(self.player, initial_tile)
 
     def enter(self):
+        bosses_remaining = 0
+        for enemy in ENTITIES[1:]:
+            if isinstance(enemy, Boss):
+                bosses_remaining += 1
+        if bosses_remaining < 1:
+            self.all_bosses_defeated = True
+
+        if self.all_bosses_defeated:
+            LEVEL_WIN_TILE.tint = TileTint.ORANGE
+
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
         total_refresh_drawing()
@@ -173,5 +187,7 @@ class PlayerMovementPhase(Phase):
         self.movement()
 
     def exit(self):
+        if self.level_complete:
+            draw_text("You WIN!!!", 50)
         self.movable_tiles = None
         self.is_tutorial = False

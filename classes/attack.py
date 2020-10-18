@@ -1,6 +1,9 @@
+from const import CRIT_MULTIPLIER
 from draw import *
 from classes.tile import Tile
 from classes.entity import Entity, Enemy
+from random import randint, randrange
+from math import ceil
 
 
 def can_attack(attacker, victim):
@@ -9,6 +12,35 @@ def can_attack(attacker, victim):
         return True
     else:
         return False
+
+
+def perform_attack(attacker, victim):
+    attacker.attacking = True
+    animate_attack(attacker, victim)
+    attacker.attacking = False
+
+    damage_taken = calculate_damage(attacker, victim)
+    if damage_taken < 0:
+        damage_taken = 0
+
+    health_before_attack = victim.health
+    victim.health -= damage_taken
+    victim.damaged = True
+
+    animate_damage(victim, health_before_attack)
+
+
+def calculate_damage(attacker, victim):
+    """ Attack damage is calculated by picking a random number between [a little
+        less than one's attack power] and [a little more than one's attack power]. """
+
+    attack_damage = (ceil(randrange(attacker.attack - randint(1, 3), attacker.attack + randint(1, 3))))
+    chance = randint(0, 100)
+    if chance <= attacker.critical_chance:
+        critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
+        return critical_damage - victim.defense
+    else:
+        return attack_damage - victim.defense
 
 
 class CounterAttack:
@@ -26,7 +58,7 @@ class CounterAttack:
         animate_attack(self.attacker, self.victim)
         self.attacker.attacking = False
         old_victim_health = self.victim.health
-        damage_taken = self.attacker.attack - self.victim.defense
+        damage_taken = calculate_damage(self.attacker, self.victim)
         if damage_taken < 0:
             damage_taken = 0
         self.victim.health -= damage_taken
@@ -41,8 +73,8 @@ class CounterAttack:
 
         if isinstance(self.victim, Enemy):
             enemy = self.victim
-            print(f"Enemy died in counter attack!: {self.victim.health}")
             if enemy.health <= 0:
+                print(f"Enemy died in counter attack!: {self.victim.health}")
                 enemy.health = 0
                 enemy.currentTile.occupied = False
                 ENTITIES.remove(enemy)

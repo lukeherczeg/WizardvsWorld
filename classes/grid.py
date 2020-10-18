@@ -2,7 +2,7 @@ from const import ENTITIES
 from classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
-from classes.entity import Knight, Archer
+from classes.entity import Knight, Archer, GreatKnight
 
 
 class Grid:
@@ -234,7 +234,7 @@ class Grid:
         return True if random() < odds else False
 
     # spawns enemies, needs to be called somewhere for new a level so that new enemies are spawned
-    def generate_enemies(self):
+    def generate_enemies(self, level):
         # spawn 30% knight 70% archer
         layout = self.map_layout
         index = 0
@@ -244,16 +244,24 @@ class Grid:
                 x = index % self.GRID_WIDTH
                 y = index // self.GRID_WIDTH
                 if self.__generate_true(.7):  # create archer
-                    archer = Archer()
+                    archer = Archer(level)
                     archer.currentTile = self.game_map[y][x]
                     archer.currentTile.occupied = True
                     ENTITIES.append(archer)
                 else:  # create knight
-                    knight = Knight()
+                    knight = Knight(level)
                     knight.currentTile = self.game_map[y][x]
                     knight.currentTile.occupied = True
                     ENTITIES.append(knight)
             index += 1
+
+        # Luke testing
+        boss = GreatKnight(level)
+        boss.currentTile = self.game_map[7][23]
+        boss.tiles = boss.currentTile
+        boss.currentTile.occupied = True
+        ENTITIES.append(boss)
+
 
     # function used in init to get path to file names for map layouts
     def update_layout(self):
