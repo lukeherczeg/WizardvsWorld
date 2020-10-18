@@ -107,8 +107,7 @@ class EnemyAIMovement(Phase):
     def enter(self):
         self.Enemies = ENTITIES[1:]
         background = pygame.transform.scale(BACKGROUND_PNG, (750, 300))
-        SCREEN.blit(background, (WINDOW_WIDTH // 8, WINDOW_HEIGHT // 4))
-        draw_text_abs('Enemy Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, RED)
+        animate_background_text('Enemy Phase', background, 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, RED, 3)
         pygame.time.delay(1200)
         self.player_position = ENTITIES[0].currentTile
         total_refresh_drawing()

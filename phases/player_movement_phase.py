@@ -160,8 +160,7 @@ class PlayerMovementPhase(Phase):
         total_refresh_drawing()
 
         background = pygame.transform.scale(BACKGROUND_PNG, (750, 300))
-        SCREEN.blit(background, (WINDOW_WIDTH // 8, WINDOW_HEIGHT // 4))
-        draw_text_abs('Player Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE)
+        animate_background_text('Player Phase', background, 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 3)
         pygame.time.delay(1200)
         total_refresh_drawing()
 

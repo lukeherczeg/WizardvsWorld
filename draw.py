@@ -109,7 +109,31 @@ def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
 
 
 # TODO
-def animate_text(message, size, tile=None, offset=None, color=WHITE, time=0):
+def animate_background_text(message, background, size, x_pos, y_pos, color=WHITE, onscreen_time=0):
+    message_font = pygame.font.Font('freesansbold.ttf', size)
+    message_text = message_font.render(str(message), True, color)
+    opacity = 0
+
+    while opacity != 250:
+        draw_grid()
+        draw_entities(hard=False)
+        _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
+        _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
+        pygame.display.flip()
+        opacity = opacity + 2
+
+    time.sleep(onscreen_time)
+
+    while opacity != 0:
+        draw_grid()
+        draw_entities(hard=False)
+        _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
+        _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
+        pygame.display.flip()
+        opacity = opacity - 2
+
+    total_refresh_drawing()
+
     return 0
 
 
@@ -389,14 +413,14 @@ def _animate_damage_bar(victim, victim_old_hp):
         x_move_index = 0 if x_move_index == len(x_move_amount) - 1 else x_move_index + 1
 
 
-def _blit_alpha(target, source, location, opacity):
-    x = location[0]
-    y = location[1]
+def _blit_alpha(target, source, location, opacity, centered=False):
+    x = location[0] if not centered else location[0] - (source.get_width() // 2)
+    y = location[1] if not centered else location[1] - (source.get_height() // 2)
     temp = pygame.Surface((source.get_width(), source.get_height())).convert()
     temp.blit(target, (-x, -y))
     temp.blit(source, (0, 0))
     temp.set_alpha(opacity)
-    target.blit(temp, location)
+    target.blit(temp, (x,y))
 
 
 def _get_tile_img(tile, tint=None):
