@@ -2,7 +2,7 @@ from const import ENTITIES
 from classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
-from classes.entity import Knight, Archer
+from classes.entity import Knight, Archer, GreatKnight
 
 
 class Grid:
@@ -254,6 +254,14 @@ class Grid:
                     knight.currentTile.occupied = True
                     ENTITIES.append(knight)
             index += 1
+
+        # Luke testing
+        boss = GreatKnight(level)
+        boss.currentTile = self.game_map[7][23]
+        boss.tiles = boss.currentTile
+        boss.currentTile.occupied = True
+        ENTITIES.append(boss)
+
 
     # function used in init to get path to file names for map layouts
     def update_layout(self):

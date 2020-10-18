@@ -5,7 +5,7 @@ import math
 import time
 from assets.image_loader import *
 from const import TileTexture, TileTint, ENTITIES
-from classes.entity import Player, Archer, Knight
+from classes.entity import Player, Archer, Knight, GreatKnight
 
 
 # NOTES:
@@ -388,38 +388,38 @@ def _blit_alpha(target, source, location, opacity):
 
 def _get_tile_img(tile, tint=None):
     if tile.texture_type == TileTexture.GRASS:
-        if tint == TileTint.BLUE:
+        if tint == TileTint.BLUE or tile.tint == TileTint.BLUE:
             return GRASS_BLUE_PNG
-        elif tint == TileTint.RED:
+        elif tint == TileTint.RED or tile.tint == TileTint.RED:
             return GRASS_RED_PNG
-        elif tint == TileTint.ORANGE:
+        elif tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
             return GRASS_ORANGE_PNG
         else:
             return GRASS_PNG
     if tile.texture_type == TileTexture.DIRT:
-        if tint == TileTint.BLUE:
+        if tint == TileTint.BLUE or tile.tint == TileTint.BLUE:
             return DIRT_BLUE_PNG
-        elif tint == TileTint.RED:
+        elif tint == TileTint.RED or tile.tint == TileTint.RED:
             return DIRT_RED_PNG
-        elif tint == TileTint.ORANGE:
+        elif tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
             return DIRT_ORANGE_PNG
         else:
             return DIRT_PNG
     elif tile.texture_type == TileTexture.STONE:
-        if tint == TileTint.BLUE:
+        if tint == TileTint.BLUE or tile.tint == TileTint.BLUE:
             return STONE_BLUE_PNG
-        elif tint == TileTint.RED:
+        elif tint == TileTint.RED or tile.tint == TileTint.RED:
             return STONE_RED_PNG
-        elif tint == TileTint.ORANGE:
+        elif tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
             return STONE_ORANGE_PNG
         else:
             return STONE_PNG
     elif tile.texture_type == TileTexture.FLOOR:
-        if tint == TileTint.BLUE:
+        if tint == TileTint.BLUE or tile.tint == TileTint.BLUE:
             return FLOOR_BLUE_PNG
-        elif tint == TileTint.RED:
+        elif tint == TileTint.RED or tile.tint == TileTint.RED:
             return FLOOR_RED_PNG
-        elif tint == TileTint.ORANGE:
+        elif tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
             return FLOOR_ORANGE_PNG
         else:
             return FLOOR_PNG
@@ -455,6 +455,9 @@ def _get_entity_img(entity):
             return ARCHER_ATTACKABLE_PNG
         else:
             return ARCHER_PNG
+
+    if isinstance(entity, GreatKnight):
+        return KNIGHT_ATTACKABLE_PNG
 
 
 def quit_game():

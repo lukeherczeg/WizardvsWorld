@@ -8,7 +8,7 @@ class Entity:
     max_health: int
     attack: int  # these variables may change based on how we want to do combat
     defense: int
-    max_movement: int = 5
+    max_movement: int = 10
     range: int
     critical_chance: int
     level: int
@@ -79,9 +79,19 @@ class Boss(Enemy):
     ranged: bool
     tiles: [Tile]
 
-    def __init__(self, level):
+    def __init__(self):
         super().__init__()
 
 
 class GreatKnight(Boss):
     range = 1
+
+    def __init__(self, level):
+        super().__init__()
+        self.max_movement = 0
+        self.health = 50 + (level * 5)
+        self.max_health = self.health
+        self.attack = 15 + (level * 2)
+        self.defense = 5 + (level * 1)
+        self.critical_chance = 5
+        self.range = 1

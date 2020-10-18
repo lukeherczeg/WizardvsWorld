@@ -17,21 +17,28 @@ class PlayerAttackPhase(Phase):
         self.data_from_movement = data_from_movement
         self.is_tutorial = True
 
+    def attack(self, enemy, enemy_tiles):
+        perform_attack(self.player, enemy)
+
+        if enemy.health <= 0:
+            enemy.currentTile.occupied = False
+            ENTITIES.remove(enemy)
+            animate_death(enemy)
+        elif enemy.health > 0:
+            enemy.damaged = False
+            attacker = CounterAttack(enemy, self.player, enemy_tiles)
+            attacker.attempt_counter_attack()
+            time.sleep(.5)
+
     def attack_enemy_procedure(self, enemy, enemy_tiles):
-        if not isinstance(enemy, Boss):
+        # If the enemy isn't a boss, or if it is but it only occupies one tile
+        if not isinstance(enemy, Boss) or isinstance(enemy.tiles, Tile):
             if enemy.currentTile is self.enemyTile:
-
-                perform_attack(self.player, enemy)
-
-                if enemy.health <= 0:
-                    enemy.currentTile.occupied = False
-                    ENTITIES.remove(enemy)
-                    animate_death(enemy)
-                elif enemy.health > 0:
-                    enemy.damaged = False
-                    attacker = CounterAttack(enemy, self.player, enemy_tiles)
-                    attacker.attempt_counter_attack()
-                    time.sleep(1)
+                self.attack(enemy, enemy_tiles)
+        else:
+            for tile in enemy.tiles:
+                if tile is self.enemyTile:
+                    self.attack(enemy, enemy_tiles)
 
     def attack_selection(self):
         enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, self.player.range)
