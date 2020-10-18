@@ -60,11 +60,24 @@ class EnemyAIMovement(Phase):
         init_tile = enemy.get_position()
         new_tile = movable_tiles[random.randint(0, len(movable_tiles) - 1)]
 
+        # Grab tiles adjacent to player
+        tiles_adjacent_to_player = GRID.get_movement(self.player_position.row, self.player_position.col, 1)
+        tiles_adjacent_to_player.remove(self.player_position)
+
         # If it's a knight, rush the player!
         if isinstance(enemy, Knight):
-            tiles_adjacent_to_player = GRID.get_movement(self.player_position.row, self.player_position.col, 1)
-            tiles_adjacent_to_player.remove(self.player_position)
             for tile in tiles_adjacent_to_player:
+                if tile in movable_tiles:
+                    new_tile = tile
+                    break
+        # If it's an archer, move to a space one away from the player to shoot an arrow!
+        elif isinstance(enemy, Archer):
+            # Grab tiles exclusively one space away from the player on all sides
+            tiles_one_away_from_player = GRID.get_movement(self.player_position.row, self.player_position.col, 2)
+            tiles_one_away_from_player.remove(self.player_position)
+            tiles_one_away_from_player = [tile for tile in tiles_one_away_from_player
+                                          if tile not in tiles_adjacent_to_player]
+            for tile in tiles_one_away_from_player:
                 if tile in movable_tiles:
                     new_tile = tile
                     break
@@ -87,7 +100,7 @@ class EnemyAIMovement(Phase):
         background = pygame.transform.scale(BACKGROUND_PNG, (750, 300))
         SCREEN.blit(background, (WINDOW_WIDTH // 8, WINDOW_HEIGHT // 4))
         draw_text_abs('Enemy Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, RED)
-        pygame.time.delay(2000)
+        pygame.time.delay(1200)
         self.player_position = ENTITIES[0].currentTile
 
     def update(self):
