@@ -2,7 +2,7 @@ from const import CRIT_MULTIPLIER
 from draw import *
 from classes.tile import Tile
 from classes.entity import Entity, Enemy
-from random import randint
+from random import randint, randrange
 from math import ceil
 
 
@@ -27,19 +27,20 @@ def perform_attack(attacker, victim):
     victim.health -= damage_taken
     victim.damaged = True
 
-    if victim.health == 0:
-        # Makes the health bar animation better :)
-        victim.health = victim.health - 10
-
     animate_damage(victim, health_before_attack)
 
 
 def calculate_damage(attacker, victim):
+    """ Attack damage is calculated by picking a random number between [a little
+        less than one's attack power] and [a little more than one's attack power]. """
+
+    attack_damage = (ceil(randrange(attacker.attack - randint(2, 5), attacker.attack + randint(2, 5))))
     chance = randint(0, 100)
     if chance <= attacker.critical_chance:
-        return ceil((attacker.attack * CRIT_MULTIPLIER)) - victim.defense
+        critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
+        return critical_damage - victim.defense
     else:
-        return attacker.attack - victim.defense
+        return attack_damage - victim.defense
 
 
 class CounterAttack:
