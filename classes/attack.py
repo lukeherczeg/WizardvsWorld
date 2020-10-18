@@ -1,6 +1,9 @@
+from const import CRIT_MULTIPLIER
 from draw import *
 from classes.tile import Tile
 from classes.entity import Entity, Enemy
+from random import randint
+from math import ceil
 
 
 def can_attack(attacker, victim):
@@ -9,6 +12,34 @@ def can_attack(attacker, victim):
         return True
     else:
         return False
+
+
+def perform_attack(attacker, victim):
+    attacker.attacking = True
+    animate_attack(attacker, victim)
+    attacker.attacking = False
+
+    damage_taken = calculate_damage(attacker, victim)
+    if damage_taken < 0:
+        damage_taken = 0
+
+    health_before_attack = victim.health
+    victim.health -= damage_taken
+    victim.damaged = True
+
+    if victim.health == 0:
+        # Makes the health bar animation better :)
+        victim.health = victim.health - 10
+
+    animate_damage(victim, health_before_attack)
+
+
+def calculate_damage(attacker, victim):
+    chance = randint(0, 100)
+    if chance <= attacker.critical_chance:
+        return ceil((attacker.attack * CRIT_MULTIPLIER)) - victim.defense
+    else:
+        return attacker.attack - victim.defense
 
 
 class CounterAttack:
@@ -26,7 +57,7 @@ class CounterAttack:
         animate_attack(self.attacker, self.victim)
         self.attacker.attacking = False
         old_victim_health = self.victim.health
-        damage_taken = self.attacker.attack - self.victim.defense
+        damage_taken = calculate_damage(self.attacker, self.victim)
         if damage_taken < 0:
             damage_taken = 0
         self.victim.health -= damage_taken
@@ -41,8 +72,8 @@ class CounterAttack:
 
         if isinstance(self.victim, Enemy):
             enemy = self.victim
-            print(f"Enemy died in counter attack!: {self.victim.health}")
             if enemy.health <= 0:
+                print(f"Enemy died in counter attack!: {self.victim.health}")
                 enemy.health = 0
                 enemy.currentTile.occupied = False
                 ENTITIES.remove(enemy)

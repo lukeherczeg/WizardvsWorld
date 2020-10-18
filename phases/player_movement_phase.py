@@ -121,7 +121,7 @@ class PlayerMovementPhase(Phase):
                 self.select_by_keypress(event)
 
     def movement(self):
-        movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_Movement)
+        movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_movement)
         self.immovable_tiles = GRID.get_movement_border(movable_tiles, self.player.range)
         self.movable_tiles = list(set(movable_tiles).difference(set(self.immovable_tiles)))
         draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)

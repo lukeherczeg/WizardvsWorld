@@ -2,6 +2,8 @@ from enum import Enum
 
 ENTITIES = []
 
+CRIT_MULTIPLIER = 2
+
 
 class TextureType(Enum):
     TILE_TEXTURE = 1

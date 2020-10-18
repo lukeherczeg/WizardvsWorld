@@ -5,7 +5,7 @@ import math
 import time
 from assets.image_loader import *
 from const import TileTexture, TileTint, ENTITIES
-from classes.entity import Player, Archer, Knight, PLAYER_HEALTH, ARCHER_HEALTH, KNIGHT_HEALTH
+from classes.entity import Player, Archer, Knight
 
 
 # NOTES:
@@ -342,24 +342,15 @@ def _animate_damage_number(victim, victim_old_hp):
 
 
 def _animate_damage_bar(victim, victim_old_hp):
-    # HP bar math 4px by 24px
+    # HP bar math 4px by 42px (old : 24)
     hp_bar_y = (victim.get_position().row * BLOCK_SIZE) + 4
-    hp_bar_x = (victim.get_position().col * BLOCK_SIZE) + 4
-    bar_length = 24
+    hp_bar_x = (victim.get_position().col * BLOCK_SIZE) - 1  # (old: + 4)
+    bar_length = 42
     bar_height = 4
 
     # get ratios for scaling health reduction graphically
-    old_hp_ratio = 0
-    new_hp_ratio = 0
-    if isinstance(victim, Player):
-        new_hp_ratio = victim.health / PLAYER_HEALTH
-        old_hp_ratio = victim_old_hp / PLAYER_HEALTH
-    elif isinstance(victim, Knight):
-        new_hp_ratio = victim.health / KNIGHT_HEALTH
-        old_hp_ratio = victim_old_hp / KNIGHT_HEALTH
-    elif isinstance(victim, Archer):
-        new_hp_ratio = victim.health / ARCHER_HEALTH
-        old_hp_ratio = victim_old_hp / ARCHER_HEALTH
+    new_hp_ratio = victim.health / victim.max_health
+    old_hp_ratio = victim_old_hp / victim.max_health
 
     # prevent negative health
     if new_hp_ratio < 0:

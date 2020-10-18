@@ -4,10 +4,10 @@ from const import TileTexture
 class Tile:
     _texture_type: TileTexture
 
-    def __init__(self, col, row, standable, texture_type=TileTexture.NONE):
+    def __init__(self, col, row, standable=True, texture_type=TileTexture.NONE):
         self._col = col
         self._row = row
-        self._standable = standable #bool
+        self._standable = standable
         self._occupied = False
         self._texture_type = texture_type
 

@@ -19,7 +19,7 @@ def main():
     player = Player()
     player.currentTile = GRID.game_map[7][0]
     ENTITIES.append(player)
-    GRID.generate_enemies()
+    GRID.generate_enemies(0)
 
     fsm = FSM()
 

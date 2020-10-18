@@ -1,9 +1,6 @@
 from classes.phase import Phase
-from phases.counter_attack import *
-from phases.counter_attack import CounterAttack
+from classes.attack import *
 from classes.user_interface import MessageBox
-import random
-import math
 
 
 class EnemyAICombatPhase(Phase):
@@ -23,27 +20,10 @@ class EnemyAICombatPhase(Phase):
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
         if can_attack(enemy, self.Player):
             time.sleep(0.25)
-            enemy.attacking = True
-            print(f"Player has been attacked!\nInitial player health: {self.Player.health}")
-            animate_attack(enemy, self.Player)
-            enemy.attacking = False
-            player_health_old = self.Player.health
-            chance = random.randint(0, 100)
-            if chance <= enemy.critical_chance:
-                damage_taken = math.ceil((enemy.attack * 1.5)) - self.Player.defense
-            else:
-                damage_taken = enemy.attack - self.Player.defense
 
-            if damage_taken < 0:
-                damage_taken = 0
-            self.Player.health -= damage_taken
-
-            self.Player.damaged = True
-            animate_damage(self.Player, player_health_old)
-            print(f"Updated player health: {self.Player.health}")
+            perform_attack(enemy, self.Player)
 
             if self.Player.health <= 0:
-                self.Player.health = 0
                 ENTITIES.remove(self.Player)
                 animate_death(self.Player)
                 time.sleep(2)

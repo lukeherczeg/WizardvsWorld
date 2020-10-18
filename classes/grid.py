@@ -234,7 +234,7 @@ class Grid:
         return True if random() < odds else False
 
     # spawns enemies, needs to be called somewhere for new a level so that new enemies are spawned
-    def generate_enemies(self):
+    def generate_enemies(self, level):
         # spawn 30% knight 70% archer
         layout = self.map_layout
         index = 0
@@ -244,12 +244,12 @@ class Grid:
                 x = index % self.GRID_WIDTH
                 y = index // self.GRID_WIDTH
                 if self.__generate_true(.7):  # create archer
-                    archer = Archer(0)
+                    archer = Archer(level)
                     archer.currentTile = self.game_map[y][x]
                     archer.currentTile.occupied = True
                     ENTITIES.append(archer)
                 else:  # create knight
-                    knight = Knight(0)
+                    knight = Knight(level)
                     knight.currentTile = self.game_map[y][x]
                     knight.currentTile.occupied = True
                     ENTITIES.append(knight)

@@ -42,7 +42,7 @@ class EnemyAIMovement(Phase):
 
     def move_enemy(self, enemy):
         if enemy.health > 0:
-            movable_tiles = GRID.get_movement(enemy.currentTile.row, enemy.currentTile.col, enemy.max_Movement)
+            movable_tiles = GRID.get_movement(enemy.currentTile.row, enemy.currentTile.col, enemy.max_movement)
             for tile in movable_tiles:
                 if self.gets_closer(enemy, tile):
                     movable_tiles.remove(tile)

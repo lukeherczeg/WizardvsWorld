@@ -1,9 +1,7 @@
-import time
 from phases.player_movement_phase import *
 from classes.user_interface import MessageBox
-from phases.counter_attack import CounterAttack
-import random
-import math
+from classes.attack import CounterAttack, perform_attack
+
 
 class PlayerAttackPhase(Phase):
     player: Player
@@ -22,26 +20,10 @@ class PlayerAttackPhase(Phase):
     def attack_enemy_procedure(self, enemy, enemy_tiles):
         if not isinstance(enemy, Boss):
             if enemy.currentTile is self.enemyTile:
-                print(f"Enemy has been attacked!\nInitial enemy health: {enemy.health}")
-                chance = random.randint(0, 100)
-                if chance <= self.player.critical_chance:
-                    damage_taken = math.ceil((self.player.attack * 1.5)) - enemy.defense
-                else:
-                    damage_taken = self.player.attack - enemy.defense
-                self.player.attacking = True
-                animate_attack(self.player, enemy)
-                self.player.attacking = False
-                enemy_health_old = enemy.health
-                if damage_taken < 0:
-                    damage_taken = 0
-                enemy.health -= damage_taken
 
-                enemy.damaged = True
-                animate_damage(enemy, enemy_health_old)
-                print(f"Updated enemy health: {enemy.health}")
+                perform_attack(self.player, enemy)
 
                 if enemy.health <= 0:
-                    enemy.health = 0
                     enemy.currentTile.occupied = False
                     ENTITIES.remove(enemy)
                     animate_death(enemy)
