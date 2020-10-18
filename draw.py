@@ -107,9 +107,15 @@ def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
     SCREEN.blit(message_text, message_rect)
     pygame.display.flip()
 
+def animate_text(message, size, tile=None, offset=None, color=WHITE, onscreen_time=0, background=None):
+    # GOTO provided tile
+    x_pos = tile.col if tile is not None else 0
+    y_pos = tile.row if tile is not None else 0
 
-# TODO
-def animate_background_text(message, background, size, x_pos, y_pos, color=WHITE, onscreen_time=0):
+    # ADD offset to coords
+    x_offset, y_offset = offset if offset is not None else (0, 0)
+    x_pos, y_pos = x_pos + x_offset, y_pos + y_offset
+    
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
     opacity = 0
@@ -117,24 +123,51 @@ def animate_background_text(message, background, size, x_pos, y_pos, color=WHITE
     while opacity != 250:
         draw_grid()
         draw_entities(hard=False)
-        _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
-        _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
+        if not background is None:
+            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity)
+        _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity)
         pygame.display.flip()
-        opacity = opacity + 2
+        opacity = opacity + 1
 
     time.sleep(onscreen_time)
 
     while opacity != 0:
         draw_grid()
         draw_entities(hard=False)
-        _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
+        if not background is None:
+            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         pygame.display.flip()
-        opacity = opacity - 2
+        opacity = opacity - 1
 
     total_refresh_drawing()
 
-    return 0
+def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time=0, background=None):
+    message_font = pygame.font.Font('freesansbold.ttf', size)
+    message_text = message_font.render(str(message), True, color)
+    opacity = 0
+
+    while opacity != 250:
+        draw_grid()
+        draw_entities(hard=False)
+        if not background is None:
+            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
+        _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
+        pygame.display.flip()
+        opacity = opacity + 1
+
+    time.sleep(onscreen_time)
+
+    while opacity != 0:
+        draw_grid()
+        draw_entities(hard=False)
+        if not background is None:
+            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
+        _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
+        pygame.display.flip()
+        opacity = opacity - 1
+
+    total_refresh_drawing()
 
 
 def animate_entity_movement(entity, prev_tile, player=None):
