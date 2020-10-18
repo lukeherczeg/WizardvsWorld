@@ -18,24 +18,27 @@ class Button:
         self.__button_text = button_font.render(text, True, WHITE)
         self.__button_rect = self.__button_text.get_rect()
         self.__button_rect.center = (pos_x + (width // 2), (pos_y + (height // 2)))
+        self.__selected = False
 
     def update(self):
-        mouse = pygame.mouse.get_pos()
-        is_pressed = pygame.mouse.get_pressed()
-
         # Button is being hovered
-        if self.__pos_x + self.__width > mouse[0] > self.__pos_x and self.__pos_y + self.__height > mouse[
-            1] > self.__pos_y:
+        if self.__selected:
             pygame.draw.rect(SCREEN, self.__color_active, (self.__pos_x, self.__pos_y, self.__width, self.__height))
-
-            # Check for clicks
-            if is_pressed[0] and self.__on_click is not None:
-                self.__on_click()
         # Button isn't hovered
         else:
             pygame.draw.rect(SCREEN, self.__color_inactive, (self.__pos_x, self.__pos_y, self.__width, self.__height))
 
         SCREEN.blit(self.__button_text, self.__button_rect)
+
+    def on_click(self):
+        if self.__selected and self.__on_click is not None:
+            self.__on_click()
+
+    def select(self):
+        self.__selected = True
+
+    def unselect(self):
+        self.__selected = False
 
 
 class MessageBox:

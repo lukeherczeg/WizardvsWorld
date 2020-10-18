@@ -16,6 +16,9 @@ class StartScreen(Phase):
         self.__buttons.append(Button(WINDOW_WIDTH // 4 - 60, 7 * WINDOW_HEIGHT // 8, 100, 50, 'Start', BRIGHT_RED, RED, self.complete)) #TODO: CALL START GAME FUNCTION IN GAME.PY
         self.__buttons.append(Button(3 * WINDOW_WIDTH // 4, 7 * WINDOW_HEIGHT // 8, 100, 50, 'Quit', BRIGHT_RED, RED, quit_game))
 
+        # Button selected with Arrow Keys
+        self.__selection = 0
+
         # Completion
         self.__completed = None
 
@@ -34,6 +37,24 @@ class StartScreen(Phase):
             button.update()
 
         pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                # Select Left
+                if event.key == pygame.K_LEFT and self.__selection > 0:
+                    self.__buttons[self.__selection].unselect()
+                    self.__selection -= 1
+                    self.__buttons[self.__selection].select()
+                # Select Right
+                elif event.key == pygame.K_RIGHT and self.__selection < len(self.__buttons) - 1:
+                    self.__buttons[self.__selection].unselect()
+                    self.__selection += 1
+                    self.__buttons[self.__selection].select()
+                # Confirm Selection
+                elif event.key == pygame.K_RETURN:
+                    self.__buttons[self.__selection].on_click()
+            elif event.type == pygame.QUIT:
+                quit_game()
 
         if self.__completed:
             return True
