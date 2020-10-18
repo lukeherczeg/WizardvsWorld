@@ -34,7 +34,7 @@ def calculate_damage(attacker, victim):
     """ Attack damage is calculated by picking a random number between [a little
         less than one's attack power] and [a little more than one's attack power]. """
 
-    attack_damage = (ceil(randrange(attacker.attack - randint(2, 5), attacker.attack + randint(2, 5))))
+    attack_damage = (ceil(randrange(attacker.attack - randint(1, 3), attacker.attack + randint(1, 3))))
     chance = randint(0, 100)
     if chance <= attacker.critical_chance:
         critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
