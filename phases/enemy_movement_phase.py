@@ -78,7 +78,7 @@ class EnemyAIMovement(Phase):
 
         enemy.currentTile.occupied = False
         enemy.currentTile = new_tile
-        animate_entity_movement(enemy, init_tile)
+        animate_entity_movement(enemy, init_tile, self.Player)
         enemy.currentTile.occupied = True
         time.sleep(0.5)
 

@@ -164,7 +164,7 @@ class Grid:
         return list(dict.fromkeys(tile_list))
 
     # Greedy search for a path to a tile
-    def path_to(self, start_tile, end_tile):
+    def path_to(self, start_tile, end_tile, player=None):
         to_visit = [start_tile]
         visited = {start_tile: None}  # Tile maps to its parent tile
 
@@ -183,10 +183,16 @@ class Grid:
             # get_movement will also return the current tile, so we remove it from edges.
             edges = self.get_movement(current.row, current.col, 1)
             edges.remove(current)
+
+            # We seek edges that are standable and non-occupied
+            # Then we check if player has been passed to this function,
+            # and if it has, that means this is an enemy, which must avoid
+            # the player's current tile.
             for edge in edges:
                 if edge.standable and not edge.occupied and edge not in visited:
-                    visited[edge] = current
-                    to_visit.append(edge)
+                    if player is None or edge is not player.currentTile:
+                        visited[edge] = current
+                        to_visit.append(edge)
 
     def print_map_data(self):
         # Standable map

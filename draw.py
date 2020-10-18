@@ -97,6 +97,7 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     SCREEN.blit(message_text, message_rect)
     pygame.display.flip()
 
+
 def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
     # Draw text
     message_font = pygame.font.Font('freesansbold.ttf', size)
@@ -112,8 +113,11 @@ def animate_text(message, size, tile=None, offset=None, color=WHITE, time=0):
     return 0
 
 
-def animate_entity_movement(entity, prev_tile):
-    tile_list = GRID.path_to(prev_tile, entity.get_position())
+def animate_entity_movement(entity, prev_tile, player=None):
+    if isinstance(entity, Player):
+        tile_list = GRID.path_to(prev_tile, entity.get_position())
+    elif player is not None:
+        tile_list = GRID.path_to(prev_tile, entity.get_position(), player)
 
     for i in range(len(tile_list) - 1):
         old_pos = (tile_list[i].col * BLOCK_SIZE, tile_list[i].row * BLOCK_SIZE)
