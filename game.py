@@ -14,7 +14,7 @@ def main():
     pygame.init()
 
     pygame.display.set_caption('Wizard vs. World ALPHA Build v 0.1')
-    pygame.display.set_icon(WIZ_PNG)
+    pygame.display.set_icon(WIZ_LARGE_PNG)
 
     player = Player()
     player.currentTile = GRID.game_map[7][0]

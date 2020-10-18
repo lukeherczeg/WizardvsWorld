@@ -85,4 +85,5 @@ FIREBALL_GIF = [
 LOGO_PNG = get_texture('logo.png', TextureType.MISC)
 BACKGROUND_PNG = get_texture('background.png', TextureType.MISC)
 BACKGROUND_SMALL_PNG = get_texture('backgroundSMALL.png', TextureType.MISC)
+WIZ_LARGE_PNG = get_texture('wizLARGE.png', TextureType.MISC)
 
