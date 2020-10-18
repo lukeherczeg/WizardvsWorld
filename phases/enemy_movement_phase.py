@@ -47,7 +47,7 @@ class EnemyAIMovement(Phase):
         # We remove every tile that is not closer to the player.
         closer_movable_tiles = movable_tiles.copy()
         for tile in movable_tiles:
-            if tile is self.player_position or not self.gets_closer(enemy, tile):
+            if not self.gets_closer(enemy, tile):  # tile is self.player_position or
                 closer_movable_tiles.remove(tile)
 
         movable_tiles = closer_movable_tiles
@@ -55,9 +55,6 @@ class EnemyAIMovement(Phase):
         # If we are right next to the player, there are no tiles closer; so stay there!
         if len(movable_tiles) == 0:
             return
-
-        draw_tinted_tiles(movable_tiles, enemy, TileTint.BLUE)
-        time.sleep(.5)
 
         # Otherwise, we pick one of the closer tiles at random.
         init_tile = enemy.get_position()
@@ -85,6 +82,15 @@ class EnemyAIMovement(Phase):
                     new_tile = tile
                     break
 
+        # Drawing enemy movement decision
+        draw_tinted_tiles(movable_tiles, enemy, TileTint.BLUE)
+        draw_selected_tile(enemy.currentTile)
+        time.sleep(.2)
+        draw_tile(enemy.currentTile)
+        draw_entities()
+        draw_selected_tile(new_tile)
+        time.sleep(.2)
+
         # Old determination of tiles to move to:
         # cannot_move = True
         # while cannot_move:
@@ -96,7 +102,7 @@ class EnemyAIMovement(Phase):
         enemy.currentTile = new_tile
         animate_entity_movement(enemy, init_tile, self.Player)
         enemy.currentTile.occupied = True
-        time.sleep(0.5)
+        time.sleep(0.3)
 
     def enter(self):
         self.Enemies = ENTITIES[1:]
@@ -105,6 +111,7 @@ class EnemyAIMovement(Phase):
         draw_text_abs('Enemy Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, RED)
         pygame.time.delay(1200)
         self.player_position = ENTITIES[0].currentTile
+        total_refresh_drawing()
 
     def update(self):
         print('Entering Enemy Movement Computation / Animation...')
