@@ -165,13 +165,6 @@ class PlayerMovementPhase(Phase):
 
         # TUTORIAL
         if self.is_tutorial:
-
-            upgrade_menu = SelectionMenu('Choose an Upgrade', [
-                                        ('Health', 'Increase your health by 15', None),
-                                        ('Attack', 'Increase your Attack by 25', None),
-                                        ('Movement', 'Increase your Movement by 1', None)])
-            upgrade_menu.draw_menu()
-
             MessageBox('You can use the arrow keys to move the cursor. ENTER will let you select a character. '
                        + 'You are the lone wizard in blue. Please select yourself!')
             total_refresh_drawing()
@@ -195,6 +188,12 @@ class PlayerMovementPhase(Phase):
 
     def exit(self):
         if self.level_complete:
+            upgrade_menu = SelectionMenu('Choose an Upgrade', [
+                ('Health', 'Increase your health by 15', print),
+                ('Attack', 'Increase your Attack by 25', print),
+                ('Movement', 'Increase your Movement by 1', print)])
+            upgrade_menu.draw_menu()
+            upgrade_menu.await_response()
             draw_text("You WIN!!!", 50)
         self.movable_tiles = None
         self.is_tutorial = False
