@@ -84,7 +84,8 @@ class EnemyAIMovement(Phase):
 
     def enter(self):
         self.Enemies = ENTITIES[1:]
-        draw_text_abs('Enemy Movement', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+        SCREEN.blit(BACKGROUND_SMALL_PNG, (WINDOW_WIDTH // 4, WINDOW_HEIGHT // 4))
+        draw_text_abs('Enemy Phase', 65, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, RED)
         pygame.time.delay(2000)
         self.player_position = ENTITIES[0].currentTile
 

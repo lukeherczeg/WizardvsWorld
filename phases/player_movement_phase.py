@@ -159,7 +159,8 @@ class PlayerMovementPhase(Phase):
         self.currentTile = self.player.currentTile
         total_refresh_drawing()
 
-        draw_text_abs('Player Movement', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
+        SCREEN.blit(BACKGROUND_SMALL_PNG, (WINDOW_WIDTH // 4, WINDOW_HEIGHT // 4))
+        draw_text_abs('Player Phase', 65, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE)
         pygame.time.delay(2000)
         total_refresh_drawing()
 
