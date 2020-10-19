@@ -14,11 +14,14 @@ class Grid:
         self.level = level
         self.map_layout = self.update_layout()
         # INDEX WITH [ROW][COL]
-        self._game_map = [[self.__generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
+        self._game_map = [[self.generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
 
     @property
     def game_map(self):
         return self._game_map
+
+    def set_game_map(self, map1):
+        self._game_map = map1
 
     def is_valid_tile_in_list(self, row, col, tile_list):
         if self.is_valid_tile(row, col) and self.game_map[row][col] in tile_list:
@@ -227,7 +230,7 @@ class Grid:
                 print('(' + str(col.row) + ',' + str(col.col) + ')' + ('O' if col.standable else 'X'), end=' ')
             print()
 
-    def __generate_tile(self, col, row):
+    def generate_tile(self, col, row):
         standable = self.__generate_true(self.STANDABLE_TILE_DENSITY_ODDS)
         # we need to calculate the index for the tile value once the string is read from file
         index = col + (row * 25)
@@ -262,6 +265,7 @@ class Grid:
     # spawns enemies, needs to be called somewhere for new a level so that new enemies are spawned
     def generate_enemies(self, level):
         # spawn 30% knight 70% archer
+
         layout = self.map_layout
         index = 0
         while index < len(layout):

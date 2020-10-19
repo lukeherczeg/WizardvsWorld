@@ -95,15 +95,20 @@ class PlayerAttackPhase(Phase):
     def enter(self):
         #draw_text_abs('Player Attack', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
         #pygame.time.delay(2000)
-        total_refresh_drawing() # Attack radius can overwrite text
-        self.attack_selection()
+        if not self.data_from_movement.level_complete:
+            total_refresh_drawing() # Attack radius can overwrite text
+            self.attack_selection()
+
 
     def update(self):
         print('Entering Player Attack Computation...')
-        for enemy in ENTITIES:
-            if enemy.currentTile is self.enemyTile:
-                self.attack_enemy_procedure(enemy, self.data_from_movement.enemy_tiles)
-                break
+        if not self.data_from_movement.level_complete:
+            for enemy in ENTITIES:
+                if enemy.currentTile is self.enemyTile:
+                    self.attack_enemy_procedure(enemy, self.data_from_movement.enemy_tiles)
+                    break
+        else:
+            self.data_from_movement.level_complete = False
 
     def exit(self):
         self.data_from_movement.occupied_index = 0
