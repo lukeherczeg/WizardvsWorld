@@ -377,9 +377,8 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     # create number rect
     number_font = pygame.font.Font('freesansbold.ttf', 14 if crit else 18)
     number_font.set_bold(True)
-    if not crit:
-        number_font.set_italic(True)
-    number_text = number_font.render('CRIT ' + str(damage_diff), True, RED)
+    number_font.set_italic(True)
+    number_text = number_font.render('CRIT ' + str(damage_diff) if crit else str(damage_diff), True, RED)
     number_rect = number_text.get_rect()
     number_y_var = victim.get_position().row * BLOCK_SIZE
     number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
