@@ -16,6 +16,7 @@ class EnemyAICombatPhase(Phase):
         self.grid = GRID
         self.is_tutorial = True
         self.attack_tutorial = True
+        self.counter_tutorial = True
 
     def attack_player_procedure(self, enemy):
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
@@ -37,6 +38,10 @@ class EnemyAICombatPhase(Phase):
             elif self.Player.health > 0:
                 self.Player.damaged = False
                 attacker = CounterAttack(self.Player, enemy, enemy_tiles)
+                if self.counter_tutorial:
+                    MessageBox('After being attacked, there is a chance that a character will perform a counterattack!')
+                    total_refresh_drawing()
+                    self.counter_tutorial = False
                 attacker.attempt_counter_attack()
 
             return True
