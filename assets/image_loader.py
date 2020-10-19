@@ -9,6 +9,7 @@ RED = (200, 0, 0)
 BRIGHT_RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 BRIGHT_GREEN = (0, 255, 0)
+GREEN = (34, 139, 34)
 WINDOW_HEIGHT = 600  # 675
 WINDOW_WIDTH = 1000  # 1125
 # Set the size of the grid block
@@ -22,7 +23,7 @@ GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
 LEVEL_WIN_TILE = GRID.game_map[7][24]
 
 MOVEMENT_SPEED = 2
-move_wiggle = [-1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1]
+move_wiggle = [-1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0]
 # move_wiggle = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
 
 main_directory = os.path.dirname('WizardvsWorld')

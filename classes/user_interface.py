@@ -1,4 +1,4 @@
-from assets.image_loader import pygame, SCREEN, BRIGHT_RED, RED, WHITE, WINDOW_HEIGHT, WINDOW_WIDTH
+from assets.image_loader import *
 from draw import quit_game, draw_text_abs, total_refresh_drawing
 
 
@@ -49,7 +49,7 @@ class MessageBox:
         self.__font = pygame.font.Font('freesansbold.ttf', 24)
         self.__lines = self.split(message, 80)  # 80 Characters Max in a line
         self.__lines.append('Press ENTER to continue...')
-        self.__rendered_lines = [self.__font.render(line, True, WHITE) for line in self.__lines]
+        self.__rendered_lines = [self.__font.render(line, True, BLACK) for line in self.__lines]
         self.draw_message_box()
         self.confirm()
 
@@ -58,9 +58,9 @@ class MessageBox:
         length = len(self.__rendered_lines)
 
         # Build the Dialogue Box
-        pygame.draw.rect(SCREEN, RED, (0, 2 * WINDOW_HEIGHT // 3, WINDOW_WIDTH, WINDOW_HEIGHT))
+        pygame.draw.rect(SCREEN, GREEN, (0, 2 * WINDOW_HEIGHT // 3, WINDOW_WIDTH, WINDOW_HEIGHT))
         text_lines = [
-            pygame.draw.rect(SCREEN, RED, (20, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 20), WINDOW_WIDTH - 20, 20))
+            pygame.draw.rect(SCREEN, GREEN, (20, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 35), WINDOW_WIDTH - 20, 20))
             for offset in range(length)]
 
         # Render to the screen

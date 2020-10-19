@@ -107,6 +107,7 @@ def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
     SCREEN.blit(message_text, message_rect)
     pygame.display.flip()
 
+
 def animate_text(message, size, tile=None, offset=None, color=WHITE, onscreen_time=0, background=None):
     # GOTO provided tile
     x_pos = tile.col if tile is not None else 0
@@ -141,6 +142,7 @@ def animate_text(message, size, tile=None, offset=None, color=WHITE, onscreen_ti
         opacity = opacity - 1
 
     total_refresh_drawing()
+
 
 def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time=0,
                      background=None, background_opacity_decrease=0):
@@ -375,17 +377,28 @@ def _animate_archer_attack(coords):
 def _animate_damage_number(victim, victim_old_hp, crit):
     damage_diff = victim_old_hp - victim.health
 
+    if crit:
+        crit_font = pygame.font.Font('freesansbold.ttf', 10)
+        crit_font.set_bold(True)
+        crit_font.set_italic(True)
+        crit_text = crit_font.render('CRIT!', True, BRIGHT_RED)
+        crit_rect = crit_text.get_rect()
+        crit_y_var = victim.get_position().row * BLOCK_SIZE + 4
+        crit_x_fixed = victim.get_position().col * BLOCK_SIZE + 30
+        crit_rect = crit_rect.move([crit_x_fixed, crit_y_var])
+
     # create number rect
-    number_font = pygame.font.Font('freesansbold.ttf', 14 if crit else 18)
+    number_font = pygame.font.Font('freesansbold.ttf', 17 if crit else 16)
     number_font.set_bold(True)
-    number_font.set_italic(True)
-    number_text = number_font.render('CRIT ' + str(damage_diff) if crit else str(damage_diff), True, RED)
+    number_font.set_italic(True) if crit else number_font.set_italic(False)
+    number_text = number_font.render(str(damage_diff), True, BRIGHT_RED)
     number_rect = number_text.get_rect()
-    number_y_var = victim.get_position().row * BLOCK_SIZE
+    number_y_var = (victim.get_position().row * BLOCK_SIZE + 12) if crit else \
+        (victim.get_position().row * BLOCK_SIZE + 8)
     number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
     number_rect = number_rect.move([number_x_fixed, number_y_var])
 
-    # create victime rect
+    # create victim rect
     victim_rect = _get_entity_img(victim).get_rect()
     victim_rect = victim_rect.move([victim.get_position().col * BLOCK_SIZE, victim.get_position().row * BLOCK_SIZE])
 
@@ -393,10 +406,17 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     y_move_amount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]
     y_move_index = 0
     wiggle_index = 0
-    for i in range(160):
+    # They wiggle for more time if they get crit
+    wiggle_length = (300 if crit else 160)
+    for i in range(wiggle_length):
         # animate
         number_rect = number_rect.move([0, y_move_amount[y_move_index]])
-        victim_rect = victim_rect.move([move_wiggle[wiggle_index] * 4 if crit else move_wiggle[wiggle_index], 0])
+
+        if crit:
+            crit_rect = crit_rect.move([0, y_move_amount[y_move_index]])
+            victim_rect = victim_rect.move([move_wiggle[wiggle_index] * 1.9, 0])
+        else:
+            victim_rect = victim_rect.move([move_wiggle[wiggle_index], 0])
 
         # prepare next frame
         y_move_index = 0 if y_move_index == len(y_move_amount) - 1 else y_move_index + 1
@@ -405,8 +425,10 @@ def _animate_damage_number(victim, victim_old_hp, crit):
         # draw
         draw_grid()
         draw_entities(hard=False, ignorables=[victim])
-        SCREEN.blit(number_text, number_rect)
         SCREEN.blit(_get_entity_img(victim), victim_rect)
+        if crit:
+            SCREEN.blit(crit_text, crit_rect)
+        SCREEN.blit(number_text, number_rect)
         pygame.display.flip()
 
     total_refresh_drawing()
@@ -454,7 +476,7 @@ def _blit_alpha(target, source, location, opacity, centered=False):
     temp.blit(target, (-x, -y))
     temp.blit(source, (0, 0))
     temp.set_alpha(opacity)
-    target.blit(temp, (x,y))
+    target.blit(temp, (x, y))
 
 
 def _get_tile_img(tile, tint=None):

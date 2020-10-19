@@ -39,7 +39,7 @@ class EnemyAICombatPhase(Phase):
                 self.Player.damaged = False
                 attacker = CounterAttack(self.Player, enemy, enemy_tiles)
                 if self.counter_tutorial:
-                    MessageBox('After being attacked, there is a chance that a character will perform a counterattack!')
+                    MessageBox('After being attacked, any unit within range will perform a counterattack!')
                     total_refresh_drawing()
                     self.counter_tutorial = False
                 attacker.attempt_counter_attack()
