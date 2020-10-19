@@ -154,7 +154,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
             _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         pygame.display.flip()
-        opacity = opacity + 1
+        opacity = opacity + 2
 
     time.sleep(onscreen_time)
 
@@ -165,7 +165,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
             _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         pygame.display.flip()
-        opacity = opacity - 1
+        opacity = opacity - 2
 
     total_refresh_drawing()
 
