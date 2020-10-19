@@ -208,7 +208,7 @@ class PlayerMovementPhase(Phase):
             GRID.set_game_map(new_map)
             GRID.generate_enemies(self.player.level)
 
-            # pass to animation (prev_map, prev_enemies, GRID)
+            animate_map_transition(prev_map, prev_enemies, self.player)
 
             self.player.currentTile = GRID.game_map[10][0]
         self.movable_tiles = None
