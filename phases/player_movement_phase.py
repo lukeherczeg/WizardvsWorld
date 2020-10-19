@@ -201,7 +201,9 @@ class PlayerMovementPhase(Phase):
 
             if len(ENTITIES) > 1:
                 prev_enemies = ENTITIES[1:]
-                ENTITIES.remove(prev_enemies)
+                wiz = ENTITIES[0]
+                ENTITIES.clear()
+                ENTITIES.append(wiz)
 
             GRID.update_layout()
             new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
