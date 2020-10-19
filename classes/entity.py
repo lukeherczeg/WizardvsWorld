@@ -44,6 +44,18 @@ class Player(Entity):
         self.attack += 5
         self.defense += 1
 
+    def boost_attack(self):
+        """End of level boost for attack"""
+        self.attack += 5
+
+    def boost_health(self):
+        """End of level boost for health"""
+        self.health += 15
+
+    def boost_movement(self):
+        """End of level boost for movement"""
+        self.max_movement += 1
+
 
 class Enemy(Entity):
     def __init__(self):

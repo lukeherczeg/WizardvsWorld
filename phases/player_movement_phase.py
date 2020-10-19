@@ -2,7 +2,7 @@ from draw import *
 from classes.phase import Phase
 from classes.entity import Player, Boss
 from classes.tile import Tile
-from classes.user_interface import MessageBox
+from classes.user_interface import MessageBox, SelectionMenu
 
 
 def select(row, col, enemy=None):
@@ -160,8 +160,7 @@ class PlayerMovementPhase(Phase):
         total_refresh_drawing()
 
         background = pygame.transform.scale(BACKGROUND_PNG, (750, 300))
-        animate_text_abs('Player Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 3, background)
-        pygame.time.delay(1200)
+        animate_text_abs('Player Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 1, background)
         total_refresh_drawing()
 
         # TUTORIAL
@@ -189,6 +188,12 @@ class PlayerMovementPhase(Phase):
 
     def exit(self):
         if self.level_complete:
+            upgrade_menu = SelectionMenu('Choose an Upgrade', [
+                ('Health', 'Increase your health by 15', self.player.boost_health),
+                ('Attack', 'Increase your Attack by 25', self.player.boost_attack),
+                ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
+            upgrade_menu.draw_menu()
+            upgrade_menu.await_response()
             draw_text("You WIN!!!", 50)
         self.movable_tiles = None
         self.is_tutorial = False
