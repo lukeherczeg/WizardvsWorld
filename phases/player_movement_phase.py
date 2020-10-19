@@ -160,12 +160,12 @@ class PlayerMovementPhase(Phase):
         total_refresh_drawing()
 
         background = pygame.transform.scale(BACKGROUND_PNG, (750, 300))
-        animate_text_abs('Player Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 1, background)
+        animate_text_abs('Player Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 1, background, 50)
         total_refresh_drawing()
 
         # TUTORIAL
         if self.is_tutorial:
-            MessageBox('You can use the arrow keys to move the cursor. ENTER will let you select a character. '
+            MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
                        + 'You are the lone wizard in blue. Please select yourself!')
             total_refresh_drawing()
 

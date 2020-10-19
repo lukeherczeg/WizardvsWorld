@@ -142,7 +142,8 @@ def animate_text(message, size, tile=None, offset=None, color=WHITE, onscreen_ti
 
     total_refresh_drawing()
 
-def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time=0, background=None):
+def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time=0,
+                     background=None, background_opacity_decrease=0):
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
     opacity = 0
@@ -151,7 +152,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         draw_grid()
         draw_entities(hard=False)
         if not background is None:
-            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
+            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity - background_opacity_decrease, True)
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         pygame.display.flip()
         opacity = opacity + 2
@@ -162,7 +163,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         draw_grid()
         draw_entities(hard=False)
         if not background is None:
-            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
+            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity - background_opacity_decrease, True)
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         pygame.display.flip()
         opacity = opacity - 2
