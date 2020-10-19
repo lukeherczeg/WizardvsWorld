@@ -18,6 +18,7 @@ class StartScreen(Phase):
 
         # Button selected with Arrow Keys
         self.__selection = 0
+        self.__buttons[0].select()
 
         # Completion
         self.__completed = None
