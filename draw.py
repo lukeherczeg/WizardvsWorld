@@ -115,7 +115,7 @@ def animate_text(message, size, tile=None, offset=None, color=WHITE, onscreen_ti
     # ADD offset to coords
     x_offset, y_offset = offset if offset is not None else (0, 0)
     x_pos, y_pos = x_pos + x_offset, y_pos + y_offset
-    
+
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
     opacity = 0
@@ -266,8 +266,8 @@ def animate_attack(attacker, victim):
             _animate_archer_attack(coords)
 
 
-def animate_damage(victim, victim_old_hp):
-    _animate_damage_number(victim, victim_old_hp)
+def animate_damage(victim, victim_old_hp, crit=False):
+    _animate_damage_number(victim, victim_old_hp, crit)
 
     time.sleep(0.2)
 
@@ -371,14 +371,15 @@ def _animate_archer_attack(coords):
     total_refresh_drawing()
 
 
-def _animate_damage_number(victim, victim_old_hp):
+def _animate_damage_number(victim, victim_old_hp, crit):
     damage_diff = victim_old_hp - victim.health
 
     # create number rect
-    number_font = pygame.font.Font('freesansbold.ttf', 14)
+    number_font = pygame.font.Font('freesansbold.ttf', 14 if crit else 18)
     number_font.set_bold(True)
-    number_font.set_italic(True)
-    number_text = number_font.render(str(damage_diff), True, RED)
+    if not crit:
+        number_font.set_italic(True)
+    number_text = number_font.render('CRIT ' + str(damage_diff), True, RED)
     number_rect = number_text.get_rect()
     number_y_var = victim.get_position().row * BLOCK_SIZE
     number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
@@ -389,13 +390,13 @@ def _animate_damage_number(victim, victim_old_hp):
     victim_rect = victim_rect.move([victim.get_position().col * BLOCK_SIZE, victim.get_position().row * BLOCK_SIZE])
 
     # animation arrays and indexes
-    y_move_amount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]
+    y_move_amount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]
     y_move_index = 0
     wiggle_index = 0
-    for i in range(120):
+    for i in range(160):
         # animate
         number_rect = number_rect.move([0, y_move_amount[y_move_index]])
-        victim_rect = victim_rect.move([move_wiggle[wiggle_index], 0])
+        victim_rect = victim_rect.move([move_wiggle[wiggle_index] * 4 if crit else move_wiggle[wiggle_index], 0])
 
         # prepare next frame
         y_move_index = 0 if y_move_index == len(y_move_amount) - 1 else y_move_index + 1
