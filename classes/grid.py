@@ -249,22 +249,22 @@ class Grid:
 
         layout = self.map_layout
         index = 0
-        # while index < len(layout):
-        #     if layout[index] == 'r' or layout[index] == 'd' or layout[index] == 'f' or layout[index] == 'g':
-        #         # need to translate index into a set of coordinates
-        #         x = index % self.GRID_WIDTH
-        #         y = index // self.GRID_WIDTH
-        #         if self.__generate_true(.7):  # create archer
-        #             archer = Archer(level)
-        #             archer.currentTile = self.game_map[y][x]
-        #             archer.currentTile.occupied = True
-        #             ENTITIES.append(archer)
-        #         else:  # create knight
-        #             knight = Knight(level)
-        #             knight.currentTile = self.game_map[y][x]
-        #             knight.currentTile.occupied = True
-        #             ENTITIES.append(knight)
-        #     index += 1
+        while index < len(layout):
+            if layout[index] == 'r' or layout[index] == 'd' or layout[index] == 'f' or layout[index] == 'g':
+                # need to translate index into a set of coordinates
+                x = index % self.GRID_WIDTH
+                y = index // self.GRID_WIDTH
+                if self.__generate_true(.7):  # create archer
+                    archer = Archer(level)
+                    archer.currentTile = self.game_map[y][x]
+                    archer.currentTile.occupied = True
+                    ENTITIES.append(archer)
+                else:  # create knight
+                    knight = Knight(level)
+                    knight.currentTile = self.game_map[y][x]
+                    knight.currentTile.occupied = True
+                    ENTITIES.append(knight)
+            index += 1
 
         # Luke testing
         boss = GreatKnight(level)
