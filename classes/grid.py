@@ -221,7 +221,7 @@ class Grid:
         #if the value is 0 (most tiles) randomly generate that tile
         #letters signify that an enemy is to be spawned on the texture type initial "f" or "d" or "g" etc.
         #r means it is a random texture type
-        if layout[index] == '0' or layout[index] == 'r':
+        if layout[index] == '0' or layout[index] == 'r' or layout[index] == 'K' or layout[index] == 'R':
             # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
             if self.__generate_true(.15):
                 return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
@@ -255,11 +255,22 @@ class Grid:
         layout = self.map_layout
         index = 0
         while index < len(layout):
-            if layout[index] == 'r' or layout[index] == 'd' or layout[index] == 'f' or layout[index] == 'g':
+            if layout[index] == 'r' or layout[index] == 'd' or layout[index] == 'f' or layout[index] == 'g' or \
+                    layout[index] == 'K' or layout[index] == 'R':
                 # need to translate index into a set of coordinates
                 x = index % self.GRID_WIDTH
                 y = index // self.GRID_WIDTH
-                if self.__generate_true(.7):  # create archer
+                if layout[index] == 'K':
+                    knight = Knight(level)
+                    knight.currentTile = self.game_map[y][x]
+                    knight.currentTile.occupied = True
+                    ENTITIES.append(knight)
+                elif layout[index] == 'R':
+                    archer = Archer(level)
+                    archer.currentTile = self.game_map[y][x]
+                    archer.currentTile.occupied = True
+                    ENTITIES.append(archer)
+                elif self.__generate_true(.7):  # create archer
                     archer = Archer(level)
                     archer.currentTile = self.game_map[y][x]
                     archer.currentTile.occupied = True
@@ -281,6 +292,8 @@ class Grid:
     # function used in init to get path to file names for map layouts
     def update_layout(self):
         self.level += 1
+        if self.level > 4:
+            self.level = 0
         lev = str(self.level)
         # get the path of the map
         main_directory = os.path.dirname('WizardvsWorld')
