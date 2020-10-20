@@ -133,11 +133,17 @@ class SelectionMenu:
         while True:
             update = False
             for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN and self.selected < len(self.options):
-                    self.selected += 1
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+                    if self.selected == len(self.option) - 1:
+                        self.selected = 0
+                    else:
+                        self.selected += 1
                     update = True
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP and self.selected > 0:
-                    self.selected -= 1
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+                    if self.selected == 0:
+                        self.selected = len(self.option) - 1
+                    else:
+                        self.selected -= 1
                     update = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     self.options[self.selected][2]() # Call the on_click function of the option
