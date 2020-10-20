@@ -79,5 +79,6 @@ fabric.properties
 
 # PyPI/twine folders and files
 WizardVsWorld/build/*
+build/*
 dist/*
-wizards_vs_world_logandgsmith.egg-info/*
+WizardVsWorld.egg-info/*
