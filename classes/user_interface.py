@@ -22,8 +22,9 @@ class Button:
 
     def update(self):
         # Button is being hovered
+        # TODO CENTER THE BUTTON HERE
         if self.__selected:
-            pygame.draw.rect(SCREEN, self.__color_active, (self.__pos_x, self.__pos_y, self.__width, self.__height))
+            pygame.draw.rect(SCREEN, self.__color_active, (self.__pos_x, self.__pos_y, self.__width + 5, self.__height + 5))
         # Button isn't hovered
         else:
             pygame.draw.rect(SCREEN, self.__color_inactive, (self.__pos_x, self.__pos_y, self.__width, self.__height))

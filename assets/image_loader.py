@@ -5,7 +5,7 @@ from classes.grid import Grid
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-RED = (200, 0, 0)
+RED = (100, 0, 0)
 BRIGHT_RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 BRIGHT_GREEN = (0, 255, 0)
@@ -38,8 +38,8 @@ def get_texture(path, texture_type):
         return pygame.image.load(os.path.join(asset_path, path)).convert_alpha()
 
 
-def get_block_sized_texture(path, texture_type):
-    return pygame.transform.scale(get_texture(path, texture_type), (BLOCK_SIZE, BLOCK_SIZE))
+def get_block_sized_texture(path, texture_type, block_size=BLOCK_SIZE):
+    return pygame.transform.scale(get_texture(path, texture_type), (block_size, block_size))
 
 
 # load textures
@@ -72,6 +72,7 @@ KNIGHT_PNG = get_block_sized_texture('knight.png', TextureType.ENTITY)
 KNIGHT_ATTACK_PNG = get_block_sized_texture('knightattack.png', TextureType.ENTITY)
 KNIGHT_ATTACKABLE_PNG = get_block_sized_texture('knightattackable.png', TextureType.ENTITY)
 KNIGHT_HURT_PNG = get_block_sized_texture('knighthurt.png', TextureType.ENTITY)
+GREATKNIGHT_PNG = get_block_sized_texture('greatknight.png', TextureType.ENTITY)
 WIZ_PNG = get_block_sized_texture('wiz.png', TextureType.ENTITY)
 WIZ_ATTACK_PNG = get_block_sized_texture('wizattack.png', TextureType.ENTITY)
 WIZ_HURT_PNG = get_block_sized_texture('wizhurt.png', TextureType.ENTITY)

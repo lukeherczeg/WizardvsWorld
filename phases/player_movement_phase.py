@@ -51,9 +51,9 @@ class PlayerMovementPhase(Phase):
         if self.movable_tiles is None and self.enemy_tiles is None:
             if self.grid.is_valid_standable_tile(row, col):
                 draw_tile(self.currentTile)
-                draw_entities()
                 self.currentTile = self.grid.game_map[row][col]
                 select(self.currentTile.row, self.currentTile.col)
+                draw_entities()
 
         elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
             draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
@@ -160,17 +160,17 @@ class PlayerMovementPhase(Phase):
         self.currentTile = self.player.currentTile
         total_refresh_drawing()
 
-        background = pygame.transform.scale(BACKGROUND_PNG, (750, 300))
-        animate_text_abs('Player Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 1, background, 15)
+        background = pygame.transform.scale(BACKGROUND_PNG, (562, 225))
+        animate_text_abs('Player Phase', 75, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 1, background, 15)
         total_refresh_drawing()
 
         # TUTORIAL
         if self.is_tutorial:
-            MessageBox('In order to win defeat the boss inside the castle guarding the exit!')
-            MessageBox('After defeating the boss, the path to the next level will be highlighted.')
+            MessageBox('In order to win, defeat the boss inside the castle guarding the exit!')
+            MessageBox('After defeating the boss, the entrance to the next level will be highlighted.')
             GRID.game_map[7][24].tint = TileTint.ORANGE
             total_refresh_drawing()
-            MessageBox('')
+            MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
             GRID.game_map[7][24].tint = TileTint.NONE
             total_refresh_drawing()
             MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
