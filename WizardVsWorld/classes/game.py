@@ -17,7 +17,7 @@ def main():
     pygame.display.set_icon(WIZ_LARGE_PNG)
 
     player = Player()
-    player.currentTile = GRID.game_map[7][20]
+    player.currentTile = GRID.game_map[7][0]
     ENTITIES.append(player)
     GRID.generate_enemies(0)
 
