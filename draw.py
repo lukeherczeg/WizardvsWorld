@@ -244,7 +244,7 @@ def animate_move(entity, old_pos, new_pos):
 
 
 def animate_attack(attacker, victim):
-    if isinstance(attacker, Knight):
+    if isinstance(attacker, Knight) or isinstance(attacker, GreatKnight):
         _animate_knight_attack()
     else:
         # Initialize start and end points and covert to pixel values
@@ -608,7 +608,12 @@ def _get_entity_img(entity):
             return WIZ_PNG
 
     if isinstance(entity, GreatKnight):
-        return GREATKNIGHT_PNG
+        if entity.attacking:
+            return GREATKNIGHT_ATTACK_PNG
+        elif entity.damaged:
+            return GREATKNIGHT_HURT_PNG
+        else:
+            return GREATKNIGHT_PNG
 
     if isinstance(entity, Knight):
         if entity.attacking:
