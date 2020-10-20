@@ -1,5 +1,5 @@
 import WizardVsWorld.phases.start_screen
-from WizardVsWorld.draw import quit_game
+from WizardVsWorld.classes.draw import quit_game
 
 import pygame
 

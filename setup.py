@@ -12,10 +12,16 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/lukeherczeg/WizardvsWorld",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_namespace_packages(include=['WizardVsWorld', 'WizardVsWorld.*']),
+    package_data={
+        '':['*.png', '*.txt']
+    },
     install_requires=[
-        "pygame"
+        "pygame==1.9.6"
     ],
+    entry_points={
+        'console_scripts':['WizardVsWorld=classes.game:main']
+    },
     classifiers = [
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

@@ -1,5 +1,5 @@
-from const import ENTITIES
-from classes.tile import Tile, TileTexture
+from WizardVsWorld.classes.const import ENTITIES
+from WizardVsWorld.classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
 from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight

@@ -1,7 +1,9 @@
-import wsl
-from WizardVsWorld.const import TextureType
-from WizardVsWorld.draw import pygame, os
+from WizardVsWorld.classes import wsl
+from WizardVsWorld.classes.const import TextureType
+from WizardVsWorld.classes.draw import pygame
 from WizardVsWorld.classes.grid import Grid
+
+import os
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)

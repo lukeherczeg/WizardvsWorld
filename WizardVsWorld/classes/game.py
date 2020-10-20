@@ -1,13 +1,11 @@
-#! /usr/bin/env python3
-
-from WizardVsWorld.draw import *
+from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.fsm import FSM
 import WizardVsWorld.phases.player_movement_phase
 import WizardVsWorld.phases.player_attack_phase
 import WizardVsWorld.phases.enemy_attack_phase
 import WizardVsWorld.phases.enemy_movement_phase
 
-from classes.entity import Player
+from WizardVsWorld.classes.entity import Player
 
 print(f'Grid Width: {GRID.GRID_WIDTH}; Grid Height: {GRID.GRID_HEIGHT}')
 

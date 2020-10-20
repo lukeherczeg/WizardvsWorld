@@ -1,10 +1,10 @@
-import os
 import pygame
 import sys
 import math
 import time
+import os
 from WizardVsWorld.assets.image_loader import *
-from WizardVsWorld.const import TileTexture, TileTint, ENTITIES
+from WizardVsWorld.classes.const import TileTexture, TileTint, ENTITIES
 from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight
 
 

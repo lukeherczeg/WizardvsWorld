@@ -1,7 +1,7 @@
 from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.phase import Phase
 from WizardVsWorld.classes.user_interface import Button
-from WizardVsWorld.draw import quit_game
+from WizardVsWorld.classes.draw import quit_game
 
 class StartScreen(Phase):
     def __init__(self):

@@ -1,5 +1,5 @@
-from WizardVsWorld.const import CRIT_MULTIPLIER
-from WizardVsWorld.draw import *
+from WizardVsWorld.classes.const import CRIT_MULTIPLIER
+from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.tile import Tile
 from WizardVsWorld.classes.entity import Entity, Enemy
 

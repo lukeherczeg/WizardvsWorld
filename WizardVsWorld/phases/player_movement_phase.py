@@ -1,4 +1,4 @@
-from WizardVsWorld.draw import *
+from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.phase import Phase
 from WizardVsWorld.classes.entity import Player, Boss
 from WizardVsWorld.classes.tile import Tile

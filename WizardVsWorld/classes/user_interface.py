@@ -1,5 +1,5 @@
 from WizardVsWorld.assets.image_loader import *
-from WizardVsWorld.draw import quit_game, draw_text_abs, total_refresh_drawing
+from WizardVsWorld.classes.draw import quit_game, draw_text_abs, total_refresh_drawing
 
 
 class Button:

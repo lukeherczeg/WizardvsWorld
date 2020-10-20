@@ -1,6 +1,6 @@
 from WizardVsWorld.classes.tile import Tile
-from WizardVsWorld.classes.entity import Enemy, Entity
-from WizardVsWorld.draw import *
+from WizardVsWorld.classes.entity import Entity
+from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.phase import Phase
 import random
 import math

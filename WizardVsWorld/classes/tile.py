@@ -1,4 +1,4 @@
-from WizardVsWorld.const import TileTexture, TileTint
+from WizardVsWorld.classes.const import TileTexture, TileTint
 
 
 class Tile:
