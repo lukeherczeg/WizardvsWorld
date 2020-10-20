@@ -49,7 +49,7 @@ class MessageBox:
         self.__font = pygame.font.Font('freesansbold.ttf', 24)
         self.__lines = self.split(message, 80)  # 80 Characters Max in a line
         self.__lines.append('Press ENTER to continue...')
-        self.__rendered_lines = [self.__font.render(line, True, BLACK) for line in self.__lines]
+        self.__rendered_lines = [self.__font.render(line, True, WHITE) for line in self.__lines]
         self.draw_message_box()
         self.confirm()
 

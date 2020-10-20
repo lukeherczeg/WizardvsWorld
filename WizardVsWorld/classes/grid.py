@@ -41,6 +41,19 @@ class Grid:
         else:
             return False
 
+    def handle_tile(self, row, col, movable_tiles, adjacent_movable_tiles,
+                    non_standable_tiles, valid_edge_tiles, valid_tiles):
+        if self.is_valid_tile(row, col):
+            new_tile = self._game_map[row][col]
+            if new_tile in movable_tiles and not new_tile.occupied:
+                adjacent_movable_tiles += 1
+            elif not new_tile.standable or new_tile.occupied:
+                non_standable_tiles.append(new_tile)
+            else:
+                valid_edge_tiles.append(new_tile)
+        else:
+            valid_tiles -= 1
+
     def get_movement_border(self, movable_tiles, attack_range):
         tile_list = []
         non_standable_tiles = []
@@ -56,58 +69,26 @@ class Grid:
             row = tile.row + 1
             col = tile.col
 
-            if self.is_valid_tile(row, col):
-                new_tile = self._game_map[row][col]
-                if new_tile in movable_tiles and not new_tile.occupied:
-                    adjacent_movable_tiles += 1
-                elif not new_tile.standable or new_tile.occupied:
-                    non_standable_tiles.append(new_tile)
-                else:
-                    valid_edge_tiles.append(new_tile)
-            else:
-                valid_tiles -= 1
+            self.handle_tile(row, col, movable_tiles, adjacent_movable_tiles,
+                             non_standable_tiles, valid_edge_tiles, valid_tiles)
 
             row = tile.row - 1
             col = tile.col
 
-            if self.is_valid_tile(row, col):
-                new_tile = self._game_map[row][col]
-                if new_tile in movable_tiles and not new_tile.occupied:
-                    adjacent_movable_tiles += 1
-                elif not new_tile.standable or new_tile.occupied:
-                    non_standable_tiles.append(new_tile)
-                else:
-                    valid_edge_tiles.append(new_tile)
-            else:
-                valid_tiles -= 1
+            self.handle_tile(row, col, movable_tiles, adjacent_movable_tiles,
+                             non_standable_tiles, valid_edge_tiles, valid_tiles)
 
             row = tile.row
             col = tile.col + 1
 
-            if self.is_valid_tile(row, col):
-                new_tile = self._game_map[row][col]
-                if new_tile in movable_tiles and not new_tile.occupied:
-                    adjacent_movable_tiles += 1
-                elif not new_tile.standable or new_tile.occupied:
-                    non_standable_tiles.append(new_tile)
-                else:
-                    valid_edge_tiles.append(new_tile)
-            else:
-                valid_tiles -= 1
+            self.handle_tile(row, col, movable_tiles, adjacent_movable_tiles,
+                             non_standable_tiles, valid_edge_tiles, valid_tiles)
 
             row = tile.row
             col = tile.col - 1
 
-            if self.is_valid_tile(row, col):
-                new_tile = self._game_map[row][col]
-                if new_tile in movable_tiles and not new_tile.occupied:
-                    adjacent_movable_tiles += 1
-                elif not new_tile.standable or new_tile.occupied:
-                    non_standable_tiles.append(new_tile)
-                else:
-                    valid_edge_tiles.append(new_tile)
-            else:
-                valid_tiles -= 1
+            self.handle_tile(row, col, movable_tiles, adjacent_movable_tiles,
+                             non_standable_tiles, valid_edge_tiles, valid_tiles)
 
             # If the counters are different, we have an edge!
             if adjacent_movable_tiles != valid_tiles:

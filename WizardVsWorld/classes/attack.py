@@ -27,7 +27,6 @@ def perform_attack(attacker, victim):
     health_before_attack = victim.health
     victim.health -= damage_taken
     victim.damaged = True
-    print('CRIT HIT: ', crit)
     animate_damage(victim, health_before_attack, crit)
 
 

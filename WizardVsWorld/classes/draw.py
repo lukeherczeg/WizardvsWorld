@@ -295,6 +295,71 @@ def animate_death(entity):
     total_refresh_drawing()
 
 
+def animate_map_transition(old_grid, old_enemies, player):
+
+    new_grid_offset = WINDOW_WIDTH
+    old_grid_offset = 0
+
+    player_x = player.get_position().col * BLOCK_SIZE
+    player_y = player.get_position().row * BLOCK_SIZE
+    player_target_x = player_x + BLOCK_SIZE
+
+    # For animating perpendicular wiggle while walking and movement speed
+    wiggle_index = 0
+    x_index = 0
+
+    move_x = [0,0,0,0,0,0,0,0,1]
+
+    while new_grid_offset >= 0:
+        for _, col in enumerate(old_grid.game_map):
+            for _, tile in enumerate(col):
+                tile_img = _get_tile_img(tile)
+                tile_rect = tile_img.get_rect()
+                tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE) + old_grid_offset, tile.row * BLOCK_SIZE])
+                SCREEN.blit(tile_img, tile_rect)
+
+        for _, col in enumerate(GRID.game_map):
+            for _, tile in enumerate(col):
+                tile_img = _get_tile_img(tile)
+                tile_rect = tile_img.get_rect()
+                tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE) + new_grid_offset, tile.row * BLOCK_SIZE])
+                SCREEN.blit(tile_img, tile_rect)
+
+        if(player_x < player_target_x):
+            player_x = player_x + move_x[x_index]
+            player_y = player_y + move_wiggle[wiggle_index]
+
+            x_index = 0 if x_index == len(move_x) - 1 else x_index + 1
+            wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
+        
+        player_img = _get_entity_img(player)
+        player_rect = player_img.get_rect()
+        player_rect = player_rect.move([player_x + old_grid_offset, player_y])
+
+        SCREEN.blit(player_img, player_rect)
+
+        for entity in old_enemies:
+            entity_img = _get_entity_img(entity)
+            entity_rect = entity_img.get_rect()
+            entity_rect = entity_rect.move([(entity.get_position().col * BLOCK_SIZE) + old_grid_offset, entity.get_position().row * BLOCK_SIZE])
+            SCREEN.blit(entity_img, entity_rect)
+
+        entities = ENTITIES[1:]
+
+        for entity in entities:
+            entity_img = _get_entity_img(entity)
+            entity_rect = entity_img.get_rect()
+            entity_rect = entity_rect.move([(entity.get_position().col * BLOCK_SIZE) + new_grid_offset, entity.get_position().row * BLOCK_SIZE])
+            SCREEN.blit(entity_img, entity_rect)
+
+        new_grid_offset = new_grid_offset - 1
+        old_grid_offset = old_grid_offset - 1
+
+        pygame.display.flip()
+
+    total_refresh_drawing()
+
+
 def update_coordinates(coords, diffs):
     start_x, start_y, target_x, target_y = coords
     x_diff, y_diff = diffs

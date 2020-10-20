@@ -28,9 +28,9 @@ class Entity:
 class Player(Entity):
     def __init__(self):
         super().__init__()
-        self.health = 100
+        self.health = 150
         self.max_health = self.health
-        self.attack = 20
+        self.attack = 25
         self.defense = 5
         self.range = 3
         self.selected = False

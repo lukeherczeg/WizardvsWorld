@@ -196,10 +196,22 @@ class PlayerMovementPhase(Phase):
             upgrade_menu.draw_menu()
             upgrade_menu.await_response()
             draw_text("You WIN!!!", 50)
+            prev_map = GRID
+            prev_enemies = []
+
+            if len(ENTITIES) > 1:
+                prev_enemies = ENTITIES[1:]
+                wiz = ENTITIES[0]
+                ENTITIES.clear()
+                ENTITIES.append(wiz)
+
             GRID.update_layout()
-            map1 = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
-            GRID.set_game_map(map1)
+            new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
+            GRID.set_game_map(new_map)
             GRID.generate_enemies(self.player.level)
+
+            animate_map_transition(prev_map, prev_enemies, self.player)
+
             self.player.currentTile = GRID.game_map[10][0]
         self.movable_tiles = None
         self.is_tutorial = False
