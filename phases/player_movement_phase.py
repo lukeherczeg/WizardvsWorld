@@ -196,9 +196,11 @@ class PlayerMovementPhase(Phase):
         self.movement()
 
     def exit(self):
+        self.movable_tiles = None
+        self.is_tutorial = False
         if self.level_complete:
-            self.player.level += 1
-            upgrade_menu = SelectionMenu('Choose an Upgrade', [
+            self.player.level_up(self.player.level + 1)
+            upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', [
                 ('Health', 'Increase your Health by 15', self.player.boost_health),
                 ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
                 ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
@@ -221,8 +223,10 @@ class PlayerMovementPhase(Phase):
 
             animate_map_transition(prev_map, prev_enemies, self.player)
             self.player.currentTile = GRID.game_map[prev_location[0]][0]
+            self.player.health = self.player.max_health
             self.all_bosses_defeated = False
+            self.level_complete = False
             self.level_win_tile = GRID.win_tile
-
-        self.movable_tiles = None
-        self.is_tutorial = False
+            self.enter()
+            self.update()
+            self.exit()
