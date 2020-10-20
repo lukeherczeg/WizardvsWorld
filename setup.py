@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/lukeherczeg/WizardvsWorld",
-    packages=setuptools.find_namespace_packages(include=['WizardVsWorld', 'WizardVsWorld.*']),
+    packages=setuptools.find_namespace_packages(include=['WizardVsWorld', 'WizardVsWorld.*', 'WizardVsWorld.assets/*']),
     package_data={
         '':['*.png', '*.txt']
     },

@@ -27,8 +27,7 @@ MOVEMENT_SPEED = 2
 move_wiggle = [-1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0]
 # move_wiggle = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
 
-main_directory = os.path.dirname('WizardVsWorld/WizardVsWorld')
-asset_path = os.path.join(main_directory, 'assets')
+asset_path = os.path.dirname(__file__)
 
 textures = []
 
