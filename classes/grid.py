@@ -15,6 +15,7 @@ class Grid:
         self.map_layout = self.update_layout()
         # INDEX WITH [ROW][COL]
         self._game_map = [[self.generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
+        self.win_tile = None
 
     @property
     def game_map(self):
@@ -237,6 +238,9 @@ class Grid:
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
         elif layout[index] == '4' or layout[index] == 'g':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
+        elif layout[index] == 'w':
+            self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR, win_tile=True)
+            return self.win_tile
         else:
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.BUSH)
 

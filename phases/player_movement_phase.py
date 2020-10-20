@@ -30,6 +30,7 @@ class PlayerMovementPhase(Phase):
         self.enemy_tiles = None
         self.occupied_index = 0
         self.is_tutorial = True
+        self.level_win_tile = GRID.game_map[7][24]
         self.all_bosses_defeated = False
         self.level_complete = False
 
@@ -115,7 +116,7 @@ class PlayerMovementPhase(Phase):
                         return True
                     elif self.movable_tiles:
                         if self.currentTile in self.movable_tiles:
-                            if self.all_bosses_defeated and self.currentTile == LEVEL_WIN_TILE:
+                            if self.all_bosses_defeated and self.currentTile == self.level_win_tile:
                                 self.level_complete = True
                             return True
                     elif self.enemy_tiles:
@@ -153,7 +154,7 @@ class PlayerMovementPhase(Phase):
             self.all_bosses_defeated = True
 
         if self.all_bosses_defeated:
-            LEVEL_WIN_TILE.tint = TileTint.ORANGE
+            self.level_win_tile.tint = TileTint.ORANGE
 
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
@@ -190,14 +191,14 @@ class PlayerMovementPhase(Phase):
         if self.level_complete:
             self.player.level += 1
             upgrade_menu = SelectionMenu('Choose an Upgrade', [
-                ('Health', 'Increase your health by 15', self.player.boost_health),
-                ('Attack', 'Increase your Attack by 25', self.player.boost_attack),
+                ('Health', 'Increase your Health by 15', self.player.boost_health),
+                ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
                 ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
             upgrade_menu.draw_menu()
             upgrade_menu.await_response()
-            draw_text("You WIN!!!", 50)
             prev_map = GRID
             prev_enemies = []
+            prev_location = [self.player.currentTile.row, self.player.currentTile.col]
 
             if len(ENTITIES) > 1:
                 prev_enemies = ENTITIES[1:]
@@ -211,7 +212,9 @@ class PlayerMovementPhase(Phase):
             GRID.generate_enemies(self.player.level)
 
             animate_map_transition(prev_map, prev_enemies, self.player)
+            self.player.currentTile = GRID.game_map[prev_location[0]][0]
+            self.all_bosses_defeated = False
+            self.level_win_tile = GRID.win_tile
 
-            self.player.currentTile = GRID.game_map[10][0]
         self.movable_tiles = None
         self.is_tutorial = False

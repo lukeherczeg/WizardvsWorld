@@ -35,16 +35,15 @@ def calculate_damage(attacker, victim):
 
     attack_damage = (ceil(randrange(attacker.attack - randint(1, 3), attacker.attack + randint(1, 3))))
     chance = randint(0, 100)
-    damage = 0
-    isCrit = False
+    is_crit = False
     if chance <= attacker.critical_chance:
         critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
         damage = critical_damage - victim.defense
-        isCrit = True
+        is_crit = True
     else:
         damage = attack_damage - victim.defense
 
-    return damage, isCrit
+    return damage, is_crit
 
 
 class CounterAttack:

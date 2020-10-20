@@ -5,13 +5,14 @@ class Tile:
     _texture_type: TileTexture
     tint: TileTint
 
-    def __init__(self, col, row, standable=True, texture_type=TileTexture.NONE):
+    def __init__(self, col, row, standable=True, texture_type=TileTexture.NONE, win_tile=False):
         self._col = col
         self._row = row
         self._standable = standable
         self._occupied = False
         self._texture_type = texture_type
         self.tint = TileTint.NONE
+        self.win_tile = win_tile
 
     @property
     def col(self):
