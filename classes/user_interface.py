@@ -135,14 +135,14 @@ class SelectionMenu:
             update = False
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
-                    if self.selected == len(self.option) - 1:
+                    if self.selected == len(self.options) - 1:
                         self.selected = 0
                     else:
                         self.selected += 1
                     update = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
                     if self.selected == 0:
-                        self.selected = len(self.option) - 1
+                        self.selected = len(self.options) - 1
                     else:
                         self.selected -= 1
                     update = True
