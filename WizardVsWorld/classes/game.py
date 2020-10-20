@@ -12,8 +12,6 @@ import WizardVsWorld.phases.enemy_movement_phase
 
 from WizardVsWorld.classes.entity import Player
 
-print(f'Grid Width: {GRID.GRID_WIDTH}; Grid Height: {GRID.GRID_HEIGHT}')
-
 
 def main():
     pygame.init()

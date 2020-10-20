@@ -90,7 +90,6 @@ class EnemyAIMovement(Phase):
                     new_tile = tile
                     break
 
-
         # Drawing enemy movement decision
         draw_tinted_tiles(movable_tiles, enemy, TileTint.BLUE)
         draw_selected_tile(enemy.currentTile)
@@ -99,13 +98,6 @@ class EnemyAIMovement(Phase):
         draw_entities()
         draw_selected_tile(new_tile)
         time.sleep(.2)
-
-        # Old determination of tiles to move to:
-        # cannot_move = True
-        # while cannot_move:
-        #     cannot_move = self.gets_closer(enemy, movable_tiles[new_tile])
-        #     if cannot_move:
-        #         new_tile = random.randint(0, len(movable_tiles) - 1)
 
         enemy.currentTile.occupied = False
         enemy.currentTile = new_tile
@@ -126,4 +118,4 @@ class EnemyAIMovement(Phase):
                 self.move_enemy(enemy)
 
     def exit(self):
-        print('Exiting Enemy Phase...')
+        return
