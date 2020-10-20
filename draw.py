@@ -581,6 +581,13 @@ def _get_tile_img(tile, tint=None):
             return FLOOR_ORANGE_PNG
         else:
             return FLOOR_PNG
+    elif tile.texture_type == TileTexture.BUSH:
+        if tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
+            return BUSH_ORANGE_PNG
+        elif tint == TileTint.RED or tile.tint == TileTint.RED:
+            return BUSH_RED_PNG
+        else:
+            return BUSH_PNG
 
 
 def _get_entity_img(entity):

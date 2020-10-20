@@ -60,6 +60,9 @@ STONE_PNG = get_block_sized_texture('stone.png', TextureType.TILE_TEXTURE)
 STONE_BLUE_PNG = get_block_sized_texture('stoneBLUE.png', TextureType.TILE_TEXTURE)
 STONE_ORANGE_PNG = get_block_sized_texture('stoneORANGE.png', TextureType.TILE_TEXTURE)
 STONE_RED_PNG = get_block_sized_texture('stoneRED.png', TextureType.TILE_TEXTURE)
+BUSH_PNG = pygame.image.load(os.path.join(asset_path, 'bush.png')).convert()
+BUSH_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'bushORANGE.png')).convert()
+BUSH_RED_PNG = pygame.image.load(os.path.join(asset_path, 'bushRED.png')).convert()
 
 # Load entities
 ARCHER_PNG = get_block_sized_texture('archer.png', TextureType.ENTITY)

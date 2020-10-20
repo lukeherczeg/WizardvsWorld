@@ -213,31 +213,32 @@ class Grid:
 
     def generate_tile(self, col, row):
         standable = self.__generate_true(self.STANDABLE_TILE_DENSITY_ODDS)
-        # we need to calculate the index for the tile value once the string is read from file
+        #we need to calculate the index for the tile value once the string is read from file
         index = col + (row * 25)
         layout = self.map_layout
 
-        # if the value is 0 (most tiles) randomly generate that tile
-        # letters signify that an enemy is to be spawned on the texture type initial "f" or "d" or "g" etc.
-        # r means it is a random texture type
+        #if the value is 0 (most tiles) randomly generate that tile
+        #letters signify that an enemy is to be spawned on the texture type initial "f" or "d" or "g" etc.
+        #r means it is a random texture type
         if layout[index] == '0' or layout[index] == 'r':
             # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
-            if self.__generate_true(.7):
-                return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
-            # check that, before creating non-standable tile, enemy is not spawned there
-            elif not standable and not layout[index] == 'r':
-                return Tile(col=col, row=row, standable=standable, texture_type=TileTexture.STONE)
-            else:
+            if self.__generate_true(.15):
                 return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
-        # load a texture based on layout
+            elif not standable and not layout[index] == 'r':  # check that before creating non-standable tile enemy is not spawned there
+                return Tile(col=col, row=row, standable=standable, texture_type=TileTexture.BUSH)
+            else:
+                return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
+        #load a texture based on layout
         elif layout[index] == '1' or layout[index] == 'd':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
         elif layout[index] == '2':
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.STONE)
         elif layout[index] == '3' or layout[index] == 'f':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
-        else:
+        elif layout[index] == '4' or layout[index] == 'g':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
+        else:
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.BUSH)
 
     @staticmethod
     def __generate_true(odds):

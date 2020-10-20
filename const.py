@@ -24,3 +24,4 @@ class TileTexture(Enum):
     DIRT = 1
     STONE = 2
     FLOOR = 3
+    BUSH = 4
