@@ -3,6 +3,11 @@ Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical roguelike 
 
 Link to project page: [https://github.com/lukeherczeg/WizardvsWorld](https://github.com/lukeherczeg/WizardvsWorld)
 
+## Running the project
+1. Download the source
+2. `python3.7 -m pip3 install pygame`
+3. `python3.7 -m game.py`
+
 ## Requirements
 * PyGame 1.9.6
 

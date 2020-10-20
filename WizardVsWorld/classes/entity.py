@@ -101,9 +101,9 @@ class GreatKnight(Boss):
     def __init__(self, level):
         super().__init__()
         self.max_movement = 0
-        self.health = 50 + (level * 5)
+        self.health = 60 + (level * 5)
         self.max_health = self.health
-        self.attack = 15 + (level * 2)
-        self.defense = 5 + (level * 1)
+        self.attack = 20 + (level * 2)
+        self.defense = 10 + (level * 1)
         self.critical_chance = 5
         self.range = 1

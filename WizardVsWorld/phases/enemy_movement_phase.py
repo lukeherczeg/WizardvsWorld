@@ -1,5 +1,5 @@
 from WizardVsWorld.classes.tile import Tile
-from WizardVsWorld.classes.entity import Entity
+from WizardVsWorld.classes.entity import Entity, Boss
 from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.phase import Phase
 import random
@@ -34,10 +34,18 @@ class EnemyAIMovement(Phase):
         p1 = [self.player_position.row, self.player_position.col]
         p2 = [enemy.currentTile.row, enemy.currentTile.col]
         distance = int(math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2)))
-        if distance > 5:
-            return False
+        if isinstance(enemy, Boss):
+            if distance <= self.Player.range:
+                enemy.max_movement = self.Player.range
+                return True
+            else:
+                enemy.max_movement = 0
+                return False
         else:
-            return True
+            if distance > 5:
+                return False
+            else:
+                return True
 
     def move_enemy(self, enemy):
         movable_tiles = GRID.get_movement(enemy.currentTile.row, enemy.currentTile.col, enemy.max_movement, self.Player)
@@ -65,7 +73,7 @@ class EnemyAIMovement(Phase):
         tiles_adjacent_to_player.remove(self.player_position)
 
         # If it's a knight, rush the player!
-        if isinstance(enemy, Knight):
+        if isinstance(enemy, Knight) or isinstance(enemy, GreatKnight):
             for tile in tiles_adjacent_to_player:
                 if tile in movable_tiles:
                     new_tile = tile
@@ -81,6 +89,7 @@ class EnemyAIMovement(Phase):
                 if tile in movable_tiles:
                     new_tile = tile
                     break
+
 
         # Drawing enemy movement decision
         draw_tinted_tiles(movable_tiles, enemy, TileTint.BLUE)
@@ -106,8 +115,8 @@ class EnemyAIMovement(Phase):
 
     def enter(self):
         self.Enemies = ENTITIES[1:]
-        background = pygame.transform.scale(BACKGROUND_PNG, (750, 300))
-        animate_text_abs('Enemy Phase', 100, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, RED, 1, background, 15)
+        background = pygame.transform.scale(BACKGROUND_PNG, (562, 225))
+        animate_text_abs('Enemy Phase', 75, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BRIGHT_RED, 1, background, 15)
         self.player_position = ENTITIES[0].currentTile
         total_refresh_drawing()
 

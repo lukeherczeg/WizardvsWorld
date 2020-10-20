@@ -7,7 +7,7 @@ import os
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-RED = (200, 0, 0)
+RED = (100, 0, 0)
 BRIGHT_RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 BRIGHT_GREEN = (0, 255, 0)
@@ -22,13 +22,12 @@ pygame.display.init()
 
 GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
 
-LEVEL_WIN_TILE = GRID.game_map[7][24]
 
 MOVEMENT_SPEED = 2
 move_wiggle = [-1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0]
 # move_wiggle = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
 
-main_directory = os.path.dirname('WizardVsWorld')
+main_directory = os.path.dirname('WizardVsWorld/WizardVsWorld')
 asset_path = os.path.join(main_directory, 'assets')
 
 textures = []
@@ -41,8 +40,8 @@ def get_texture(path, texture_type):
         return pygame.image.load(os.path.join(asset_path, path)).convert_alpha()
 
 
-def get_block_sized_texture(path, texture_type):
-    return pygame.transform.scale(get_texture(path, texture_type), (BLOCK_SIZE, BLOCK_SIZE))
+def get_block_sized_texture(path, texture_type, block_size=BLOCK_SIZE):
+    return pygame.transform.scale(get_texture(path, texture_type), (block_size, block_size))
 
 
 # load textures
@@ -62,6 +61,9 @@ STONE_PNG = get_block_sized_texture('stone.png', TextureType.TILE_TEXTURE)
 STONE_BLUE_PNG = get_block_sized_texture('stoneBLUE.png', TextureType.TILE_TEXTURE)
 STONE_ORANGE_PNG = get_block_sized_texture('stoneORANGE.png', TextureType.TILE_TEXTURE)
 STONE_RED_PNG = get_block_sized_texture('stoneRED.png', TextureType.TILE_TEXTURE)
+BUSH_PNG = pygame.image.load(os.path.join(asset_path, 'bush.png')).convert()
+BUSH_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'bushORANGE.png')).convert()
+BUSH_RED_PNG = pygame.image.load(os.path.join(asset_path, 'bushRED.png')).convert()
 
 # Load entities
 ARCHER_PNG = get_block_sized_texture('archer.png', TextureType.ENTITY)
@@ -72,6 +74,9 @@ KNIGHT_PNG = get_block_sized_texture('knight.png', TextureType.ENTITY)
 KNIGHT_ATTACK_PNG = get_block_sized_texture('knightattack.png', TextureType.ENTITY)
 KNIGHT_ATTACKABLE_PNG = get_block_sized_texture('knightattackable.png', TextureType.ENTITY)
 KNIGHT_HURT_PNG = get_block_sized_texture('knighthurt.png', TextureType.ENTITY)
+GREATKNIGHT_PNG = get_block_sized_texture('greatknight.png', TextureType.ENTITY)
+GREATKNIGHT_ATTACK_PNG = get_block_sized_texture('greatknightattack.png', TextureType.ENTITY)
+GREATKNIGHT_HURT_PNG = get_block_sized_texture('greatknighthurt.png', TextureType.ENTITY)
 WIZ_PNG = get_block_sized_texture('wiz.png', TextureType.ENTITY)
 WIZ_ATTACK_PNG = get_block_sized_texture('wizattack.png', TextureType.ENTITY)
 WIZ_HURT_PNG = get_block_sized_texture('wizhurt.png', TextureType.ENTITY)

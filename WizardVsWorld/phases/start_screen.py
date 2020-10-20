@@ -1,7 +1,7 @@
 from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.phase import Phase
 from WizardVsWorld.classes.user_interface import Button
-from WizardVsWorld.classes.draw import quit_game
+from WizardVsWorld.classes.draw import quit_game, draw_text_abs
 
 class StartScreen(Phase):
     def __init__(self):
@@ -13,8 +13,10 @@ class StartScreen(Phase):
 
         # Buttons (Make them appear under the icons)
         self.__buttons = []
-        self.__buttons.append(Button(WINDOW_WIDTH // 4 - 60, 7 * WINDOW_HEIGHT // 8, 100, 50, 'Start', BRIGHT_RED, RED, self.complete)) #TODO: CALL START GAME FUNCTION IN GAME.PY
-        self.__buttons.append(Button(3 * WINDOW_WIDTH // 4, 7 * WINDOW_HEIGHT // 8, 100, 50, 'Quit', BRIGHT_RED, RED, quit_game))
+        self.__buttons.append(Button(WINDOW_WIDTH // 4 - WINDOW_WIDTH // 20, 7 * WINDOW_HEIGHT // 8, 100, 50,
+                                     'Start', BRIGHT_RED, RED, self.complete))
+        self.__buttons.append(Button(3 * WINDOW_WIDTH // 4 - WINDOW_WIDTH // 20, 7 * WINDOW_HEIGHT // 8, 100, 50,
+                                     'Quit', BRIGHT_RED, RED, quit_game))
 
         # Button selected with Arrow Keys
         self.__selection = 0
@@ -36,6 +38,9 @@ class StartScreen(Phase):
 
         for button in self.__buttons:
             button.update()
+
+        draw_text_abs("Use the arrow keys to navigate to a choice and hit enter to confirm!",
+                      20, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 1.2)
 
         pygame.display.update()
 

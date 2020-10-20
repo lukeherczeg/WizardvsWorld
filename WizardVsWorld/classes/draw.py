@@ -74,7 +74,12 @@ def draw_entities(ignorables=None, hard=True):
     for entity in entities:
         entity_img = _get_entity_img(entity)
         entity_rect = entity_img.get_rect()
-        entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
+        # if isinstance(entity, GreatKnight):
+        #     entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE,
+        #                                     entity.get_position().row * BLOCK_SIZE - BLOCK_SIZE // 4])
+        # else:
+        entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE,
+                                        entity.get_position().row * BLOCK_SIZE])  # - BLOCK_SIZE // 8
         SCREEN.blit(entity_img, entity_rect)
 
         if hard: pygame.display.update(entity_rect)
@@ -239,7 +244,7 @@ def animate_move(entity, old_pos, new_pos):
 
 
 def animate_attack(attacker, victim):
-    if isinstance(attacker, Knight):
+    if isinstance(attacker, Knight) or isinstance(attacker, GreatKnight):
         _animate_knight_attack()
     else:
         # Initialize start and end points and covert to pixel values
@@ -296,7 +301,6 @@ def animate_death(entity):
 
 
 def animate_map_transition(old_grid, old_enemies, player):
-
     new_grid_offset = WINDOW_WIDTH
     old_grid_offset = 0
 
@@ -308,7 +312,7 @@ def animate_map_transition(old_grid, old_enemies, player):
     wiggle_index = 0
     x_index = 0
 
-    move_x = [0,0,0,0,0,0,0,0,1]
+    move_x = [0, 0, 0, 0, 0, 0, 0, 0, 1]
 
     while new_grid_offset >= 0:
         for _, col in enumerate(old_grid.game_map):
@@ -325,13 +329,13 @@ def animate_map_transition(old_grid, old_enemies, player):
                 tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE) + new_grid_offset, tile.row * BLOCK_SIZE])
                 SCREEN.blit(tile_img, tile_rect)
 
-        if(player_x < player_target_x):
+        if (player_x < player_target_x):
             player_x = player_x + move_x[x_index]
             player_y = player_y + move_wiggle[wiggle_index]
 
             x_index = 0 if x_index == len(move_x) - 1 else x_index + 1
             wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
-        
+
         player_img = _get_entity_img(player)
         player_rect = player_img.get_rect()
         player_rect = player_rect.move([player_x + old_grid_offset, player_y])
@@ -341,7 +345,8 @@ def animate_map_transition(old_grid, old_enemies, player):
         for entity in old_enemies:
             entity_img = _get_entity_img(entity)
             entity_rect = entity_img.get_rect()
-            entity_rect = entity_rect.move([(entity.get_position().col * BLOCK_SIZE) + old_grid_offset, entity.get_position().row * BLOCK_SIZE])
+            entity_rect = entity_rect.move(
+                [(entity.get_position().col * BLOCK_SIZE) + old_grid_offset, entity.get_position().row * BLOCK_SIZE])
             SCREEN.blit(entity_img, entity_rect)
 
         entities = ENTITIES[1:]
@@ -349,7 +354,8 @@ def animate_map_transition(old_grid, old_enemies, player):
         for entity in entities:
             entity_img = _get_entity_img(entity)
             entity_rect = entity_img.get_rect()
-            entity_rect = entity_rect.move([(entity.get_position().col * BLOCK_SIZE) + new_grid_offset, entity.get_position().row * BLOCK_SIZE])
+            entity_rect = entity_rect.move(
+                [(entity.get_position().col * BLOCK_SIZE) + new_grid_offset, entity.get_position().row * BLOCK_SIZE])
             SCREEN.blit(entity_img, entity_rect)
 
         new_grid_offset = new_grid_offset - 1
@@ -581,6 +587,13 @@ def _get_tile_img(tile, tint=None):
             return FLOOR_ORANGE_PNG
         else:
             return FLOOR_PNG
+    elif tile.texture_type == TileTexture.BUSH:
+        if tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
+            return BUSH_ORANGE_PNG
+        elif tint == TileTint.RED or tile.tint == TileTint.RED:
+            return BUSH_RED_PNG
+        else:
+            return BUSH_PNG
 
 
 def _get_entity_img(entity):
@@ -593,6 +606,14 @@ def _get_entity_img(entity):
             return WIZ_SELECTED_PNG
         else:
             return WIZ_PNG
+
+    if isinstance(entity, GreatKnight):
+        if entity.attacking:
+            return GREATKNIGHT_ATTACK_PNG
+        elif entity.damaged:
+            return GREATKNIGHT_HURT_PNG
+        else:
+            return GREATKNIGHT_PNG
 
     if isinstance(entity, Knight):
         if entity.attacking:
@@ -613,9 +634,6 @@ def _get_entity_img(entity):
             return ARCHER_ATTACKABLE_PNG
         else:
             return ARCHER_PNG
-
-    if isinstance(entity, GreatKnight):
-        return KNIGHT_ATTACKABLE_PNG
 
 
 def quit_game():
