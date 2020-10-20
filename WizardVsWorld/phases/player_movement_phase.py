@@ -1,8 +1,8 @@
-from draw import *
-from classes.phase import Phase
-from classes.entity import Player, Boss
-from classes.tile import Tile
-from classes.user_interface import MessageBox, SelectionMenu
+from WizardVsWorld.draw import *
+from WizardVsWorld.classes.phase import Phase
+from WizardVsWorld.classes.entity import Player, Boss
+from WizardVsWorld.classes.tile import Tile
+from WizardVsWorld.classes.user_interface import MessageBox, SelectionMenu
 
 
 def select(row, col, enemy=None):

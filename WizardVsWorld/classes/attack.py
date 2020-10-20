@@ -1,7 +1,8 @@
-from const import CRIT_MULTIPLIER
-from draw import *
-from classes.tile import Tile
-from classes.entity import Entity, Enemy
+from WizardVsWorld.const import CRIT_MULTIPLIER
+from WizardVsWorld.draw import *
+from WizardVsWorld.classes.tile import Tile
+from WizardVsWorld.classes.entity import Entity, Enemy
+
 from random import randint, randrange
 from math import ceil
 

@@ -3,9 +3,9 @@ import pygame
 import sys
 import math
 import time
-from assets.image_loader import *
-from const import TileTexture, TileTint, ENTITIES
-from classes.entity import Player, Archer, Knight, GreatKnight
+from WizardVsWorld.assets.image_loader import *
+from WizardVsWorld.const import TileTexture, TileTint, ENTITIES
+from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight
 
 
 # NOTES:

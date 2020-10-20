@@ -1,4 +1,4 @@
-from classes.tile import Tile
+from WizardVsWorld.classes.tile import Tile
 
 
 # entity will have various shared data types

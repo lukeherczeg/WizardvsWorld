@@ -1,9 +1,11 @@
-from draw import *
-from classes.fsm import FSM
-import phases.player_movement_phase
-import phases.player_attack_phase
-import phases.enemy_attack_phase
-import phases.enemy_movement_phase
+#! /usr/bin/env python3
+
+from WizardVsWorld.draw import *
+from WizardVsWorld.classes.fsm import FSM
+import WizardVsWorld.phases.player_movement_phase
+import WizardVsWorld.phases.player_attack_phase
+import WizardVsWorld.phases.enemy_attack_phase
+import WizardVsWorld.phases.enemy_movement_phase
 
 from classes.entity import Player
 
@@ -24,10 +26,10 @@ def main():
     fsm = FSM()
 
     # Declare Phases
-    player_movement_phase = phases.player_movement_phase.PlayerMovementPhase(player)
-    player_attack_phase = phases.player_attack_phase.PlayerAttackPhase(player, player_movement_phase)
-    enemy_attack_phase = phases.enemy_attack_phase.EnemyAICombatPhase()
-    enemy_movement_phase = phases.enemy_movement_phase.EnemyAIMovement()
+    player_movement_phase = WizardVsWorld.phases.player_movement_phase.PlayerMovementPhase(player)
+    player_attack_phase = WizardVsWorld.phases.player_attack_phase.PlayerAttackPhase(player, player_movement_phase)
+    enemy_attack_phase = WizardVsWorld.phases.enemy_attack_phase.EnemyAICombatPhase()
+    enemy_movement_phase = WizardVsWorld.phases.enemy_movement_phase.EnemyAIMovement()
 
     # Add Phases
     fsm.add_phase(player_movement_phase)

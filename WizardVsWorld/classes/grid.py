@@ -2,7 +2,7 @@ from const import ENTITIES
 from classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
-from classes.entity import Knight, Archer, GreatKnight
+from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight
 
 
 class Grid:
@@ -297,7 +297,7 @@ class Grid:
         self.level += 1
         lev = str(self.level)
         # get the path of the map
-        main_directory = os.path.dirname('WizardvsWorld')
+        main_directory = os.path.dirname('WizardVsWorld')
         asset_path = os.path.join(main_directory, 'maps')
         map_layout = os.path.join(asset_path, 'map')
         map_layout += lev

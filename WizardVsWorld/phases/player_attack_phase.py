@@ -1,6 +1,6 @@
-from phases.player_movement_phase import *
-from classes.user_interface import MessageBox
-from classes.attack import CounterAttack, perform_attack
+from WizardVsWorld.phases.player_movement_phase import *
+from WizardVsWorld.classes.user_interface import MessageBox
+from WizardVsWorld.classes.attack import CounterAttack, perform_attack
 
 
 class PlayerAttackPhase(Phase):

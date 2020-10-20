@@ -1,6 +1,6 @@
-from classes.phase import Phase
-from classes.attack import *
-from classes.user_interface import MessageBox
+from WizardVsWorld.classes.phase import Phase
+from WizardVsWorld.classes.attack import *
+from WizardVsWorld.classes.user_interface import MessageBox
 
 
 class EnemyAICombatPhase(Phase):

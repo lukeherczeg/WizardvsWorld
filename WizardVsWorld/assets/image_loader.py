@@ -1,7 +1,7 @@
 import wsl
-from const import TextureType
-from draw import pygame, os
-from classes.grid import Grid
+from WizardVsWorld.const import TextureType
+from WizardVsWorld.draw import pygame, os
+from WizardVsWorld.classes.grid import Grid
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -26,7 +26,7 @@ MOVEMENT_SPEED = 2
 move_wiggle = [-1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0]
 # move_wiggle = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
 
-main_directory = os.path.dirname('WizardvsWorld')
+main_directory = os.path.dirname('WizardVsWorld')
 asset_path = os.path.join(main_directory, 'assets')
 
 textures = []

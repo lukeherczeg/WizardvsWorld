@@ -1,6 +1,7 @@
-import phases.start_screen
+import WizardVsWorld.phases.start_screen
+from WizardVsWorld.draw import quit_game
+
 import pygame
-from draw import quit_game
 
 # Example Phase
 # class ExamplePhase(Phase):
@@ -53,7 +54,7 @@ class FSM:
         if not self.__phases:
             print('No phases were added before restart')
 
-        start_screen = phases.start_screen.StartScreen()
+        start_screen = WizardVsWorld.phases.start_screen.StartScreen()
         start_screen.enter()
 
         # Keep updating until the player starts or quits
