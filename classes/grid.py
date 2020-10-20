@@ -3,7 +3,7 @@ from classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
 from classes.entity import Knight, Archer, GreatKnight
-
+import const
 
 class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
@@ -294,15 +294,30 @@ class Grid:
         self.level += 1
         if self.level > 4:
             self.level = 0
-        lev = str(self.level)
+        # lev = str(self.level)
         # get the path of the map
-        main_directory = os.path.dirname('WizardvsWorld')
-        asset_path = os.path.join(main_directory, 'maps')
-        map_layout = os.path.join(asset_path, 'map')
-        map_layout += lev
-        map_layout += '.txt'
-        # turn map into single string
-        with open(map_layout, 'r') as file:
-            string = file.read().replace('\n', '')
-            self.map_layout = string
-        return string
+        # main_directory = os.path.dirname('WizardvsWorld')
+        # asset_path = os.path.join(main_directory, 'maps')
+        # map_layout = os.path.join(asset_path, 'map')
+        # map_layout += lev
+        # map_layout += '.txt'
+        # # turn map into single string
+        # with open(map_layout, 'r') as file:
+        #     string = file.read().replace('\n', '')
+        #     self.map_layout = string
+        # return string
+        if self.level == 0:
+            self.map_layout = const.map_0
+            return const.map_0
+        elif self.level == 1:
+            self.map_layout = const.map_1
+            return const.map_1
+        elif self.level == 2:
+            self.map_layout = const.map_2
+            return const.map_2
+        elif self.level == 3:
+            self.map_layout = const.map_3
+            return const.map_3
+        elif self.level == 4:
+            self.map_layout = const.map_4
+            return const.map_4
