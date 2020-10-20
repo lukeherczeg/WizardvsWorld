@@ -121,7 +121,6 @@ class EnemyAIMovement(Phase):
         total_refresh_drawing()
 
     def update(self):
-        print('Entering Enemy Movement Computation / Animation...')
         for enemy in self.Enemies:
             if self.can_move(enemy):
                 self.move_enemy(enemy)

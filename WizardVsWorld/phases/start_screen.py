@@ -29,7 +29,6 @@ class StartScreen(Phase):
         self.__completed = True
 
     def enter(self):
-        print('Entering start...')
         self.__completed = False
 
     def update(self):

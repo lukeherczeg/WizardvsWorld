@@ -88,20 +88,14 @@ class PlayerAttackPhase(Phase):
                 MessageBox('No enemies are close enough to attack. Let\'s pass for now.')
                 total_refresh_drawing()
 
-            print(f"No enemies within range, back to selection!")
-
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.NONE)
 
     def enter(self):
-        #draw_text_abs('Player Attack', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
-        #pygame.time.delay(2000)
         if not self.data_from_movement.level_complete:
-            total_refresh_drawing() # Attack radius can overwrite text
+            total_refresh_drawing()  # Attack radius can overwrite text
             self.attack_selection()
 
-
     def update(self):
-        print('Entering Player Attack Computation...')
         if not self.data_from_movement.level_complete:
             for enemy in ENTITIES:
                 if enemy.currentTile is self.enemyTile:
@@ -112,4 +106,3 @@ class PlayerAttackPhase(Phase):
 
     def exit(self):
         self.data_from_movement.occupied_index = 0
-        print('Exiting Player Phase...')

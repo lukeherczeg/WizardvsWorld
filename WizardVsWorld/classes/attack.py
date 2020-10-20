@@ -70,15 +70,10 @@ class CounterAttack:
         animate_damage(self.victim, old_victim_health, crit)
 
         time.sleep(.25)
-        if isinstance(self.victim, Player):
-            print(f"Updated player health: {self.victim.health}")
-        else:
-            print(f"Updated enemy health: {self.victim.health}")
 
         if isinstance(self.victim, Enemy):
             enemy = self.victim
             if enemy.health <= 0:
-                print(f"Enemy died in counter attack!: {self.victim.health}")
                 enemy.health = 0
                 enemy.currentTile.occupied = False
                 ENTITIES.remove(enemy)
