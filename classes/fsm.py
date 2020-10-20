@@ -1,4 +1,4 @@
-import phases.start_screen
+from phases.start_screen import StartScreen
 import pygame
 from draw import quit_game
 
@@ -53,7 +53,7 @@ class FSM:
         if not self.__phases:
             print('No phases were added before restart')
 
-        start_screen = phases.start_screen.StartScreen()
+        start_screen = StartScreen()
         start_screen.enter()
 
         # Keep updating until the player starts or quits

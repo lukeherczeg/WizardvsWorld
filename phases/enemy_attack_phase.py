@@ -32,7 +32,7 @@ class EnemyAICombatPhase(Phase):
             if self.Player.health <= 0:
                 ENTITIES.remove(self.Player)
                 animate_death(self.Player)
-                MessageBox('You died. Closing the game... Please relaunch to try again.')
+                MessageBox('You died. But that\'s okay! It looks like the Grand Magus still has plans for you...')
                 pygame.quit()
                 sys.exit()
             elif self.Player.health > 0:
