@@ -166,8 +166,16 @@ class PlayerMovementPhase(Phase):
 
         # TUTORIAL
         if self.is_tutorial:
+            MessageBox('In order to win defeat the boss inside the castle guarding the exit!')
+            MessageBox('After defeating the boss, the path to the next level will be highlighted.')
+            GRID.game_map[7][24].tint = TileTint.ORANGE
+            total_refresh_drawing()
+            MessageBox('')
+            GRID.game_map[7][24].tint = TileTint.NONE
+            total_refresh_drawing()
             MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
                        + 'You are the lone wizard in blue. Please select yourself!')
+            
             total_refresh_drawing()
 
         select(self.currentTile.row, self.currentTile.col)
