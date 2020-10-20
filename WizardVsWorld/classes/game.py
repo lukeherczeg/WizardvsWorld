@@ -1,3 +1,7 @@
+import sys
+import os.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
 from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.fsm import FSM
 import WizardVsWorld.phases.player_movement_phase
@@ -8,7 +12,6 @@ import WizardVsWorld.phases.enemy_movement_phase
 from WizardVsWorld.classes.entity import Player
 
 print(f'Grid Width: {GRID.GRID_WIDTH}; Grid Height: {GRID.GRID_HEIGHT}')
-
 
 def main():
     pygame.init()

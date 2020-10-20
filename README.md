@@ -3,7 +3,13 @@ Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical roguelike 
 
 Link to project page: [https://github.com/lukeherczeg/WizardvsWorld](https://github.com/lukeherczeg/WizardvsWorld)
 
-## Running the project
+# Running from PIP
+1. Create a virtual environment for Python3.7: `virtualenv -p="/usr/bin/python3.7" <env_name>`
+2. Use the virtual environment: `source <env_name>/bin/activate`
+3. Install the WizardVsWorld Package from PIP: `pip install WizardVsWorld`
+4. Run the game: `WizardVsWorld`
+
+## Running from Source 
 1. Download the source
 2. `python3.7 -m pip3 install pygame`
 3. `python3.7 -m game.py`
@@ -12,11 +18,11 @@ Link to project page: [https://github.com/lukeherczeg/WizardvsWorld](https://git
 * PyGame 1.9.6
 
 ## Installation
-Package Name: [Coming Soon]
+Package Name: WizardVsWorld
 
-Executable Command: [Coming Soon]
+Executable Command: WizardVsWorld
 
-Initialization Command: [Coming Soon]
+Initialization Command: WizardVsWorld(?)
 
 ## Miscellaneous
 

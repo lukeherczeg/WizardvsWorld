@@ -5,7 +5,7 @@ with open("README.md", "r") as readme:
 
 setuptools.setup(
     name="WizardVsWorld",
-    version= "0.1.4",
+    version= "0.1.5",
     author="Logan D.G. Smith",
     author_email="loganda.smith@ufl.edu",
     description="2D tactical game involving magic and malice.",
