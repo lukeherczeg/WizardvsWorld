@@ -100,7 +100,7 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     message_rect = message_text.get_rect()
     message_rect = message_rect.move([x_pos * BLOCK_SIZE, y_pos * BLOCK_SIZE])
     SCREEN.blit(message_text, message_rect)
-    pygame.display.flip()
+    #pygame.display.flip()
 
 
 def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):

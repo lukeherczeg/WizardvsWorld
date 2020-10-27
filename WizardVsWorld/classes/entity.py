@@ -20,6 +20,10 @@ class Entity:
     def get_position(self):
         return self.currentTile
 
+    # Gets health, defense, attack, attack range, critical chance, and movement.
+    def get_character_stats(self):
+        return self.health, self.defense, self.attack, self.range, self.critical_chance, self.max_movement
+
 
 # each type of entity will have an "image" method that handles retrieving (but not printing assets)
 # this method is responsible for taking in bools that will decipher which image of the character to retrieve
@@ -56,6 +60,9 @@ class Player(Entity):
         """End of level boost for movement"""
         self.max_movement += 1
 
+    def get_name(self):
+        return "The Wizard (Player)"
+
 
 class Enemy(Entity):
     def __init__(self):
@@ -74,6 +81,9 @@ class Knight(Enemy):
         self.critical_chance = 5
         self.range = 1
 
+    def get_name(self):
+        return "Knight"
+
 
 class Archer(Enemy):
     def __init__(self, level):
@@ -85,6 +95,9 @@ class Archer(Enemy):
         self.defense = 0 + (level * 1)
         self.critical_chance = 15
         self.range = 2
+
+    def get_name(self):
+        return "Archer"
 
 
 class Boss(Enemy):
@@ -107,3 +120,6 @@ class GreatKnight(Boss):
         self.defense = 10 + (level * 1)
         self.critical_chance = 5
         self.range = 1
+
+    def get_name(self):
+        return "Great Knight"

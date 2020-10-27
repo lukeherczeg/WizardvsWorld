@@ -12,6 +12,15 @@ def select(row, col, enemy=None):
         draw_selected_tile(GRID.game_map[row][col], enemy)
 
 
+def get_all_stats(entity):
+    # TODO: Implement a refresh with specific tiles
+    # tiles [1][0] - [1][4], [2][0] - [4][0]
+    total_refresh_drawing()
+    stats = [entity.get_name()]
+    stats.extend(entity.get_character_stats())
+    return stats
+
+
 class PlayerMovementPhase(Phase):
     player: Player
     currentTile: Tile
@@ -42,6 +51,23 @@ class PlayerMovementPhase(Phase):
         self.occupied_index += 1
         return tile_list[(current_tile + 1) % len(tile_list)]
 
+    def draw_stats(self):
+        stats = []
+        if self.currentTile.occupied:
+            for enemy in ENTITIES:
+                if enemy.currentTile is self.currentTile:
+                    stats = get_all_stats(enemy)
+
+        elif self.currentTile is self.player.currentTile:
+            stats = get_all_stats(self.player)
+
+        stat_draw_location = [1, 0]
+        stat_draw_offset = 0
+        for stat in stats:
+            draw_text(stat, 20, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
+                      (0, stat_draw_offset))
+            stat_draw_offset += .5
+
     def select_tile(self, row, col):
         """Restricts tile selection based on the tile constraints passed to it.
            If there are no movable or enemy tiles, then it must be normal, free selection phase,
@@ -52,6 +78,9 @@ class PlayerMovementPhase(Phase):
             if self.grid.is_valid_standable_tile(row, col):
                 draw_tile(self.currentTile)
                 self.currentTile = self.grid.game_map[row][col]
+
+                self.draw_stats()
+
                 select(self.currentTile.row, self.currentTile.col)
                 draw_entities()
 
