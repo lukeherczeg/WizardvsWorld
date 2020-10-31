@@ -24,6 +24,9 @@ class Entity:
     def get_character_stats(self):
         return self.health, self.defense, self.attack, self.range, self.critical_chance, self.max_movement
 
+    def get_max_health(self):
+        return self.max_health
+
 
 # each type of entity will have an "image" method that handles retrieving (but not printing assets)
 # this method is responsible for taking in bools that will decipher which image of the character to retrieve
@@ -43,8 +46,8 @@ class Player(Entity):
 
     def level_up(self, new_level):
         self.level = new_level
-        self.health += 15
-        self.max_health = self.health
+        self.max_health += 15
+        self.health = self.max_health
         self.attack += 5
         self.defense += 1
 
@@ -61,7 +64,7 @@ class Player(Entity):
         self.max_movement += 1
 
     def get_name(self):
-        return "The Wizard (Player)"
+        return "The Wizard"
 
 
 class Enemy(Entity):

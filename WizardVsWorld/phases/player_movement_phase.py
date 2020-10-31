@@ -14,10 +14,16 @@ def select(row, col, enemy=None):
 
 def get_all_stats(entity):
     # TODO: Implement a refresh with specific tiles
-    # tiles [1][0] - [1][4], [2][0] - [4][0]
+    # tiles [1][0] - [1][3], [2][0] - [4][2]
     total_refresh_drawing()
     stats = [entity.get_name()]
     stats.extend(entity.get_character_stats())
+    stats[1] = f"Health: {stats[1]}/{entity.get_max_health()}"
+    stats[2] = "Defense: {}".format(stats[2])
+    stats[3] = "Attack: {}".format(stats[3])
+    stats[4] = "Range: {}".format(stats[4])
+    stats[5] = "Crit Chance: {}".format(stats[5])
+    stats[6] = "Movement: {}".format(stats[6])
     return stats
 
 
@@ -53,18 +59,28 @@ class PlayerMovementPhase(Phase):
 
     def draw_stats(self):
         stats = []
+        draw_color = WHITE
         if self.currentTile.occupied:
             for enemy in ENTITIES:
                 if enemy.currentTile is self.currentTile:
                     stats = get_all_stats(enemy)
+                    draw_color = BRIGHT_RED
 
         elif self.currentTile is self.player.currentTile:
             stats = get_all_stats(self.player)
+            draw_color = BLUE
 
         stat_draw_location = [1, 0]
         stat_draw_offset = 0
-        for stat in stats:
-            draw_text(stat, 20, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
+        # Print the character type slightly larger before the rest of the stats
+        if len(stats) > 0:
+            background = pygame.transform.scale(BACKGROUND_PNG, (562, 225))
+            draw_text(stats[0], 25, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
+                      (0, stat_draw_offset), draw_color)
+            stat_draw_offset += .75
+        # Print all other stats to the top left of the screen
+        for stat in stats[1:]:
+            draw_text(stat, 15, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
                       (0, stat_draw_offset))
             stat_draw_offset += .5
 
