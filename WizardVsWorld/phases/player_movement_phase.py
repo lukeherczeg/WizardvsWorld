@@ -57,6 +57,31 @@ class PlayerMovementPhase(Phase):
         self.occupied_index += 1
         return tile_list[(current_tile + 1) % len(tile_list)]
 
+    def display_tile_type(self, tile_info, draw_color, row, col, offset_x, offset_y):
+        if self.currentTile.win_tile and self.all_bosses_defeated:
+            draw_text("Win Tile", 24, GRID.game_map[row][col], (offset_x, offset_y), BRIGHT_GREEN)
+        elif tile_info == TileTexture.DIRT:
+            draw_text("Dirt", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.GRASS:
+            draw_text("Grass", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.FLOOR:
+            draw_text("Floor Tile", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.BUSH:
+            draw_text("Bush", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.STONE:
+            draw_text("Stone Wall", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+
+        if self.currentTile.standable:
+            draw_color = BLUE
+            standable = "(Standable)"
+        else:
+            draw_color = RED
+            standable = "(Non-Standable)"
+
+        offset_y += .75
+        draw_text(standable, 18, GRID.game_map[row][col],
+                  (offset_x, offset_y), draw_color)
+
     def display_tile_info(self):
         stats = []
         tile_info = []
@@ -87,38 +112,13 @@ class PlayerMovementPhase(Phase):
                 draw_text(stat, 15, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
                           (stat_draw_offset_horizontal, stat_draw_offset_vertical))
                 stat_draw_offset_vertical += .5
+        # If there aren't any entities on this tile, we display the tile type instead
         else:
             draw_color = WHITE
             total_refresh_drawing()
-            if self.currentTile.win_tile and self.all_bosses_defeated:
-                draw_text("Win Tile", 24, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                          (stat_draw_offset_horizontal, stat_draw_offset_vertical), BRIGHT_GREEN)
-            elif tile_info == TileTexture.DIRT:
-                draw_text("Dirt", 24, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                          (stat_draw_offset_horizontal, stat_draw_offset_vertical), draw_color)
-            elif tile_info == TileTexture.GRASS:
-                draw_text("Grass", 24, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                          (stat_draw_offset_horizontal, stat_draw_offset_vertical), draw_color)
-            elif tile_info == TileTexture.FLOOR:
-                draw_text("Floor Tile", 24, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                          (stat_draw_offset_horizontal, stat_draw_offset_vertical), draw_color)
-            elif tile_info == TileTexture.BUSH:
-                draw_text("Bush", 24, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                          (stat_draw_offset_horizontal, stat_draw_offset_vertical), draw_color)
-            elif tile_info == TileTexture.STONE:
-                draw_text("Stone Wall", 24, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                          (stat_draw_offset_horizontal, stat_draw_offset_vertical), draw_color)
 
-            if self.currentTile.standable:
-                draw_color = BLUE
-                standable = "(Standable)"
-            else:
-                draw_color = RED
-                standable = "(Non-Standable)"
-
-            stat_draw_offset_vertical += .75
-            draw_text(standable, 18, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                      (stat_draw_offset_horizontal, stat_draw_offset_vertical), draw_color)
+            self.display_tile_type(tile_info, draw_color, stat_draw_location[0], stat_draw_location[1],
+                                   stat_draw_offset_horizontal, stat_draw_offset_vertical)
 
     def select_tile(self, row, col):
         """Restricts tile selection based on the tile constraints passed to it.
@@ -127,7 +127,7 @@ class PlayerMovementPhase(Phase):
            and if there are enemy tiles, it sets constraints for the attack phase."""
 
         if self.movable_tiles is None and self.enemy_tiles is None:
-            #if self.grid.is_valid_standable_tile(row, col):
+            # if self.grid.is_valid_standable_tile(row, col):
             draw_tile(self.currentTile)
             self.currentTile = self.grid.game_map[row][col]
 
