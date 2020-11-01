@@ -127,14 +127,14 @@ class PlayerMovementPhase(Phase):
            and if there are enemy tiles, it sets constraints for the attack phase."""
 
         if self.movable_tiles is None and self.enemy_tiles is None:
-            # if self.grid.is_valid_standable_tile(row, col):
-            draw_tile(self.currentTile)
-            self.currentTile = self.grid.game_map[row][col]
+            if self.grid.is_valid_tile(row, col):
+                draw_tile(self.currentTile)
+                self.currentTile = self.grid.game_map[row][col]
 
-            self.display_tile_info()
+                self.display_tile_info()
 
-            select(self.currentTile.row, self.currentTile.col)
-            draw_entities()
+                select(self.currentTile.row, self.currentTile.col)
+                draw_entities()
 
         elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
             draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
