@@ -74,12 +74,9 @@ def draw_entities(ignorables=None, hard=True):
     for entity in entities:
         entity_img = _get_entity_img(entity)
         entity_rect = entity_img.get_rect()
-        # if isinstance(entity, GreatKnight):
-        #     entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE,
-        #                                     entity.get_position().row * BLOCK_SIZE - BLOCK_SIZE // 4])
-        # else:
+        
         entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE,
-                                        entity.get_position().row * BLOCK_SIZE])  # - BLOCK_SIZE // 8
+                                        (entity.get_position().row + 1) * BLOCK_SIZE - entity_rect.size[1]])  # - BLOCK_SIZE // 8
         SCREEN.blit(entity_img, entity_rect)
 
         if hard: pygame.display.update(entity_rect)
@@ -507,7 +504,7 @@ def _animate_damage_number(victim, victim_old_hp, crit):
 
 def _animate_damage_bar(victim, victim_old_hp):
     # HP bar math 4px by 42px (old : 24)
-    hp_bar_y = (victim.get_position().row * BLOCK_SIZE) + 4
+    hp_bar_y = ((victim.get_position().row+1) * BLOCK_SIZE) - _get_entity_img(victim).get_rect().size[1]
     hp_bar_x = (victim.get_position().col * BLOCK_SIZE) - 1  # (old: + 4)
     bar_length = 42
     bar_height = 4
@@ -527,12 +524,13 @@ def _animate_damage_bar(victim, victim_old_hp):
     # animate
     x_move_amount = [0, 0, 0, 0, 0, 0, 0, -1]
     x_move_index = 0
-    while green_hp_bar_x_pos != green_hp_bar_x_final:
+    while green_hp_bar_x_pos >= green_hp_bar_x_final:
         # draw
         draw_grid()
         draw_entities(hard=False)
         pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, bar_length, bar_height))
-        pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
+        if((green_hp_bar_x_final != green_hp_bar_x_pos) or new_hp_ratio != 0):
+            pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
         pygame.display.flip()
 
         # load next animation frame
