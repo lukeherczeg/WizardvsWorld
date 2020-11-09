@@ -1,5 +1,5 @@
 from WizardVsWorld.classes.tile import Tile
-from WizardVsWorld.classes.entity import Entity, Boss
+from WizardVsWorld.classes.entity import Entity, Boss, GreatMarksman, WizardKing
 from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.phase import Phase
 import random
@@ -79,7 +79,7 @@ class EnemyAIMovement(Phase):
                     new_tile = tile
                     break
         # If it's an archer, move to a space one away from the player to shoot an arrow!
-        elif isinstance(enemy, Archer):
+        elif isinstance(enemy, Archer) or isinstance(enemy, GreatMarksman) or isinstance(enemy, WizardKing):
             # Grab tiles exclusively one space away from the player on all sides
             tiles_one_away_from_player = GRID.get_movement(self.player_position.row, self.player_position.col, 2)
             tiles_one_away_from_player.remove(self.player_position)

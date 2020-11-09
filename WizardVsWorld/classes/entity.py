@@ -126,3 +126,31 @@ class GreatKnight(Boss):
 
     def get_name(self):
         return "Great Knight"
+
+
+class GreatMarksman(Boss):
+    range = 3
+
+    def __init__(self, level):
+        super().__init__()
+        self.max_movement = 1
+        self.health = 30 + (level * 4)
+        self.max_health = self.health
+        self.attack = 40 + (level * 4)
+        self.defense = 0 + (level * 2)
+        self.critical_chance = 8
+        self.range = 3
+
+
+class WizardKing(Boss):
+    range = 2
+
+    def __init__(self, level):
+        super().__init__()
+        self.max_movement = 0
+        self.health = 45 + (level * 6)
+        self.max_health = self.health
+        self.attack = 35 + (level * 6)
+        self.defense = 10 + (level * 3)
+        self.critical_chance = 7
+        self.range = 2
