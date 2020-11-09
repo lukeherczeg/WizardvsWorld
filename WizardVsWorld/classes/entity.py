@@ -10,7 +10,8 @@ class Entity:
     defense: int
     max_movement: int = 5
     range: int
-    critical_chance: int
+    crit_chance: int
+    hit_chance: int
     level: int
 
     def __init__(self):
@@ -22,7 +23,7 @@ class Entity:
 
     # Gets health, defense, attack, attack range, critical chance, and movement.
     def get_character_stats(self):
-        return self.health, self.defense, self.attack, self.range, self.critical_chance, self.max_movement
+        return self.health, self.defense, self.attack, self.range, self.crit_chance, self.hit_chance, self.max_movement
 
     def get_max_health(self):
         return self.max_health
@@ -42,7 +43,8 @@ class Player(Entity):
         self.range = 3
         self.selected = False
         self.level = 0
-        self.critical_chance = 25
+        self.crit_chance = 25
+        self.hit_chance = 95
 
     def level_up(self, new_level):
         self.level = new_level
@@ -71,6 +73,7 @@ class Enemy(Entity):
     def __init__(self):
         super().__init__()
         self.attackable = False
+        self.hit_chance = 80
 
 
 class Knight(Enemy):
@@ -81,7 +84,7 @@ class Knight(Enemy):
         self.max_health = self.health
         self.attack = 15 + (level * 2)
         self.defense = 5 + (level * 1)
-        self.critical_chance = 5
+        self.crit_chance = 5
         self.range = 1
 
     def get_name(self):
@@ -96,7 +99,7 @@ class Archer(Enemy):
         self.max_health = self.health
         self.attack = 10 + (level * 3)
         self.defense = 0 + (level * 1)
-        self.critical_chance = 15
+        self.crit_chance = 15
         self.range = 2
 
     def get_name(self):
@@ -121,7 +124,7 @@ class GreatKnight(Boss):
         self.max_health = self.health
         self.attack = 20 + (level * 2)
         self.defense = 10 + (level * 1)
-        self.critical_chance = 5
+        self.crit_chance = 5
         self.range = 1
 
     def get_name(self):

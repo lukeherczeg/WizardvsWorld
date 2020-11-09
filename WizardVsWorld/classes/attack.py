@@ -21,6 +21,10 @@ def perform_attack(attacker, victim):
     attacker.attacking = False
 
     damage_taken, crit = calculate_damage(attacker, victim)
+    if damage_taken is None:
+        animate_miss(victim)
+        return
+
     if damage_taken < 0:
         damage_taken = 0
 
@@ -37,12 +41,15 @@ def calculate_damage(attacker, victim):
     attack_damage = (ceil(randrange(attacker.attack - randint(1, 3), attacker.attack + randint(1, 3))))
     chance = randint(0, 100)
     is_crit = False
-    if chance <= attacker.critical_chance:
-        critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
-        damage = critical_damage - victim.defense
-        is_crit = True
+    if chance <= attacker.hit_chance:
+        if chance <= attacker.crit_chance:
+            critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
+            damage = critical_damage - victim.defense
+            is_crit = True
+        else:
+            damage = attack_damage - victim.defense
     else:
-        damage = attack_damage - victim.defense
+        damage = None
 
     return damage, is_crit
 
@@ -61,10 +68,16 @@ class CounterAttack:
         self.attacker.attacking = True
         animate_attack(self.attacker, self.victim)
         self.attacker.attacking = False
-        old_victim_health = self.victim.health
         damage_taken, crit = calculate_damage(self.attacker, self.victim)
+
+        if damage_taken is None:
+            animate_miss(self.victim)
+            return
+
         if damage_taken < 0:
             damage_taken = 0
+
+        old_victim_health = self.victim.health
         self.victim.health -= damage_taken
         self.victim.damaged = True
         animate_damage(self.victim, old_victim_health, crit)

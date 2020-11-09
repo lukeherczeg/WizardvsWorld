@@ -14,16 +14,17 @@ def select(row, col, enemy=None):
 
 def get_all_stats(entity):
     # TODO: Implement a refresh with specific tiles
-    # tiles ([1][0] - [1][3]), ([2][0]) - ([4][2])
+    # tiles ([1][0] - [1][3]), ([2][0]) - ([5][2])
     total_refresh_drawing()
     stats = [entity.get_name()]
     stats.extend(entity.get_character_stats())
     stats[1] = f"Health: {stats[1]}/{entity.get_max_health()}"
-    stats[2] = "Defense: {}".format(stats[2])
-    stats[3] = "Attack: {}".format(stats[3])
-    stats[4] = "Range: {}".format(stats[4])
-    stats[5] = "Crit Chance: {}".format(stats[5])
-    stats[6] = "Movement: {}".format(stats[6])
+    stats[2] = f"Defense: {stats[2]}"
+    stats[3] = f"Attack: {stats[3]}"
+    stats[4] = f"Range: {stats[4]}"
+    stats[5] = f"Crit Chance: {stats[5]}"
+    stats[6] = f"Hit Chance: {stats[6]}"
+    stats[7] = f"Movement: {stats[7]}"
     return stats
 
 
