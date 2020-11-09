@@ -75,8 +75,8 @@ def draw_entities(ignorables=None, hard=True):
         entity_img = _get_entity_img(entity)
         entity_rect = entity_img.get_rect()
         
-        entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE,
-                                        (entity.get_position().row + 1) * BLOCK_SIZE - entity_rect.size[1]])  # - BLOCK_SIZE // 8
+        entity_coords = (entity.get_position().col, entity.get_position().row)
+        entity_rect = entity_rect.move(_calc_player_coords(entity_coords, entity_rect))
         SCREEN.blit(entity_img, entity_rect)
 
         if hard: pygame.display.update(entity_rect)
@@ -182,8 +182,10 @@ def animate_entity_movement(entity, prev_tile, player=None):
         tile_list = GRID.path_to(prev_tile, entity.get_position(), player)
 
     for i in range(len(tile_list) - 1):
-        old_pos = (tile_list[i].col * BLOCK_SIZE, tile_list[i].row * BLOCK_SIZE)
-        new_pos = (tile_list[i + 1].col * BLOCK_SIZE, tile_list[i + 1].row * BLOCK_SIZE)
+        old_coords = (tile_list[i].col, tile_list[i].row)
+        new_coords = (tile_list[i+1].col, tile_list[i+1].row)
+        old_pos = _calc_player_coords(old_coords, _get_entity_img(entity).get_rect())
+        new_pos = _calc_player_coords(new_coords, _get_entity_img(entity).get_rect())
         animate_move(entity, old_pos, new_pos)
 
     # this is done to re-center the final animation sprite and ensure game state is up to date
@@ -198,7 +200,7 @@ def animate_move(entity, old_pos, new_pos):
     # Create rect of moving entity
     entity_img = _get_entity_img(entity)
     entity_rect = entity_img.get_rect()
-    entity_rect = entity_rect.move([old_x, old_y])
+    entity_rect = entity_rect.move(old_pos)
 
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
@@ -380,6 +382,15 @@ def update_coordinates(coords, diffs):
 
     return start_x, start_y
 
+def _calc_player_coords(entity_pos, entity_rect, offset=None):
+    x_point = (entity_pos[0] * BLOCK_SIZE) - ((entity_rect.size[0] - BLOCK_SIZE) / 2)
+    y_point = (entity_pos[1] * BLOCK_SIZE) - (entity_rect.size[1] - BLOCK_SIZE)
+
+    if offset:
+        x_point = x_point + offset[0]
+        y_point = y_point + offset[1]
+    
+    return [x_point, y_point]
 
 def _animate_player_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
