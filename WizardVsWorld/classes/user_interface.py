@@ -47,26 +47,23 @@ class MessageBox:
 
     # TODO: PUT A DARK TRANSPARENT OVERLAY ON THE TOP OF THE SCREEN TO FOCUS PLAYER
     def __init__(self, message):
-        self.__font = pygame.font.Font('freesansbold.ttf', 24)
-        self.__lines = self.split(message, 80)  # 80 Characters Max in a line
+        self.__lines = self.split(message, 75)  # 80 Characters Max in a line
         self.__lines.append('Press ENTER to continue...')
-        self.__rendered_lines = [self.__font.render(line, True, WHITE) for line in self.__lines]
         self.draw_message_box()
         self.confirm()
 
     def draw_message_box(self):
         """Draw the message box over the bottom third of the screen"""
-        length = len(self.__rendered_lines)
+        length = len(self.__lines)
 
         # Build the Dialogue Box
-        pygame.draw.rect(SCREEN, GREEN, (0, 2 * WINDOW_HEIGHT // 3, WINDOW_WIDTH, WINDOW_HEIGHT))
-        text_lines = [
-            pygame.draw.rect(SCREEN, GREEN, (20, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 35), WINDOW_WIDTH - 20, 20))
-            for offset in range(length)]
+        background = pygame.transform.scale(BACKGROUND_PNG, (WINDOW_WIDTH, WINDOW_HEIGHT // 3))
+        rect = background.get_rect()
+        rect.center = (WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + 100)
+        SCREEN.blit(background, rect)
 
-        # Render to the screen
-        for x in range(length):
-            SCREEN.blit(self.__rendered_lines[x], text_lines[x])
+        for offset in range(length):
+            draw_text_abs(self.__lines[offset], 24, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 35))
 
         pygame.display.update()
 
