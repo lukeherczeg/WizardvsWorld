@@ -14,7 +14,7 @@ def select(row, col, enemy=None):
 
 def get_all_stats(entity):
     # TODO: Implement a refresh with specific tiles
-    # tiles [1][0] - [1][3], [2][0] - [4][2]
+    # tiles ([1][0] - [1][3]), ([2][0]) - ([4][2])
     total_refresh_drawing()
     stats = [entity.get_name()]
     stats.extend(entity.get_character_stats())
