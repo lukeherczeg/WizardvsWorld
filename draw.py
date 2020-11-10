@@ -193,7 +193,7 @@ def animate_entity_movement(entity, prev_tile, player=None):
 
 
 def animate_move(entity, old_pos, new_pos):
-    # Initialize start and end points and covert to pixel values
+     # Initialize start and end points and covert to pixel values
     target_x, target_y = new_pos
     old_x, old_y = old_pos
 
@@ -289,8 +289,9 @@ def animate_death(entity):
     while opacity != 0:
         draw_grid()
         draw_entities()
-        _blit_alpha(SCREEN, entity_img, (entity.get_position().col * BLOCK_SIZE + move_wiggle[wiggle_index],
-                                         entity.get_position().row * BLOCK_SIZE), opacity)
+        entity_pos = (entity.get_position().col, entity.get_position().row)
+        entity_pos = _calc_player_coords(entity_pos, entity_img.get_rect(), (move_wiggle[wiggle_index],0))
+        _blit_alpha(SCREEN, entity_img, tuple(entity_pos), opacity)
         pygame.display.flip()
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
@@ -344,8 +345,9 @@ def animate_map_transition(old_grid, old_enemies, player):
         for entity in old_enemies:
             entity_img = _get_entity_img(entity)
             entity_rect = entity_img.get_rect()
-            entity_rect = entity_rect.move(
-                [(entity.get_position().col * BLOCK_SIZE) + old_grid_offset, entity.get_position().row * BLOCK_SIZE])
+            entity_pos = (entity.get_position().col, entity.get_position().row)
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, (old_grid_offset, 0))
+            entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
 
         entities = ENTITIES[1:]
@@ -353,8 +355,9 @@ def animate_map_transition(old_grid, old_enemies, player):
         for entity in entities:
             entity_img = _get_entity_img(entity)
             entity_rect = entity_img.get_rect()
-            entity_rect = entity_rect.move(
-                [(entity.get_position().col * BLOCK_SIZE) + new_grid_offset, entity.get_position().row * BLOCK_SIZE])
+            entity_pos = (entity.get_position().col, entity.get_position().row)
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, (new_grid_offset, 0))
+            entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
 
         new_grid_offset = new_grid_offset - 1
@@ -381,16 +384,6 @@ def update_coordinates(coords, diffs):
         start_y = start_y - y_diff
 
     return start_x, start_y
-
-def _calc_player_coords(entity_pos, entity_rect, offset=None):
-    x_point = (entity_pos[0] * BLOCK_SIZE) - ((entity_rect.size[0] - BLOCK_SIZE) / 2)
-    y_point = (entity_pos[1] * BLOCK_SIZE) - (entity_rect.size[1] - BLOCK_SIZE)
-
-    if offset:
-        x_point = x_point + offset[0]
-        y_point = y_point + offset[1]
-    
-    return [x_point, y_point]
 
 def _animate_player_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
@@ -479,7 +472,8 @@ def _animate_damage_number(victim, victim_old_hp, crit):
 
     # create victim rect
     victim_rect = _get_entity_img(victim).get_rect()
-    victim_rect = victim_rect.move([victim.get_position().col * BLOCK_SIZE, victim.get_position().row * BLOCK_SIZE])
+    victim_coords = _calc_player_coords((victim.get_position().col, victim.get_position().row), victim_rect)
+    victim_rect = victim_rect.move(victim_coords)
 
     # animation arrays and indexes
     y_move_amount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]
@@ -643,6 +637,17 @@ def _get_entity_img(entity):
             return ARCHER_ATTACKABLE_PNG
         else:
             return ARCHER_PNG
+
+
+def _calc_player_coords(entity_pos, entity_rect, offset=None):
+    x_point = (entity_pos[0] * BLOCK_SIZE) - ((entity_rect.size[0] - BLOCK_SIZE) / 2)
+    y_point = (entity_pos[1] * BLOCK_SIZE) - (entity_rect.size[1] - BLOCK_SIZE)
+
+    if offset:
+        x_point = x_point + offset[0]
+        y_point = y_point + offset[1]
+
+    return [x_point, y_point]
 
 
 def quit_game():
