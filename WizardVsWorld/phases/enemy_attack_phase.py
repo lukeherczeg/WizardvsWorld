@@ -1,6 +1,6 @@
-from classes.phase import Phase
-from classes.attack import *
-from classes.user_interface import MessageBox
+from WizardVsWorld.classes.phase import Phase
+from WizardVsWorld.classes.attack import *
+from WizardVsWorld.classes.user_interface import MessageBox
 
 
 class EnemyAICombatPhase(Phase):
@@ -50,12 +50,9 @@ class EnemyAICombatPhase(Phase):
 
     def enter(self):
         self.Enemies = ENTITIES[1:]
-        #draw_text_abs('Enemy Attack', 72, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)
-        #pygame.time.delay(2000)
         self.player_position = self.Player.currentTile
 
     def update(self):
-        print('Entering Enemy Attack Computation')
         valid_attackers = 0
         for enemy in self.Enemies:
             if isinstance(enemy, Enemy):
@@ -67,5 +64,4 @@ class EnemyAICombatPhase(Phase):
             total_refresh_drawing()
 
     def exit(self):
-        print('Exiting Enemy Phase...')
         self.is_tutorial = False

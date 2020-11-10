@@ -1,7 +1,8 @@
-from const import CRIT_MULTIPLIER
-from draw import *
-from classes.tile import Tile
-from classes.entity import Entity, Enemy
+from WizardVsWorld.classes.const import CRIT_MULTIPLIER
+from WizardVsWorld.classes.draw import *
+from WizardVsWorld.classes.tile import Tile
+from WizardVsWorld.classes.entity import Entity, Enemy
+
 from random import randint, randrange
 from math import ceil
 
@@ -20,6 +21,10 @@ def perform_attack(attacker, victim):
     attacker.attacking = False
 
     damage_taken, crit = calculate_damage(attacker, victim)
+    if damage_taken is None:
+        animate_miss(victim)
+        return
+
     if damage_taken < 0:
         damage_taken = 0
 
@@ -36,12 +41,15 @@ def calculate_damage(attacker, victim):
     attack_damage = (ceil(randrange(attacker.attack - randint(1, 3), attacker.attack + randint(1, 3))))
     chance = randint(0, 100)
     is_crit = False
-    if chance <= attacker.critical_chance:
-        critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
-        damage = critical_damage - victim.defense
-        is_crit = True
+    if chance <= attacker.hit_chance:
+        if chance <= attacker.crit_chance:
+            critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
+            damage = critical_damage - victim.defense
+            is_crit = True
+        else:
+            damage = attack_damage - victim.defense
     else:
-        damage = attack_damage - victim.defense
+        damage = None
 
     return damage, is_crit
 
@@ -60,24 +68,25 @@ class CounterAttack:
         self.attacker.attacking = True
         animate_attack(self.attacker, self.victim)
         self.attacker.attacking = False
-        old_victim_health = self.victim.health
         damage_taken, crit = calculate_damage(self.attacker, self.victim)
+
+        if damage_taken is None:
+            animate_miss(self.victim)
+            return
+
         if damage_taken < 0:
             damage_taken = 0
+
+        old_victim_health = self.victim.health
         self.victim.health -= damage_taken
         self.victim.damaged = True
         animate_damage(self.victim, old_victim_health, crit)
 
         time.sleep(.25)
-        if isinstance(self.victim, Player):
-            print(f"Updated player health: {self.victim.health}")
-        else:
-            print(f"Updated enemy health: {self.victim.health}")
 
         if isinstance(self.victim, Enemy):
             enemy = self.victim
             if enemy.health <= 0:
-                print(f"Enemy died in counter attack!: {self.victim.health}")
                 enemy.health = 0
                 enemy.currentTile.occupied = False
                 ENTITIES.remove(enemy)

@@ -1,7 +1,7 @@
-from classes.tile import Tile
-from classes.entity import Entity, Boss
-from draw import *
-from classes.phase import Phase
+from WizardVsWorld.classes.tile import Tile
+from WizardVsWorld.classes.entity import Entity, Boss, GreatMarksman, WizardKing
+from WizardVsWorld.classes.draw import *
+from WizardVsWorld.classes.phase import Phase
 import random
 import math
 
@@ -79,7 +79,7 @@ class EnemyAIMovement(Phase):
                     new_tile = tile
                     break
         # If it's an archer, move to a space one away from the player to shoot an arrow!
-        elif isinstance(enemy, Archer):
+        elif isinstance(enemy, Archer) or isinstance(enemy, GreatMarksman) or isinstance(enemy, WizardKing):
             # Grab tiles exclusively one space away from the player on all sides
             tiles_one_away_from_player = GRID.get_movement(self.player_position.row, self.player_position.col, 2)
             tiles_one_away_from_player.remove(self.player_position)
@@ -90,7 +90,6 @@ class EnemyAIMovement(Phase):
                     new_tile = tile
                     break
 
-
         # Drawing enemy movement decision
         draw_tinted_tiles(movable_tiles, enemy, TileTint.BLUE)
         draw_selected_tile(enemy.currentTile)
@@ -99,13 +98,6 @@ class EnemyAIMovement(Phase):
         draw_entities()
         draw_selected_tile(new_tile)
         time.sleep(.2)
-
-        # Old determination of tiles to move to:
-        # cannot_move = True
-        # while cannot_move:
-        #     cannot_move = self.gets_closer(enemy, movable_tiles[new_tile])
-        #     if cannot_move:
-        #         new_tile = random.randint(0, len(movable_tiles) - 1)
 
         enemy.currentTile.occupied = False
         enemy.currentTile = new_tile
@@ -121,10 +113,9 @@ class EnemyAIMovement(Phase):
         total_refresh_drawing()
 
     def update(self):
-        print('Entering Enemy Movement Computation / Animation...')
         for enemy in self.Enemies:
             if self.can_move(enemy):
                 self.move_enemy(enemy)
 
     def exit(self):
-        print('Exiting Enemy Phase...')
+        return

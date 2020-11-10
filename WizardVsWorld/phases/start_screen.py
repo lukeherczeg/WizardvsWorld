@@ -1,8 +1,7 @@
-from assets.image_loader import *
-from classes.phase import Phase
-from classes.user_interface import Button
-from draw import quit_game, draw_text_abs
-
+from WizardVsWorld.assets.image_loader import *
+from WizardVsWorld.classes.phase import Phase
+from WizardVsWorld.classes.user_interface import Button
+from WizardVsWorld.classes.draw import quit_game, draw_text_abs
 
 class StartScreen(Phase):
     def __init__(self):
@@ -30,7 +29,6 @@ class StartScreen(Phase):
         self.__completed = True
 
     def enter(self):
-        print('Entering start...')
         self.__completed = False
 
     def update(self):

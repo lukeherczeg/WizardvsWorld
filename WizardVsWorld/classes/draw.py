@@ -1,11 +1,11 @@
-import os
 import pygame
 import sys
 import math
 import time
-from assets.image_loader import *
-from const import TileTexture, TileTint, ENTITIES
-from classes.entity import Player, Archer, Knight, GreatKnight
+import os
+from WizardVsWorld.assets.image_loader import *
+from WizardVsWorld.classes.const import TileTexture, TileTint, ENTITIES
+from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight
 
 
 # NOTES:
@@ -97,7 +97,7 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     message_rect = message_text.get_rect()
     message_rect = message_rect.move([x_pos * BLOCK_SIZE, y_pos * BLOCK_SIZE])
     SCREEN.blit(message_text, message_rect)
-    pygame.display.flip()
+    # pygame.display.flip()
 
 
 def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
@@ -273,6 +273,10 @@ def animate_attack(attacker, victim):
             _animate_archer_attack(coords)
 
 
+def animate_miss(victim):
+    _animate_miss_text(victim)
+
+
 def animate_damage(victim, victim_old_hp, crit=False):
     _animate_damage_number(victim, victim_old_hp, crit)
 
@@ -443,6 +447,44 @@ def _animate_archer_attack(coords):
         pygame.display.flip()
 
     # this is done to re-center the final animation sprite and ensure game state is up to date
+    total_refresh_drawing()
+
+
+def _animate_miss_text(victim):
+    # create number rect
+    number_font = pygame.font.Font('freesansbold.ttf', 16)
+    number_font.set_bold(False)
+    number_font.set_italic(False)
+    number_text = number_font.render("Miss!", True, BLACK)
+    number_rect = number_text.get_rect()
+    number_y_var = (victim.get_position().row * BLOCK_SIZE + 8)
+    number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
+    number_rect = number_rect.move([number_x_fixed, number_y_var])
+
+    victim_rect = _get_entity_img(victim).get_rect()
+    victim_rect = victim_rect.move([victim.get_position().col * BLOCK_SIZE, victim.get_position().row * BLOCK_SIZE])
+
+    # animation arrays and indexes
+    y_move_amount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]
+    y_move_index = 0
+    wiggle_index = 0
+    wiggle_length = 160
+    for i in range(wiggle_length):
+        number_rect = number_rect.move([0, y_move_amount[y_move_index]])
+
+        victim_rect = victim_rect.move([dodge_wiggle[wiggle_index], 0])
+
+        # prepare next frame
+        y_move_index = 0 if y_move_index == len(y_move_amount) - 1 else y_move_index + 1
+        wiggle_index = 0 if wiggle_index == len(dodge_wiggle) - 1 else wiggle_index + 1
+
+        # # draw
+        draw_grid()
+        draw_entities(hard=False, ignorables=[victim])
+        SCREEN.blit(_get_entity_img(victim), victim_rect)
+        SCREEN.blit(number_text, number_rect)
+        pygame.display.flip()
+
     total_refresh_drawing()
 
 

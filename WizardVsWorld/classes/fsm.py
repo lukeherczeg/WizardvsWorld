@@ -1,6 +1,6 @@
-from phases.start_screen import StartScreen
+from WizardVsWorld.phases.start_screen import StartScreen
+from WizardVsWorld.classes.draw import quit_game
 import pygame
-from draw import quit_game
 
 # Example Phase
 # class ExamplePhase(Phase):

@@ -78,6 +78,8 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # PyPI/twine folders and files
+WizardVsWorld/WizardVsWorld.egg-info/*
+WizardVsWorld/build/*
 build/*
 dist/*
-wizards_vs_world_logandgsmith.egg-info/*
+WizardVsWorld.egg-info/*

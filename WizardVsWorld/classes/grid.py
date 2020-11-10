@@ -1,9 +1,11 @@
-from const import ENTITIES
-from classes.tile import Tile, TileTexture
+from WizardVsWorld.classes.const import ENTITIES
+from WizardVsWorld.classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
-from classes.entity import Knight, Archer, GreatKnight
-import const
+
+from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight
+from WizardVsWorld.classes.const import *
+
 
 class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
@@ -307,17 +309,17 @@ class Grid:
         #     self.map_layout = string
         # return string
         if self.level == 0:
-            self.map_layout = const.map_0
-            return const.map_0
+            self.map_layout = map_0
+            return map_0
         elif self.level == 1:
-            self.map_layout = const.map_1
-            return const.map_1
+            self.map_layout = map_1
+            return map_1
         elif self.level == 2:
-            self.map_layout = const.map_2
-            return const.map_2
+            self.map_layout = map_2
+            return map_2
         elif self.level == 3:
-            self.map_layout = const.map_3
-            return const.map_3
+            self.map_layout = map_3
+            return map_3
         elif self.level == 4:
-            self.map_layout = const.map_4
-            return const.map_4
+            self.map_layout = map_4
+            return map_4
