@@ -1,4 +1,5 @@
 from WizardVsWorld.classes.tile import Tile
+from WizardVsWorld.classes.spell import Spell
 
 
 # entity will have various shared data types
@@ -43,6 +44,18 @@ class Player(Entity):
         self.selected = False
         self.level = 0
         self.critical_chance = 25
+        self.uses = 1 # Base uses for special spells
+        self.creep = 1  # Base "creep" or spread of aoe spells
+        self.spellbook = []
+        self.refresh_spells()
+
+    @property
+    def spellbook(self):
+        return self.spellbook
+
+    @spellbook.setter
+    def spellbook(self, spellbook):
+        self.spellbook = spellbook
 
     def level_up(self, new_level):
         self.level = new_level
@@ -65,6 +78,15 @@ class Player(Entity):
 
     def get_name(self):
         return "The Wizard"
+
+    def refresh_spells(self):
+        """Called to initialize the spellbook and to refresh between levels (Rescales spells to current stats)"""
+        self.spellbook = [
+            Spell('Fireball', 999, self.range, self.attack),
+            Spell('Heal', self.uses, 0, -self.max_health),
+            Spell('Greater Fireball', self.uses, self.range + 1, self.attack + 5 * (self.level + 1), aoe=self.creep),
+            Spell('Flame Barrier', self.uses, 0, self.attack + 5 * (self.level + 1), aoe= self.creep)
+        ]
 
 
 class Enemy(Entity):
