@@ -33,7 +33,16 @@ def draw_tile(tile):
     tile_rect = tile_img.get_rect()
     tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
     SCREEN.blit(tile_img, tile_rect)
-    pygame.display.flip()
+
+
+def draw_rectangular_area(top_left, bottom_right):
+    start = top_left.row, top_left.col
+    end = bottom_right.row, bottom_right.col
+
+    for i in range(start[0], end[0]+1):
+        for j in range(start[1], end[1]+1):
+            draw_tile(GRID.game_map[i][j])
+            #print(f"Drew tile [{i}, {j}].")
 
 def draw_entity(entity):
     for tile in entity.tiles:
@@ -84,7 +93,7 @@ def draw_entities(ignorables=None, hard=True):
     for entity in entities:
         entity_img = _get_entity_img(entity)
         entity_rect = entity_img.get_rect()
-        
+
         entity_coords = (entity.get_position().col, entity.get_position().row)
         entity_rect = entity_rect.move(_calc_player_coords(entity_coords, entity_rect))
         SCREEN.blit(entity_img, entity_rect)
@@ -197,7 +206,7 @@ def animate_entity_movement(entity, prev_tile, player=None):
 
     for i in range(len(tile_list) - 1):
         old_coords = (tile_list[i].col, tile_list[i].row)
-        new_coords = (tile_list[i+1].col, tile_list[i+1].row)
+        new_coords = (tile_list[i + 1].col, tile_list[i + 1].row)
         old_pos = _calc_player_coords(old_coords, _get_entity_img(entity).get_rect())
         new_pos = _calc_player_coords(new_coords, _get_entity_img(entity).get_rect())
         animate_move(entity, old_pos, new_pos)
@@ -207,7 +216,7 @@ def animate_entity_movement(entity, prev_tile, player=None):
 
 
 def animate_move(entity, old_pos, new_pos):
-     # Initialize start and end points and covert to pixel values
+    # Initialize start and end points and covert to pixel values
     target_x, target_y = new_pos
     old_x, old_y = old_pos
 
@@ -310,7 +319,7 @@ def animate_death(entity):
         draw_grid()
         draw_entities()
         entity_pos = (entity.get_position().col, entity.get_position().row)
-        entity_pos = _calc_player_coords(entity_pos, entity_img.get_rect(), (move_wiggle[wiggle_index],0))
+        entity_pos = _calc_player_coords(entity_pos, entity_img.get_rect(), (move_wiggle[wiggle_index], 0))
         _blit_alpha(SCREEN, entity_img, tuple(entity_pos), opacity)
         CLOCK.tick(FPS)
         pygame.display.flip()
@@ -405,6 +414,7 @@ def update_coordinates(coords, diffs):
         start_y = start_y - y_diff
 
     return start_x, start_y
+
 
 def _animate_player_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
@@ -568,7 +578,7 @@ def _animate_damage_number(victim, victim_old_hp, crit):
 
 def _animate_damage_bar(victim, victim_old_hp):
     # HP bar math 4px by 42px (old : 24)
-    hp_bar_y = ((victim.get_position().row+1) * BLOCK_SIZE) - _get_entity_img(victim).get_rect().size[1]
+    hp_bar_y = ((victim.get_position().row + 1) * BLOCK_SIZE) - _get_entity_img(victim).get_rect().size[1]
     hp_bar_x = (victim.get_position().col * BLOCK_SIZE) - 1  # (old: + 4)
     bar_length = 42
     bar_height = 4
@@ -591,7 +601,7 @@ def _animate_damage_bar(victim, victim_old_hp):
         draw_grid()
         draw_entities(hard=False)
         pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, bar_length, bar_height))
-        if((green_hp_bar_x_final != green_hp_bar_x_pos) or new_hp_ratio != 0):
+        if ((green_hp_bar_x_final != green_hp_bar_x_pos) or new_hp_ratio != 0):
             pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
         CLOCK.tick(FPS)
         pygame.display.flip()

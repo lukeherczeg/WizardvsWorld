@@ -13,11 +13,11 @@ def select(row, col, enemy=None):
 
 
 def get_all_stats(entity):
-    # TODO: Implement a refresh with specific tiles
-    # tiles ([1][0] - [1][3]), ([2][0]) - ([5][2])
-    total_refresh_drawing()
+    # Initialize the first stat as the name
     stats = [entity.get_name()]
+    # Add all the other entity stats
     stats.extend(entity.get_character_stats())
+    # Make each stat in the array a formatted string to print
     stats[1] = f"Health: {stats[1]}/{entity.get_max_health()}"
     stats[2] = f"Defense: {stats[2]}"
     stats[3] = f"Attack: {stats[3]}"
@@ -58,6 +58,17 @@ class PlayerMovementPhase(Phase):
         self.occupied_index += 1
         return tile_list[(current_tile + 1) % len(tile_list)]
 
+    def check_for_entities_in_area(self, top_left, bottom_right):
+        start = top_left.row, top_left.col
+        end = bottom_right.row, bottom_right.col
+
+        for i in range(start[0], end[0] + 1):
+            for j in range(start[1], end[1] + 1):
+                if GRID.game_map[i][j].occupied or self.player.currentTile == GRID.game_map[i][j]:
+                    return True
+
+        return False
+
     def display_tile_type(self, tile_info, draw_color, row, col, offset_x, offset_y):
         if self.currentTile.win_tile and self.all_bosses_defeated:
             draw_text("Win Tile", 24, GRID.game_map[row][col], (offset_x, offset_y), BRIGHT_GREEN)
@@ -83,7 +94,14 @@ class PlayerMovementPhase(Phase):
         draw_text(standable, 18, GRID.game_map[row][col],
                   (offset_x, offset_y), draw_color)
 
-    def display_tile_info(self):
+    def display_tile_info(self, entities_in_top_left):
+        # Refresh the tiles where we will show information.
+
+        if entities_in_top_left:
+            draw_rectangular_area(GRID.game_map[10][0], GRID.game_map[14][3])
+        else:
+            draw_rectangular_area(GRID.game_map[1][0], GRID.game_map[5][3])
+
         stats = []
         tile_info = []
         draw_color = WHITE
@@ -99,7 +117,11 @@ class PlayerMovementPhase(Phase):
         else:
             tile_info = self.currentTile.texture_type
 
-        stat_draw_location = [1, 0]
+        if entities_in_top_left:
+            stat_draw_location = [10, 0]
+        else:
+            stat_draw_location = [1, 0]
+
         stat_draw_offset_vertical = 0
         stat_draw_offset_horizontal = .03
 
@@ -116,7 +138,6 @@ class PlayerMovementPhase(Phase):
         # If there aren't any entities on this tile, we display the tile type instead
         else:
             draw_color = WHITE
-            total_refresh_drawing()
 
             self.display_tile_type(tile_info, draw_color, stat_draw_location[0], stat_draw_location[1],
                                    stat_draw_offset_horizontal, stat_draw_offset_vertical)
@@ -132,7 +153,8 @@ class PlayerMovementPhase(Phase):
                 draw_tile(self.currentTile)
                 self.currentTile = self.grid.game_map[row][col]
 
-                self.display_tile_info()
+                entities_in_top_left = self.check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
+                self.display_tile_info(entities_in_top_left)
 
                 select(self.currentTile.row, self.currentTile.col)
                 draw_entities()
