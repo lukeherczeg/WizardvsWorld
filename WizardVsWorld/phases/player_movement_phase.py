@@ -13,11 +13,11 @@ def select(row, col, enemy=None):
 
 
 def get_all_stats(entity):
-    # TODO: Implement a refresh with specific tiles
-    # tiles ([1][0] - [1][3]), ([2][0]) - ([5][2])
-    total_refresh_drawing()
+    # Initialize the first stat as the name
     stats = [entity.get_name()]
+    # Add all the other entity stats
     stats.extend(entity.get_character_stats())
+    # Make each stat in the array a formatted string to print
     stats[1] = f"Health: {stats[1]}/{entity.get_max_health()}"
     stats[2] = f"Defense: {stats[2]}"
     stats[3] = f"Attack: {stats[3]}"
@@ -84,6 +84,9 @@ class PlayerMovementPhase(Phase):
                   (offset_x, offset_y), draw_color)
 
     def display_tile_info(self):
+        # Refresh the tiles where we will show information.
+        draw_rectangular_area(GRID.game_map[1][0], GRID.game_map[5][3])
+
         stats = []
         tile_info = []
         draw_color = WHITE
@@ -116,7 +119,6 @@ class PlayerMovementPhase(Phase):
         # If there aren't any entities on this tile, we display the tile type instead
         else:
             draw_color = WHITE
-            total_refresh_drawing()
 
             self.display_tile_type(tile_info, draw_color, stat_draw_location[0], stat_draw_location[1],
                                    stat_draw_offset_horizontal, stat_draw_offset_vertical)

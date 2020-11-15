@@ -24,7 +24,8 @@ class Button:
         # Button is being hovered
         # TODO CENTER THE BUTTON HERE
         if self.__selected:
-            pygame.draw.rect(SCREEN, self.__color_active, (self.__pos_x, self.__pos_y, self.__width + 5, self.__height + 5))
+            pygame.draw.rect(SCREEN, self.__color_active,
+                             (self.__pos_x, self.__pos_y, self.__width + 5, self.__height + 5))
         # Button isn't hovered
         else:
             pygame.draw.rect(SCREEN, self.__color_inactive, (self.__pos_x, self.__pos_y, self.__width, self.__height))
@@ -110,44 +111,57 @@ class SelectionMenu:
         self.options = options
         if options:
             self.selected = 0
+            self.last_selected = 0
         else:
             self.selected = None
+            self.last_selected = None
 
     def add_option(self, option):
         self.options.append(option)
 
-    def draw_menu(self):
-        draw_text_abs(self.header, 36, WINDOW_WIDTH // 2, 50)
+    def draw_menu(self, initialize=None):
+        draw_text_abs(self.header, int(WINDOW_WIDTH * .036), WINDOW_WIDTH // 2, WINDOW_WIDTH // 20)
         option_number = 0
         for option in self.options:
+            position = (WINDOW_WIDTH // 6, 100 * option_number + WINDOW_WIDTH // 10,
+                        WINDOW_WIDTH - WINDOW_WIDTH // 3, int(WINDOW_WIDTH * .075))
             if option_number == self.selected:
-                pygame.draw.rect(SCREEN, BRIGHT_RED, (20, 100 * option_number + 100, WINDOW_WIDTH - 40, 75))
+                pygame.draw.rect(SCREEN, BRIGHT_RED, position)
+            elif initialize is not None or (self.last_selected == option_number):
+                pygame.draw.rect(SCREEN, RED, position)
             else:
-                pygame.draw.rect(SCREEN, RED, (20, 100 * option_number + 100, WINDOW_WIDTH - 40, 75))
+                option_number += 1
+                continue
 
-            draw_text_abs(option[0], 18, WINDOW_WIDTH // 2, 100 * option_number + 115)
-            draw_text_abs(option[1], 14, WINDOW_WIDTH // 2, 100 * option_number + 150)
+            draw_text_abs(option[0], int(WINDOW_WIDTH * .018), WINDOW_WIDTH // 2,
+                          100 * option_number + int(WINDOW_WIDTH * .115))
+            draw_text_abs(option[1], int(WINDOW_WIDTH * .014), WINDOW_WIDTH // 2,
+                          100 * option_number + int(WINDOW_WIDTH * .150))
             option_number += 1
-        pygame.display.update()
 
     def await_response(self):
+        self.draw_menu(True)
         while True:
             update = False
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
                     if self.selected == len(self.options) - 1:
                         self.selected = 0
+                        self.last_selected = len(self.options) - 1
                     else:
+                        self.last_selected = self.selected
                         self.selected += 1
                     update = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
                     if self.selected == 0:
                         self.selected = len(self.options) - 1
+                        self.last_selected = 0
                     else:
+                        self.last_selected = self.selected
                         self.selected -= 1
                     update = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    self.options[self.selected][2]() # Call the on_click function of the option
+                    self.options[self.selected][2]()  # Call the on_click function of the option
                     total_refresh_drawing()
                     return True
                 elif event.type == pygame.QUIT:
