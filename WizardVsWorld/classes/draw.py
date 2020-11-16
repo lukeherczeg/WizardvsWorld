@@ -142,7 +142,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         CLOCK.tick(FPS)
         pygame.display.flip()
-        opacity = opacity + 25
+        opacity = opacity + 10
 
     time.sleep(onscreen_time)
 
@@ -154,7 +154,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         CLOCK.tick(FPS)
         pygame.display.flip()
-        opacity = opacity - 25
+        opacity = opacity - 10
 
     total_refresh_drawing()
 
@@ -244,13 +244,13 @@ def animate_attack(attacker, victim):
 
         # get proportion of x movement to y movement needed
         if target_y == start_y:
-            x_diff = 10
+            x_diff = 6
         else:
-            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y))) * 4
+            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y))) * 3
         if target_x == start_x:
-            y_diff = 10
+            y_diff = 6
         else:
-            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x))) * 4
+            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x))) * 3
 
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
         if isinstance(attacker, Player):
@@ -347,8 +347,8 @@ def animate_map_transition(old_grid, old_enemies, player):
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
 
-        new_grid_offset = new_grid_offset - 10
-        old_grid_offset = old_grid_offset - 10
+        new_grid_offset = new_grid_offset - 5
+        old_grid_offset = old_grid_offset - 5
 
         CLOCK.tick(FPS)
         pygame.display.flip()
@@ -418,7 +418,7 @@ def _animate_archer_attack(coords):
     trans_arrow = pygame.transform.rotate(ARROW_PNG, angle)
     trans_arrow = pygame.transform.scale(trans_arrow, (30, 30))
 
-    while abs(start_x - target_x) >= 2 or abs(start_y - target_y) >= 2:
+    while abs(start_x - target_x) >= 3 or abs(start_y - target_y) >= 3:
         # update animation position and frame
         arrow_rect = trans_arrow.get_rect()
         arrow_rect = arrow_rect.move([start_x, start_y])
