@@ -1,5 +1,5 @@
 from WizardVsWorld.phases.player_movement_phase import *
-from WizardVsWorld.classes.user_interface import MessageBox
+from WizardVsWorld.classes.user_interface import MessageBox, SpellMenu
 from WizardVsWorld.classes.attack import CounterAttack, perform_attack
 
 
@@ -41,7 +41,7 @@ class PlayerAttackPhase(Phase):
                 if tile is self.enemyTile:
                     self.attack(enemy, enemy_tiles)
 
-    def attack_selection(self):
+    def attack_selection(self, spell):
         enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, self.player.range)
 
         self.data_from_movement.enemy_tiles = enemy_tiles
@@ -93,7 +93,9 @@ class PlayerAttackPhase(Phase):
     def enter(self):
         if not self.data_from_movement.level_complete:
             total_refresh_drawing()  # Attack radius can overwrite text
-            self.attack_selection()
+            spell_menu = SpellMenu(self.player.spellbook)
+            chosen_spell =  spell_menu.await_response()
+            self.attack_selection(self.player.spellbook[chosen_spell])
 
     def update(self):
         if not self.data_from_movement.level_complete:
