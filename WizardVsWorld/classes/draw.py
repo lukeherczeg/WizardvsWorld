@@ -2,7 +2,6 @@ import pygame
 import sys
 import math
 import time
-import os
 from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.const import TileTexture, TileTint, ENTITIES
 from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight
@@ -129,44 +128,6 @@ def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
     pygame.display.flip()
 
 
-def animate_text(message, size, tile=None, offset=None, color=WHITE, onscreen_time=0, background=None):
-    # GOTO provided tile
-    x_pos = tile.col if tile is not None else 0
-    y_pos = tile.row if tile is not None else 0
-
-    # ADD offset to coords
-    x_offset, y_offset = offset if offset is not None else (0, 0)
-    x_pos, y_pos = x_pos + x_offset, y_pos + y_offset
-
-    message_font = pygame.font.Font('freesansbold.ttf', size)
-    message_text = message_font.render(str(message), True, color)
-    opacity = 0
-
-    while opacity != 250:
-        draw_grid()
-        draw_entities(hard=False)
-        if not background is None:
-            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity)
-        _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity)
-        CLOCK.tick(FPS)
-        pygame.display.flip()
-        opacity = opacity + 10
-
-    time.sleep(onscreen_time)
-
-    while opacity != 0:
-        draw_grid()
-        draw_entities(hard=False)
-        if not background is None:
-            _blit_alpha(SCREEN, background, (x_pos, y_pos), opacity, True)
-        _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
-        CLOCK.tick(FPS)
-        pygame.display.flip()
-        opacity = opacity - 10
-
-    total_refresh_drawing()
-
-
 def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time=0,
                      background=None, background_opacity_decrease=0):
     message_font = pygame.font.Font('freesansbold.ttf', size)
@@ -181,7 +142,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         CLOCK.tick(FPS)
         pygame.display.flip()
-        opacity = opacity + 10
+        opacity = opacity + 25
 
     time.sleep(onscreen_time)
 
@@ -193,7 +154,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         CLOCK.tick(FPS)
         pygame.display.flip()
-        opacity = opacity - 10
+        opacity = opacity - 25
 
     total_refresh_drawing()
 
@@ -283,13 +244,13 @@ def animate_attack(attacker, victim):
 
         # get proportion of x movement to y movement needed
         if target_y == start_y:
-            x_diff = 5
+            x_diff = 10
         else:
-            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y))) * 3
+            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y))) * 4
         if target_x == start_x:
-            y_diff = 5
+            y_diff = 10
         else:
-            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x))) * 3
+            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x))) * 4
 
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
         if isinstance(attacker, Player):
@@ -340,9 +301,6 @@ def animate_map_transition(old_grid, old_enemies, player):
 
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
-    x_index = 0
-
-    move_x = [0, 0, 0, 0, 0, 0, 0, 0, 1]
 
     while new_grid_offset >= 0:
         for _, col in enumerate(old_grid.game_map):
@@ -360,10 +318,9 @@ def animate_map_transition(old_grid, old_enemies, player):
                 SCREEN.blit(tile_img, tile_rect)
 
         if (player_x < player_target_x):
-            player_x = player_x + move_x[x_index]
+            player_x = player_x + 1
             player_y = player_y + move_wiggle[wiggle_index]
 
-            x_index = 0 if x_index == len(move_x) - 1 else x_index + 1
             wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
 
         player_img = _get_entity_img(player)
@@ -390,9 +347,10 @@ def animate_map_transition(old_grid, old_enemies, player):
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
 
-        new_grid_offset = new_grid_offset - 1
-        old_grid_offset = old_grid_offset - 1
+        new_grid_offset = new_grid_offset - 10
+        old_grid_offset = old_grid_offset - 10
 
+        CLOCK.tick(FPS)
         pygame.display.flip()
 
     total_refresh_drawing()
@@ -549,7 +507,7 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     # animation arrays and indexes
     wiggle_index = 0
     # They wiggle for more time if they get crit
-    wiggle_length = (35 if crit else 20)
+    wiggle_length = (30 if crit else 20)
     for i in range(wiggle_length):
         # animate
         number_rect = number_rect.move([0, -1])
