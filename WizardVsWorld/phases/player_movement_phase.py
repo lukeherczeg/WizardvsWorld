@@ -165,7 +165,6 @@ class PlayerMovementPhase(Phase):
                             GRID.is_valid_tile(tile.row + rect_size, tile.col + rect_size):
                         top_left = GRID.game_map[tile.row - rect_size][tile.col - rect_size]
                         bottom_right = GRID.game_map[tile.row + rect_size][tile.col + rect_size]
-                        draw_rectangular_area(top_left, bottom_right)
                         entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
                         self.display_tile_info(entities_in_top_left)
                         select(self.currentTile.row, self.currentTile.col)
