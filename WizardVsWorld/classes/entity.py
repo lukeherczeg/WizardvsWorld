@@ -1,3 +1,5 @@
+from typing import List
+
 from WizardVsWorld.classes.tile import Tile
 
 
@@ -15,6 +17,7 @@ class Entity:
     level: int
 
     def __init__(self):
+        self.tiles = [self.currentTile]
         self.damaged = False
         self.attacking = False
 
@@ -45,6 +48,7 @@ class Player(Entity):
         self.level = 0
         self.crit_chance = 25
         self.hit_chance = 95
+        self.tiles = None
 
     def level_up(self, new_level):
         self.level = new_level
@@ -108,7 +112,6 @@ class Archer(Enemy):
 
 class Boss(Enemy):
     ranged: bool
-    tiles: [Tile]
 
     def __init__(self):
         super().__init__()

@@ -150,7 +150,8 @@ class Grid:
                 tile_list.extend(self.get_movement(row, col - 1, num_moves - 1, player))
 
         # proceed bottom if not at border, lower tile is standable
-        if row != self.GRID_HEIGHT - 1 and self._game_map[row + 1][col].standable and not self._game_map[row + 1][col].occupied:
+        if row != self.GRID_HEIGHT - 1 and self._game_map[row + 1][col].standable and not self._game_map[row + 1][
+            col].occupied:
             tile_not_player_occupied = (player is not None and self._game_map[row + 1][col] is not player.currentTile)
 
             if player is None:
@@ -159,7 +160,8 @@ class Grid:
                 tile_list.extend(self.get_movement(row + 1, col, num_moves - 1, player))
 
         # proceed right if not at border, right tile is standable
-        if col != self.GRID_WIDTH - 1 and self._game_map[row][col + 1].standable and not self._game_map[row][col + 1].occupied:
+        if col != self.GRID_WIDTH - 1 and self._game_map[row][col + 1].standable and not self._game_map[row][
+            col + 1].occupied:
             tile_not_player_occupied = (player is not None and self._game_map[row][col + 1] is not player.currentTile)
 
             if player is None:
@@ -216,22 +218,23 @@ class Grid:
 
     def generate_tile(self, col, row):
         standable = self.__generate_true(self.STANDABLE_TILE_DENSITY_ODDS)
-        #we need to calculate the index for the tile value once the string is read from file
+        # we need to calculate the index for the tile value once the string is read from file
         index = col + (row * 25)
         layout = self.map_layout
 
-        #if the value is 0 (most tiles) randomly generate that tile
-        #letters signify that an enemy is to be spawned on the texture type initial "f" or "d" or "g" etc.
-        #r means it is a random texture type
+        # if the value is 0 (most tiles) randomly generate that tile
+        # letters signify that an enemy is to be spawned on the texture type initial "f" or "d" or "g" etc.
+        # r means it is a random texture type
         if layout[index] == '0' or layout[index] == 'r' or layout[index] == 'K' or layout[index] == 'R':
             # walls = [self.__generate_true(self.WALL_DENSITY) for x in range(4)]
             if self.__generate_true(.15):
                 return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
-            elif not standable and not layout[index] == 'r':  # check that before creating non-standable tile enemy is not spawned there
+            elif not standable and not layout[index] == 'r':  # check that before creating non-standable tile enemy
+                # is not spawned there
                 return Tile(col=col, row=row, standable=standable, texture_type=TileTexture.BUSH)
             else:
                 return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
-        #load a texture based on layout
+        # load a texture based on layout
         elif layout[index] == '1' or layout[index] == 'd':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
         elif layout[index] == '2':
@@ -287,7 +290,6 @@ class Grid:
         # Luke testing
         boss = GreatKnight(level)
         boss.currentTile = self.game_map[7][23]
-        boss.tiles = boss.currentTile
         boss.currentTile.occupied = True
         ENTITIES.append(boss)
 

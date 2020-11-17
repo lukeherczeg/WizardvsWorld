@@ -39,24 +39,24 @@ def draw_rectangular_area(top_left, bottom_right):
     start = top_left.row, top_left.col
     end = bottom_right.row, bottom_right.col
 
-    for i in range(start[0], end[0]+1):
-        for j in range(start[1], end[1]+1):
+    for i in range(start[0], end[0] + 1):
+        for j in range(start[1], end[1] + 1):
             draw_tile(GRID.game_map[i][j])
-            #print(f"Drew tile [{i}, {j}].")
+            # print(f"Drew tile [{i}, {j}].")
+
+
+def clear_tinted_tiles(tile_list, entity):
+    draw_tinted_tiles(tile_list, entity, TileTint.NONE)
 
 
 def draw_tinted_tiles(tile_list, entity, tint):
     for tile in tile_list:
-        tile_img = _get_tile_img(tile, tint)
-        tile_rect = tile_img.get_rect()
-        tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
-        SCREEN.blit(tile_img, tile_rect)
+        tile.tint = tint
+        draw_tile(tile)
+    for tile in tile_list:
+        draw_entity_from_tile(tile)
 
-    entity_img = _get_entity_img(entity)
-    entity_rect = entity_img.get_rect()
-    entity_rect = entity_rect.move([entity.get_position().col * BLOCK_SIZE, entity.get_position().row * BLOCK_SIZE])
-    SCREEN.blit(entity_img, entity_rect)
-    draw_entities()
+    draw_entity(entity)
     pygame.display.flip()
 
 
@@ -71,6 +71,52 @@ def draw_selected_tile(tile, enemy=None):
     tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
     SCREEN.blit(tile_img, tile_rect)
     pygame.display.flip()
+
+
+def draw_entities_in_rectangular_area(top_left, bottom_right):
+    start = top_left.row, top_left.col
+    end = bottom_right.row, bottom_right.col
+
+    for entity in ENTITIES:
+        if start[0] <= entity.currentTile.row <= end[0] and start[1] <= entity.currentTile.col <= end[1]:
+            draw_entity(entity)
+
+
+def check_for_entities_in_area(top_left, bottom_right):
+    start = top_left.row, top_left.col
+    end = bottom_right.row, bottom_right.col
+
+    for entity in ENTITIES:
+        if start[0] <= entity.currentTile.row <= end[0] and start[1] <= entity.currentTile.col <= end[1]:
+            return True
+
+    return False
+
+
+def draw_entity_from_tile(tile):
+    entity_to_draw = None
+    for entity in ENTITIES:
+        if entity.currentTile == tile:
+            entity_to_draw = entity
+            break
+
+    if entity_to_draw is not None:
+        draw_entity(entity_to_draw)
+
+
+def draw_entity(entity):
+    if entity.tiles is not None:
+        if len(entity.tiles) > 1:
+            for tile in entity.tiles:
+                draw_tile(tile)
+
+    entity_img = _get_entity_img(entity)
+    entity_rect = entity_img.get_rect()
+
+    entity_coords = (entity.get_position().col, entity.get_position().row)
+    entity_rect = entity_rect.move(_calc_player_coords(entity_coords, entity_rect))
+    SCREEN.blit(entity_img, entity_rect)
+    pygame.display.update(entity_rect)
 
 
 def draw_entities(ignorables=None, hard=True):
@@ -106,7 +152,6 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     message_rect = message_text.get_rect()
     message_rect = message_rect.move([x_pos * BLOCK_SIZE, y_pos * BLOCK_SIZE])
     SCREEN.blit(message_text, message_rect)
-    # pygame.display.flip()
 
 
 def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
@@ -605,47 +650,47 @@ def _blit_alpha(target, source, location, opacity, centered=False):
     target.blit(temp, (x, y))
 
 
-def _get_tile_img(tile, tint=None):
+def _get_tile_img(tile):
     if tile.texture_type == TileTexture.GRASS:
-        if tint == TileTint.BLUE or tile.tint == TileTint.BLUE:
+        if tile.tint == TileTint.BLUE:
             return GRASS_BLUE_PNG
-        elif tint == TileTint.RED or tile.tint == TileTint.RED:
+        elif tile.tint == TileTint.RED:
             return GRASS_RED_PNG
-        elif tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
+        elif tile.tint == TileTint.ORANGE:
             return GRASS_ORANGE_PNG
         else:
             return GRASS_PNG
     if tile.texture_type == TileTexture.DIRT:
-        if tint == TileTint.BLUE or tile.tint == TileTint.BLUE:
+        if tile.tint == TileTint.BLUE:
             return DIRT_BLUE_PNG
-        elif tint == TileTint.RED or tile.tint == TileTint.RED:
+        elif tile.tint == TileTint.RED:
             return DIRT_RED_PNG
-        elif tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
+        elif tile.tint == TileTint.ORANGE:
             return DIRT_ORANGE_PNG
         else:
             return DIRT_PNG
     elif tile.texture_type == TileTexture.STONE:
-        if tint == TileTint.BLUE or tile.tint == TileTint.BLUE:
+        if tile.tint == TileTint.BLUE:
             return STONE_BLUE_PNG
-        elif tint == TileTint.RED or tile.tint == TileTint.RED:
+        elif tile.tint == TileTint.RED:
             return STONE_RED_PNG
-        elif tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
+        elif tile.tint == TileTint.ORANGE:
             return STONE_ORANGE_PNG
         else:
             return STONE_PNG
     elif tile.texture_type == TileTexture.FLOOR:
-        if tint == TileTint.BLUE or tile.tint == TileTint.BLUE:
+        if tile.tint == TileTint.BLUE:
             return FLOOR_BLUE_PNG
-        elif tint == TileTint.RED or tile.tint == TileTint.RED:
+        elif tile.tint == TileTint.RED:
             return FLOOR_RED_PNG
-        elif tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
+        elif tile.tint == TileTint.ORANGE:
             return FLOOR_ORANGE_PNG
         else:
             return FLOOR_PNG
     elif tile.texture_type == TileTexture.BUSH:
-        if tint == TileTint.ORANGE or tile.tint == TileTint.ORANGE:
+        if tile.tint == TileTint.ORANGE:
             return BUSH_ORANGE_PNG
-        elif tint == TileTint.RED or tile.tint == TileTint.RED:
+        elif tile.tint == TileTint.RED:
             return BUSH_RED_PNG
         else:
             return BUSH_PNG
@@ -693,7 +738,7 @@ def _get_entity_img(entity):
 
 def _calc_player_coords(entity_pos, entity_rect, offset=None):
     x_point = (entity_pos[0] * BLOCK_SIZE) - ((entity_rect.size[0] - BLOCK_SIZE) / 2)
-    y_point = (entity_pos[1] * BLOCK_SIZE) - (entity_rect.size[1] - BLOCK_SIZE)
+    y_point = (entity_pos[1] * BLOCK_SIZE) - (entity_rect.size[1] - BLOCK_SIZE) - 3
 
     if offset:
         x_point = x_point + offset[0]
