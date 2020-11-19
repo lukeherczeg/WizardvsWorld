@@ -14,13 +14,33 @@ def can_attack(attacker, victim):
     else:
         return False
 
+def cast_spell(caster, target):
+    """Casts the prepared spell"""
+    # TODO: ANIMATE CASTING SPELLS OTHER THAN FIREBALL
 
-def perform_attack(attacker, victim):
+    spell = caster.prepared_spell
+
+    # Typically Buffs and defense spells
+    if spell.range == 0:
+        spell.cast(target)
+        perform_aoe(caster, target, spell.power, False)
+
+    # If not cast on self, its susceptible to attack roll
+    if spell.range > 0:
+        perform_attack(caster, target, spell)
+
+
+def perform_attack(attacker, victim, spell=None):
     attacker.attacking = True
     animate_attack(attacker, victim)
     attacker.attacking = False
 
-    damage_taken, crit = calculate_damage(attacker, victim)
+    # Check if spell is being cast
+    if spell is not None:
+        damage_taken, crit = calculate_damage(attacker, victim, spell)
+    else:
+        damage_taken, crit = calculate_damage(attacker, victim)
+
     if damage_taken is None:
         animate_miss(victim)
         return
@@ -33,14 +53,24 @@ def perform_attack(attacker, victim):
     victim.damaged = True
     animate_damage(victim, health_before_attack, crit)
 
+    if spell is not None:
+        perform_aoe(attacker, victim, damage_taken, crit)
 
-def calculate_damage(attacker, victim):
+
+
+def calculate_damage(attacker, victim, spell=None):
     """ Attack damage is calculated by picking a random number between [a little
         less than one's attack power] and [a little more than one's attack power]. """
 
-    attack_damage = (ceil(randrange(attacker.attack - randint(1, 3), attacker.attack + randint(1, 3))))
+    # Check if spell is being cast
+    if spell is not None:
+        attack_damage = (ceil(randrange(spell.power - randint(1, 3), spell.power + randint(1, 3))))
+    else:
+        attack_damage = (ceil(randrange(attacker.attack - randint(1, 3), attacker.attack + randint(1, 3))))
+
     chance = randint(0, 100)
     is_crit = False
+
     if chance <= attacker.hit_chance:
         if chance <= attacker.crit_chance:
             critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
@@ -52,6 +82,42 @@ def calculate_damage(attacker, victim):
         damage = None
 
     return damage, is_crit
+
+
+def perform_aoe(attacker, victim, damage, crit):
+    """Check if any entities (not enemies) are in the spell's AoE"""
+    spell = attacker.prepared_spell
+
+    if spell is not None and spell.aoe > 0:
+        affected_entities = calculate_aoe(attacker, victim)
+        for entity in affected_entities:
+            entity_health_before_attack = entity.health
+            entity.health -= damage
+            entity.damaged = True
+            animate_damage(entity, entity_health_before_attack, crit)
+
+
+def calculate_aoe(caster, victim):
+    """Returns a list of entities (not enemies) in the AoE of a spell"""
+    affected_entities = []
+
+    # Fetch AoE of a spell
+    aoe = caster.prepared_spell.aoe
+
+    # Calculate bounds of AoE
+    lo = [victim.currentTile.row - aoe, victim.currentTile.col - aoe] # lower [row, col] affected
+    hi = [victim.currentTile.col + aoe, victim.currentTile.col + aoe] # upper [row, col] affected
+
+    # Check if any entities are in the AoE
+    for entity in ENTITIES:
+        if  lo[0] <= entity.currentTile.row <= hi[0] and lo[1] <= entity.currentTile.col <= hi[1] and entity is not victim: # No double dipping
+            affected_entities.append(entity)
+
+    # Exclude caster from effects of spell
+    if caster.prepared_spell.exclude_self:
+        affected_entities = [entity for entity in affected_entities if entity is not caster] # Yay listcomps!
+
+    return affected_entities
 
 
 class CounterAttack:

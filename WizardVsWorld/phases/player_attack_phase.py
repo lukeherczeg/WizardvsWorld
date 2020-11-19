@@ -1,6 +1,6 @@
 from WizardVsWorld.phases.player_movement_phase import *
 from WizardVsWorld.classes.user_interface import MessageBox, SpellMenu
-from WizardVsWorld.classes.attack import CounterAttack, perform_attack
+from WizardVsWorld.classes.attack import CounterAttack, cast_spell
 
 
 class PlayerAttackPhase(Phase):
@@ -18,13 +18,19 @@ class PlayerAttackPhase(Phase):
         self.is_tutorial = True
 
     def attack(self, enemy, enemy_tiles):
-        perform_attack(self.player, enemy)
+        cast_spell(self.player, enemy)
 
-        if enemy.health <= 0:
-            enemy.currentTile.occupied = False
-            ENTITIES.remove(enemy)
-            animate_death(enemy)
-        elif enemy.health > 0:
+        # Check if any entites died in the attack or its effects
+        for entity in ENTITIES:
+            if entity.health <= 0:
+                entity.currentTile.occupied = False
+                ENTITIES.remove(entity)
+                animate_death(entity)
+            else:
+                entity.damaged = False
+
+        # Potential counterattack from enemy
+        if self.player is not enemy and enemy.health > 0:
             enemy.damaged = False
             attacker = CounterAttack(enemy, self.player, enemy_tiles)
             attacker.attempt_counter_attack()
@@ -41,8 +47,15 @@ class PlayerAttackPhase(Phase):
                 if tile is self.enemyTile:
                     self.attack(enemy, enemy_tiles)
 
-    def attack_selection(self, spell):
-        enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, spell.range)
+    def attack_selection(self):
+        if self.player.prepared_spell.range == 0:
+            self.enemyTile = self.player.currentTile #TODO: WILL CHANGING THE NAME OF ENEMYTILE BREAK ANYTHING?
+
+        enemy_tiles = GRID.get_attack(
+            self.player.currentTile.row,
+            self.player.currentTile.col,
+            self.player.prepared_spell.range
+        )
 
         self.data_from_movement.enemy_tiles = enemy_tiles
 
@@ -90,14 +103,6 @@ class PlayerAttackPhase(Phase):
 
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.NONE)
 
-    # Spells that cast on self don't need to target
-    def cast_on_self(self, spell):
-        # Cast only on player
-        if spell.aoe == 0:
-            self.player.decrease_health(spell)
-        else:
-            pass
-
     def enter(self):
         if not self.data_from_movement.level_complete:
             # Attack radius can overwrite text
@@ -106,14 +111,9 @@ class PlayerAttackPhase(Phase):
             # Select a spell
             spell_menu = SpellMenu(self.player.spellbook)
             spell_number = spell_menu.await_response()
-            chosen_spell = self.player.spellbook[spell_number]
+            self.player.prepared_spell = self.player.spellbook[spell_number]
 
-            # These are spells player casts on self (e.g. Heal)
-            if chosen_spell.range == 0:
-                self.cast_on_self(chosen_spell)
-            # These are spells that need to target (e.g. Greater Fireball)
-            else:
-                self.attack_selection(chosen_spell)
+            self.attack_selection()
 
     def update(self):
         if not self.data_from_movement.level_complete:

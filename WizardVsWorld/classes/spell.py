@@ -1,11 +1,14 @@
 class Spell():
-    def __init__(self, name, uses, spell_range, power, aoe=0):
-        self._name = name
-        self._max_uses = uses
-        self._current_uses = uses
-        self._range = spell_range
-        self._power = power
-        self._aoe = aoe
+    def __init__(self, name, uses, spell_range, power, aoe=0, exclude=False, effect=None, impact=None):
+        self._name = name # Name of spell -- typically used for debugging
+        self._max_uses = uses # Maximum uses of this spell per level
+        self._current_uses = uses # How many uses of the spell are left this level
+        self._range = spell_range # Spell range in tiles (Named this way to avoid shadowing stl range).
+        self._power = power # Spell power -- Can be damaging (Positive Value) or healing (Negative Value)
+        self._aoe = aoe # The depth of tiles around a target that are affected by the spell
+        self._exclude_self = exclude # Determines if the caster is excluded from the spell's AoE
+        self._effect = effect # On cast effect
+        self._impact = impact # On attack hit effect
 
     @property
     def name(self):
@@ -31,12 +34,16 @@ class Spell():
     def aoe(self):
         return self._aoe
 
+    @property
+    def exclude_self(self):
+        return self._exclude_self
+
     @range.setter
     def range(self, new_range):
         self._range = new_range
 
     def replenish(self):
-        """Set spell uses to max. Usually at beginning of level"""
+        """Set spell uses to max"""
         self._current_uses = self._max_uses
 
     def can_cast(self):
@@ -46,7 +53,17 @@ class Spell():
         else:
             return False
 
-    def cast(self):
+    def cast(self, target):
         """Decrement _current_uses by 1 if the spell has any"""
         if self._current_uses > 0:
-            self._current_uses -= 1
+            if self._effect is not None:
+                if target is not None:
+                    self._effect(target)
+                else:
+                    self._effect()
+                self._current_uses -= 1
+
+    def on_hit(self, target):
+        """Any effects that are dependant on the spell hitting the enemy"""
+        if self._impact is not None and target is not None:
+            self._impact(target)

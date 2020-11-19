@@ -48,7 +48,8 @@ class Player(Entity):
         self.hit_chance = 95
         self.uses = 1 # Base uses for special spells
         self.creep = 1  # Base "creep" or spread of aoe spells
-        self.spellbook = None
+        self.spellbook = None # Populated by self.refresh_spell()
+        self.prepared_spell = None # Keeps track of current spell to cast (jank)
         self.refresh_spells()
 
     def level_up(self, new_level):
@@ -85,15 +86,17 @@ class Player(Entity):
     def get_name(self):
         return "The Wizard"
 
+    def heal(self, target):
+        target.health = target.max_health
+
     def refresh_spells(self):
         """Called to initialize the spellbook and to refresh between levels (Rescales spells to current stats)"""
         self.spellbook = [
             Spell('Fireball', 999, self.range, self.attack),
-            Spell('Heal', self.uses, 0, -self.max_health),
+            Spell('Heal', self.uses, 0, -self.max_health, effect=self.heal),
             Spell('Greater Fireball', self.uses, self.range + 1, self.attack + 5 * (self.level + 1), aoe=self.creep),
-            Spell('Flame Barrier', self.uses, 0, self.attack + 5 * (self.level + 1), aoe= self.creep)
+            Spell('Flame Barrier', self.uses, 0, self.attack + 5 * (self.level + 1), aoe= self.creep, exclude=True)
         ]
-
 
 class Enemy(Entity):
     def __init__(self):
