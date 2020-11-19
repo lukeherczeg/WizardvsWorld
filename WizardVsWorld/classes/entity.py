@@ -49,6 +49,7 @@ class Player(Entity):
         self.crit_chance = 25
         self.hit_chance = 95
         self.tiles = None
+        self.healing = False
 
     def level_up(self, new_level):
         self.level = new_level
