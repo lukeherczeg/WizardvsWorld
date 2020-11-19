@@ -1,10 +1,10 @@
-class Spell:
-    def __init__(self, name, uses, spell_range, effect, aoe=0):
+class Spell():
+    def __init__(self, name, uses, spell_range, power, aoe=0):
         self._name = name
         self._max_uses = uses
         self._current_uses = uses
         self._range = spell_range
-        self._effect = effect
+        self._power = power
         self._aoe = aoe
 
     @property
@@ -24,8 +24,8 @@ class Spell:
         return self._range
 
     @property
-    def effect(self):
-        return self._effect
+    def power(self):
+        return self._power
 
     @property
     def aoe(self):

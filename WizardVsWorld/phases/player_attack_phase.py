@@ -42,7 +42,7 @@ class PlayerAttackPhase(Phase):
                     self.attack(enemy, enemy_tiles)
 
     def attack_selection(self, spell):
-        enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, self.player.range)
+        enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, spell.range)
 
         self.data_from_movement.enemy_tiles = enemy_tiles
 
@@ -90,12 +90,30 @@ class PlayerAttackPhase(Phase):
 
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.NONE)
 
+    # Spells that cast on self don't need to target
+    def cast_on_self(self, spell):
+        # Cast only on player
+        if spell.aoe == 0:
+            self.player.decrease_health(spell)
+        else:
+            pass
+
     def enter(self):
         if not self.data_from_movement.level_complete:
-            total_refresh_drawing()  # Attack radius can overwrite text
+            # Attack radius can overwrite text
+            total_refresh_drawing()
+
+            # Select a spell
             spell_menu = SpellMenu(self.player.spellbook)
-            chosen_spell =  spell_menu.await_response()
-            self.attack_selection(self.player.spellbook[chosen_spell])
+            spell_number = spell_menu.await_response()
+            chosen_spell = self.player.spellbook[spell_number]
+
+            # These are spells player casts on self (e.g. Heal)
+            if chosen_spell.range == 0:
+                self.cast_on_self(chosen_spell)
+            # These are spells that need to target (e.g. Greater Fireball)
+            else:
+                self.attack_selection(chosen_spell)
 
     def update(self):
         if not self.data_from_movement.level_complete:

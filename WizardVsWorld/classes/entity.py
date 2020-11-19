@@ -48,16 +48,8 @@ class Player(Entity):
         self.hit_chance = 95
         self.uses = 1 # Base uses for special spells
         self.creep = 1  # Base "creep" or spread of aoe spells
-        self.spellbook = []
+        self.spellbook = None
         self.refresh_spells()
-
-    @property
-    def spellbook(self):
-        return self.spellbook
-
-    @spellbook.setter
-    def spellbook(self, spellbook):
-        self.spellbook = spellbook
 
     def level_up(self, new_level):
         self.level = new_level
@@ -65,18 +57,30 @@ class Player(Entity):
         self.health = self.max_health
         self.attack += 5
         self.defense += 1
+        self.refresh_spells()
 
     def boost_attack(self):
         """End of level boost for attack"""
         self.attack += 5
+        self.refresh_spells()
 
     def boost_health(self):
         """End of level boost for health"""
         self.health += 15
+        self.refresh_spells()
 
     def boost_movement(self):
         """End of level boost for movement"""
         self.max_movement += 1
+        self.refresh_spells()
+
+    def decrease_health(self, health):
+        """Decrease the health of player by a certain amount; Clamped at 0 and Max Health. Can be used for healing"""
+        self.health -= health
+        if self.health > self.max_health:
+            self.health = self.max_health
+        elif self.health < 0:
+            self.health = 0
 
     def get_name(self):
         return "The Wizard"
