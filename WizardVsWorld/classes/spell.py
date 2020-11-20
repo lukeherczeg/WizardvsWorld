@@ -1,18 +1,24 @@
-class Spell():
-    def __init__(self, name, uses, spell_range, power, aoe=0, exclude=False, effect=None, impact=None):
-        self._name = name # Name of spell -- typically used for debugging
-        self._max_uses = uses # Maximum uses of this spell per level
-        self._current_uses = uses # How many uses of the spell are left this level
-        self._range = spell_range # Spell range in tiles (Named this way to avoid shadowing stl range).
-        self._power = power # Spell power -- Can be damaging (Positive Value) or healing (Negative Value)
-        self._aoe = aoe # The depth of tiles around a target that are affected by the spell
-        self._exclude_self = exclude # Determines if the caster is excluded from the spell's AoE
-        self._effect = effect # On cast effect
-        self._impact = impact # On attack hit effect
+class Spell:
+    """Spells are used by wizards and mages to augment their Attack"""
+    def __init__(self, name, description, uses, spell_range, power, aoe=0, exclude=False, effect=None, impact=None):
+        self._name = name               # Name of spell for the menu
+        self._description = description # Description of the spell for the menu
+        self._max_uses = uses           # Maximum uses of this spell per level
+        self._current_uses = uses       # How many uses of the spell are left this level
+        self._range = spell_range       # Spell range in tiles (Named this way to avoid shadowing stl range).
+        self._power = power             # Spell power -- Can be damaging (Positive Value) or healing (Negative Value)
+        self._aoe = aoe                 # The depth of tiles around a target that are affected by the spell
+        self._exclude_self = exclude    # Determines if the caster is excluded from the spell's AoE
+        self._effect = effect           # On cast effect
+        self._impact = impact           # On attack hit effect
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def description(self):
+        return self._description
 
     @property
     def max_uses(self):

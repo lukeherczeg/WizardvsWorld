@@ -92,10 +92,50 @@ class Player(Entity):
     def refresh_spells(self):
         """Called to initialize the spellbook and to refresh between levels (Rescales spells to current stats)"""
         self.spellbook = [
-            Spell('Fireball', 999, self.range, self.attack),
-            Spell('Heal', self.uses, 0, -self.max_health, effect=self.heal),
-            Spell('Greater Fireball', self.uses, self.range + 1, self.attack + 5 * (self.level + 1), aoe=self.creep),
-            Spell('Flame Barrier', self.uses, 0, 50 + self.attack + 2 * (self.level + 1), aoe= self.creep, exclude=True)
+            # Example Spell
+            # Spell(
+            #   'Name',                     # Name of Spell
+            #   'Description Goes Here',    # Description
+            #   0,                          # Max Uses
+            #   self.range,                 # Range
+            #   self.attack,                # Spell Power (Positive for Damage, Negative for Healing)
+            #   aoe=self.creep,             # AoE of the Spell (Default = 0)
+            #   exclude=True,               # Exclude the caster from AoE
+            #   effect=some_function,       # On cast effect
+            #   impact=other_function       # On hit effect
+            #),
+            Spell(
+                'Fireball',
+                'Basic Fireball.',
+                999,
+                self.range,
+                self.attack
+            ),
+            Spell(
+                'Heal',
+                'Heal to full.',
+                self.uses,
+                0,
+                -self.max_health,
+                effect=self.heal
+            ),
+            Spell(
+                'Greater Fireball',
+                f'Cast a stronger fireball with AoE of {self.creep}',
+                self.uses,
+                self.range + 1,
+                self.attack + 5 * (self.level + 1),
+                aoe=self.creep
+            ),
+            Spell(
+                'Flame Nova',
+                f'Fire out flames in all directions with AoE of {self.creep}',
+                self.uses,
+                0,
+                50 + self.attack + 2 * (self.level + 1),
+                aoe= self.creep,
+                exclude=True
+            )
         ]
 
 class Enemy(Entity):
