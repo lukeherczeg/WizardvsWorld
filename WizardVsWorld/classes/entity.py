@@ -95,7 +95,7 @@ class Player(Entity):
             Spell('Fireball', 999, self.range, self.attack),
             Spell('Heal', self.uses, 0, -self.max_health, effect=self.heal),
             Spell('Greater Fireball', self.uses, self.range + 1, self.attack + 5 * (self.level + 1), aoe=self.creep),
-            Spell('Flame Barrier', self.uses, 0, self.attack + 5 * (self.level + 1), aoe= self.creep, exclude=True)
+            Spell('Flame Barrier', self.uses, 0, 50 + self.attack + 2 * (self.level + 1), aoe= self.creep, exclude=True)
         ]
 
 class Enemy(Entity):

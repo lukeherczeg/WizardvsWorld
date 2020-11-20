@@ -106,7 +106,7 @@ def calculate_aoe(caster, victim):
 
     # Calculate bounds of AoE
     lo = [victim.currentTile.row - aoe, victim.currentTile.col - aoe] # lower [row, col] affected
-    hi = [victim.currentTile.col + aoe, victim.currentTile.col + aoe] # upper [row, col] affected
+    hi = [victim.currentTile.row + aoe, victim.currentTile.col + aoe] # upper [row, col] affected
 
     # Check if any entities are in the AoE
     for entity in ENTITIES:
