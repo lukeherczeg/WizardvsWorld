@@ -14,6 +14,7 @@ def can_attack(attacker, victim):
     else:
         return False
 
+
 def cast_spell(caster, target):
     """Casts the prepared spell"""
     # TODO: ANIMATE CASTING SPELLS OTHER THAN FIREBALL
@@ -28,6 +29,20 @@ def cast_spell(caster, target):
     # If not cast on self, its susceptible to attack roll
     if spell.range > 0:
         perform_attack(caster, target, spell)
+
+
+def entity_cleanup(victim, damage, crit):
+    health_before_attack = victim.health
+    victim.health -= damage
+    victim.damaged = True
+    animate_damage(victim, health_before_attack, crit)
+
+    if victim.health <= 0:
+        victim.currentTile.occupied = False
+        ENTITIES.remove(victim)
+        animate_death(victim)
+    else:
+        victim.damaged = False
 
 
 def perform_attack(attacker, victim, spell=None):
@@ -48,14 +63,10 @@ def perform_attack(attacker, victim, spell=None):
     if damage_taken < 0:
         damage_taken = 0
 
-    health_before_attack = victim.health
-    victim.health -= damage_taken
-    victim.damaged = True
-    animate_damage(victim, health_before_attack, crit)
+    entity_cleanup(victim, damage_taken, crit)
 
     if spell is not None:
         perform_aoe(attacker, victim, damage_taken, crit)
-
 
 
 def calculate_damage(attacker, victim, spell=None):
@@ -91,10 +102,7 @@ def perform_aoe(attacker, victim, damage, crit):
     if spell is not None and spell.aoe > 0:
         affected_entities = calculate_aoe(attacker, victim)
         for entity in affected_entities:
-            entity_health_before_attack = entity.health
-            entity.health -= damage
-            entity.damaged = True
-            animate_damage(entity, entity_health_before_attack, crit)
+            entity_cleanup(entity, damage, crit)
 
 
 def calculate_aoe(caster, victim):
@@ -105,17 +113,18 @@ def calculate_aoe(caster, victim):
     aoe = caster.prepared_spell.aoe
 
     # Calculate bounds of AoE
-    lo = [victim.currentTile.row - aoe, victim.currentTile.col - aoe] # lower [row, col] affected
-    hi = [victim.currentTile.row + aoe, victim.currentTile.col + aoe] # upper [row, col] affected
+    lo = [victim.currentTile.row - aoe, victim.currentTile.col - aoe]  # lower [row, col] affected
+    hi = [victim.currentTile.row + aoe, victim.currentTile.col + aoe]  # upper [row, col] affected
 
     # Check if any entities are in the AoE
     for entity in ENTITIES:
-        if  lo[0] <= entity.currentTile.row <= hi[0] and lo[1] <= entity.currentTile.col <= hi[1] and entity is not victim: # No double dipping
+        if lo[0] <= entity.currentTile.row <= hi[0] and lo[1] <= entity.currentTile.col <= hi[
+            1] and entity is not victim:  # No double dipping
             affected_entities.append(entity)
 
     # Exclude caster from effects of spell
     if caster.prepared_spell.exclude_self:
-        affected_entities = [entity for entity in affected_entities if entity is not caster] # Yay listcomps!
+        affected_entities = [entity for entity in affected_entities if entity is not caster]  # Yay listcomps!
 
     return affected_entities
 
