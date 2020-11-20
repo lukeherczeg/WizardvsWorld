@@ -30,19 +30,19 @@ class PlayerAttackPhase(Phase):
         elif self.player.health > 0:
             self.player.damaged = False
 
-        # Check if any entities died in the attack or its effects
-        dead_entities = []
-        for entity in ENTITIES:
-            if entity.health <= 0:
-                entity.currentTile.occupied = False
-                dead_entities.append(entity)
-            else:
-                entity.damaged = False
-
-        # Remove all of the dead
-        for entity in dead_entities:
-            ENTITIES.remove(entity)
-            animate_death(entity)
+        # # Check if any entities died in the attack or its effects
+        # dead_entities = []
+        # for entity in ENTITIES:
+        #     if entity.health <= 0:
+        #         entity.currentTile.occupied = False
+        #         dead_entities.append(entity)
+        #     else:
+        #         entity.damaged = False
+        #
+        # # Remove all of the dead
+        # for entity in dead_entities:
+        #     ENTITIES.remove(entity)
+        #     animate_death(entity)
 
         # Potential counterattack from enemy
         if self.player is not enemy and enemy.health > 0:
