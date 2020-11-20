@@ -74,13 +74,18 @@ KNIGHT_PNG = get_block_sized_texture('knight.png', TextureType.ENTITY)
 KNIGHT_ATTACK_PNG = get_block_sized_texture('knightattack.png', TextureType.ENTITY)
 KNIGHT_ATTACKABLE_PNG = get_block_sized_texture('knightattackable.png', TextureType.ENTITY)
 KNIGHT_HURT_PNG = get_block_sized_texture('knighthurt.png', TextureType.ENTITY)
-GREATKNIGHT_PNG = get_block_sized_texture('greatknight.png', TextureType.ENTITY)
-GREATKNIGHT_ATTACK_PNG = get_block_sized_texture('greatknightattack.png', TextureType.ENTITY)
-GREATKNIGHT_HURT_PNG = get_block_sized_texture('greatknighthurt.png', TextureType.ENTITY)
+
+GREATKNIGHT_RESCALESIZE = int(WINDOW_WIDTH * 0.08)
+GREATKNIGHT_PNG = get_block_sized_texture('greatknight.png', TextureType.ENTITY, GREATKNIGHT_RESCALESIZE)
+GREATKNIGHT_ATTACK_PNG = get_block_sized_texture('greatknightattack.png', TextureType.ENTITY, GREATKNIGHT_RESCALESIZE)
+GREATKNIGHT_HURT_PNG = get_block_sized_texture('greatknighthurt.png', TextureType.ENTITY, GREATKNIGHT_RESCALESIZE)
 WIZ_PNG = get_block_sized_texture('wiz.png', TextureType.ENTITY)
 WIZ_ATTACK_PNG = get_block_sized_texture('wizattack.png', TextureType.ENTITY)
 WIZ_HURT_PNG = get_block_sized_texture('wizhurt.png', TextureType.ENTITY)
 WIZ_SELECTED_PNG = get_block_sized_texture('wizselected.png', TextureType.ENTITY)
+
+WIZARDKING_RESCALESIZE = int(WINDOW_WIDTH * 0.12)
+WIZARDKING_PNG = get_block_sized_texture('dirt.png', TextureType.ENTITY, WIZARDKING_RESCALESIZE)
 
 # Miscellaneous
 SELECT_PNG = get_block_sized_texture('select.png', TextureType.MISC)

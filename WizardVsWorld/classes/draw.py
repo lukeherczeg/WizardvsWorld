@@ -5,7 +5,7 @@ import time
 import os
 from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.const import TileTexture, TileTint, ENTITIES
-from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight
+from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight, WizardKing
 
 
 # NOTES:
@@ -734,6 +734,9 @@ def _get_entity_img(entity):
             return ARCHER_ATTACKABLE_PNG
         else:
             return ARCHER_PNG
+
+    if isinstance(entity, WizardKing):
+        return WIZARDKING_PNG
 
 
 def _calc_player_coords(entity_pos, entity_rect, offset=None):

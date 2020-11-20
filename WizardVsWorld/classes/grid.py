@@ -3,7 +3,7 @@ from WizardVsWorld.classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
 
-from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight
+from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight, WizardKing
 from WizardVsWorld.classes.const import *
 
 
@@ -288,8 +288,9 @@ class Grid:
             index += 1
 
         # Luke testing
-        boss = GreatKnight(level)
+        boss = WizardKing(level)
         boss.currentTile = self.game_map[7][23]
+        boss.populate_tiles(boss.height_tiles, boss.width_tiles)
         boss.currentTile.occupied = True
         ENTITIES.append(boss)
 
