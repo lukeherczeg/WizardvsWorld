@@ -20,14 +20,29 @@ class PlayerAttackPhase(Phase):
     def attack(self, enemy, enemy_tiles):
         cast_spell(self.player, enemy)
 
-        # Check if any entites died in the attack or its effects
+        # Check if player died to the spell
+        if self.player.health <= 0:
+            ENTITIES.remove(self.player)
+            animate_death(self.player)
+            MessageBox('Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
+            pygame.quit()
+            sys.exit()
+        elif self.player.health > 0:
+            self.player.damaged = False
+
+        # Check if any entities died in the attack or its effects
+        dead_entities = []
         for entity in ENTITIES:
             if entity.health <= 0:
                 entity.currentTile.occupied = False
-                ENTITIES.remove(entity)
-                animate_death(entity)
+                dead_entities.append(entity)
             else:
                 entity.damaged = False
+
+        # Remove all of the dead
+        for entity in dead_entities:
+            ENTITIES.remove(entity)
+            animate_death(entity)
 
         # Potential counterattack from enemy
         if self.player is not enemy and enemy.health > 0:
