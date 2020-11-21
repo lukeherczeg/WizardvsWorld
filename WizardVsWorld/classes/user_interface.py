@@ -201,8 +201,8 @@ class SpellMenu:
             position = (
                 WINDOW_WIDTH // 20, # Left
                 25 * spell_number + WINDOW_WIDTH * .020, # Top
-                self.width + 5,  # Width
-                int(WINDOW_WIDTH * .020) # Height
+                18 * (self.width + 5),  # Width
+                25 # Height
             )
             if spell_number == self.selected:
                 pygame.draw.rect(SCREEN, BRIGHT_RED, position)
@@ -215,7 +215,7 @@ class SpellMenu:
             draw_text_abs(
                 spell.name, # Text
                 int(WINDOW_WIDTH * .018), # Font size
-                WINDOW_WIDTH // 2, # Pos X
+                (position[0] + position[2]) // 2, # Pos X
                 100 * spell_number + int(WINDOW_WIDTH * .115) # Pos Y
             )
 
