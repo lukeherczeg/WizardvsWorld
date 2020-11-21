@@ -56,9 +56,6 @@ class PlayerAttackPhase(Phase):
             self.attack(enemy, enemy_tiles)
 
     def attack_selection(self):
-        if self.player.prepared_spell.range == 0:
-            self.enemyTile = self.player.currentTile #TODO: WILL CHANGING THE NAME OF ENEMYTILE BREAK ANYTHING?
-
         enemy_tiles = GRID.get_attack(
             self.player.currentTile.row,
             self.player.currentTile.col,
@@ -75,6 +72,15 @@ class PlayerAttackPhase(Phase):
                 enemies_within_range += 1
 
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.ORANGE)
+
+        # Spells cast on self trigger here
+        if self.player.prepared_spell.range == 0:
+            self.enemyTile = self.player.currentTile #TODO: WILL CHANGING THE NAME OF ENEMYTILE BREAK ANYTHING?
+            time.sleep(1)
+            self.player.selected = False
+            clear_tinted_tiles([self.player.currentTile], self.player)
+            cast_spell(self.player, self.player)
+            return
 
         if enemies_within_range != 0:
 

@@ -186,12 +186,14 @@ class SpellMenu:
         self.last_selected = 0
 
     def draw_menu(self, initialize=None):
-        draw_text_abs(
-            self.header,
-            18,
-            WINDOW_WIDTH // 2,
-            WINDOW_WIDTH // 2
-        )
+        # Draw the menu header
+        if initialize is not None:
+            draw_text_abs(
+                self.header,
+                18,
+                WINDOW_WIDTH // 2,
+                WINDOW_HEIGHT // 8
+            )
 
         spell_number = 0
         for spell in self.spells:
@@ -213,7 +215,7 @@ class SpellMenu:
                 spell.name, # Text
                 int(WINDOW_WIDTH * .018), # Font size
                 (position[0] + position[2]) // 2, # Pos X
-                100 * spell_number + int(WINDOW_WIDTH * .115) # Pos Y
+                20 * spell_number + int(WINDOW_WIDTH * .020) # Pos Y
             )
 
             spell_number += 1

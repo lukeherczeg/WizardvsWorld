@@ -118,8 +118,8 @@ def calculate_aoe(caster, victim):
 
     # Check if any entities are in the AoE
     for entity in ENTITIES:
-        if lo[0] <= entity.currentTile.row <= hi[0] and lo[1] <= entity.currentTile.col <= hi[
-            1] and entity is not victim:  # No double dipping
+        if lo[0] <= entity.currentTile.row <= hi[0] and lo[1] <= entity.currentTile.col <= hi[1] \
+                and entity is not victim:  # No double dipping
             affected_entities.append(entity)
 
     # Exclude caster from effects of spell

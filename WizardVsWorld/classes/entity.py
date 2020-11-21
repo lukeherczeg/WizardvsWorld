@@ -136,7 +136,7 @@ class Player(Entity):
                 self.uses,
                 0,
                 50 + self.attack + 2 * (self.level + 1),
-                aoe= self.creep,
+                aoe=self.creep,
                 exclude=True
             )
         ]
