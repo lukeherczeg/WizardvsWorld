@@ -40,6 +40,7 @@ class PlayerMovementPhase(Phase):
     def __init__(self, player):
         self.player = player
         self.currentTile = player.currentTile
+        self.prev_tile = player.currentTile
         self.grid = GRID
         self.immovable_tiles = None
         self.movable_tiles = None
@@ -57,17 +58,6 @@ class PlayerMovementPhase(Phase):
     def cyclic_next(self, tile_list, current_tile):
         self.occupied_index += 1
         return tile_list[(current_tile + 1) % len(tile_list)]
-
-    def check_for_entities_in_area(self, top_left, bottom_right):
-        start = top_left.row, top_left.col
-        end = bottom_right.row, bottom_right.col
-
-        for i in range(start[0], end[0] + 1):
-            for j in range(start[1], end[1] + 1):
-                if GRID.game_map[i][j].occupied or self.player.currentTile == GRID.game_map[i][j]:
-                    return True
-
-        return False
 
     def display_tile_type(self, tile_info, draw_color, row, col, offset_x, offset_y):
         if self.currentTile.win_tile and self.all_bosses_defeated:
@@ -95,8 +85,6 @@ class PlayerMovementPhase(Phase):
                   (offset_x, offset_y), draw_color)
 
     def display_tile_info(self, entities_in_top_left):
-        # Refresh the tiles where we will show information.
-
         if entities_in_top_left:
             draw_rectangular_area(GRID.game_map[10][0], GRID.game_map[14][3])
         else:
@@ -148,26 +136,59 @@ class PlayerMovementPhase(Phase):
            if there are movable tiles, it sets constraints and tints for the movement phase,
            and if there are enemy tiles, it sets constraints for the attack phase."""
 
+        # Free selection phase
         if self.movable_tiles is None and self.enemy_tiles is None:
             if self.grid.is_valid_tile(row, col):
+                # Draw the previous tile
                 draw_tile(self.currentTile)
+
                 self.currentTile = self.grid.game_map[row][col]
 
-                entities_in_top_left = self.check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
-                self.display_tile_info(entities_in_top_left)
+                tile = self.currentTile
 
-                select(self.currentTile.row, self.currentTile.col)
-                draw_entities()
+                rect_size = 2
+                #   for example, rect_size = 2 means:
+                #
+                #   2 1 0 1 2
+                #   X X X X X
+                #   X X X X X
+                #   X X O X X
+                #   X X X X X
+                #   X X X X X
+                #
+                #   where O is the current tile.
 
+                # We check if it is possible to make a n-size rect area, and if not, make an n-1,
+                # n-2, and so on until n=0
+                for i in range(rect_size + 1):
+                    if GRID.is_valid_tile(tile.row - rect_size, tile.col - rect_size) and \
+                            GRID.is_valid_tile(tile.row + rect_size, tile.col + rect_size):
+                        top_left = GRID.game_map[tile.row - rect_size][tile.col - rect_size]
+                        bottom_right = GRID.game_map[tile.row + rect_size][tile.col + rect_size]
+                        entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
+                        self.display_tile_info(entities_in_top_left)
+                        select(self.currentTile.row, self.currentTile.col)
+                        draw_entities_in_rectangular_area(top_left, bottom_right)
+                        break
+                    else:
+                        rect_size = rect_size - 1
+
+                if rect_size == 0:
+                    draw_entity_from_tile(self.prev_tile)
+
+        # Movement selection phase
         elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
             draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
             self.currentTile = self.grid.game_map[row][col]
             select(self.currentTile.row, self.currentTile.col)
+            draw_entity_from_tile(self.currentTile)
 
+        # Attack selection phase
         elif self.enemy_tiles and self.grid.is_valid_tile_in_list(row, col, self.enemy_tiles):
             draw_tinted_tiles(self.enemy_tiles, self.player, TileTint.ORANGE)
             self.currentTile = self.grid.game_map[row][col]
             select(self.currentTile.row, self.currentTile.col)
+            draw_entity_from_tile(self.currentTile)
 
             # If we want to use enemy specific selection tiles:
 
@@ -180,6 +201,7 @@ class PlayerMovementPhase(Phase):
         row = self.currentTile.row
         col = self.currentTile.col
         if self.enemy_tiles is None:
+            self.prev_tile = GRID.game_map[row][col]
             if event.key == pygame.K_LEFT:
                 self.select_tile(row, col - 1)
 
@@ -200,10 +222,12 @@ class PlayerMovementPhase(Phase):
 
             if event.key == pygame.K_LEFT or event.key == pygame.K_DOWN:
                 hovered_tile = self.cyclic_next(occupied_enemy_tiles, self.occupied_index)
+                self.prev_tile = hovered_tile
                 self.select_tile(hovered_tile.row, hovered_tile.col)
 
             elif event.key == pygame.K_RIGHT or event.key == pygame.K_UP:
                 hovered_tile = self.cyclic_last(occupied_enemy_tiles, self.occupied_index)
+                self.prev_tile = hovered_tile
                 self.select_tile(hovered_tile.row, hovered_tile.col)
 
     def selection(self):
@@ -233,17 +257,21 @@ class PlayerMovementPhase(Phase):
         movable_tiles = GRID.get_movement(self.currentTile.row, self.currentTile.col, self.player.max_movement)
         self.immovable_tiles = GRID.get_movement_border(movable_tiles, self.player.range)
         self.movable_tiles = list(set(movable_tiles).difference(set(self.immovable_tiles)))
+
         draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
         draw_tinted_tiles(self.immovable_tiles, self.player, TileTint.RED)
 
+        select(self.currentTile.row, self.currentTile.col)
+        draw_entity_from_tile(self.currentTile)
         initial_tile = self.currentTile
 
-        select(self.currentTile.row, self.currentTile.col)
         selecting = True
         while selecting:
             if self.selection():
-                self.player.selected = False
                 selecting = False
+
+        clear_tinted_tiles(self.movable_tiles, self.player)
+        clear_tinted_tiles(self.immovable_tiles, self.player)
 
         self.player.currentTile = self.currentTile
 
@@ -281,12 +309,12 @@ class PlayerMovementPhase(Phase):
 
             total_refresh_drawing()
 
-        self.select_tile(self.currentTile.row, self.currentTile.col)
+        select(self.currentTile.row, self.currentTile.col)
+        draw_entity_from_tile(self.currentTile)
         selecting = True
         while selecting:
             if self.selection():
                 if self.currentTile == self.player.currentTile:
-                    self.player.selected = True
 
                     # TUTORIAL
                     if self.is_tutorial:
