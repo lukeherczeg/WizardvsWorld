@@ -20,7 +20,7 @@ wsl.set_display_to_host()
 SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.init()
 CLOCK = pygame.time.Clock()
-FPS = 145
+FPS = 110
 
 GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
 
