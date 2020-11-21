@@ -1,6 +1,6 @@
 from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.draw import quit_game, draw_text_abs, total_refresh_drawing
-
+from operator import attrgetter
 
 class Button:
     # Inspired by the tutorial at https://pythonprogramming.net/pygame-button-function/
@@ -166,3 +166,85 @@ class SelectionMenu:
 
             if update:
                 self.draw_menu()
+
+class SpellMenu:
+    """Overlay the current screen with selection menu.
+
+    :param spells: a list of Spell Objects
+
+    """
+
+    def __init__(self, spells):
+        longest_name = max(spells, key=attrgetter('name'))
+
+        self.width = len(longest_name.name)
+        self.height = len(spells)
+        self.header = 'Choose a Spell'
+        self.spells = spells
+
+        self.selected = 0
+        self.last_selected = 0
+
+    def draw_menu(self, initialize=None):
+        draw_text_abs(
+            self.header,
+            18,
+            WINDOW_WIDTH // 2,
+            WINDOW_WIDTH // 2
+        )
+
+        spell_number = 0
+        for spell in self.spells:
+            position = (
+                WINDOW_WIDTH // 20, # Left
+                25 * spell_number + WINDOW_WIDTH * .020, # Top
+                self.width + 5,  # Width
+                int(WINDOW_WIDTH * .020) # Height
+            )
+            if spell_number == self.selected:
+                pygame.draw.rect(SCREEN, BRIGHT_RED, position)
+            elif initialize is not None or (self.last_selected == spell_number):
+                pygame.draw.rect(SCREEN, RED, position)
+            else:
+                spell_number += 1
+                continue
+
+            draw_text_abs(
+                spell.name, # Text
+                int(WINDOW_WIDTH * .018), # Font size
+                WINDOW_WIDTH // 2, # Pos X
+                100 * spell_number + int(WINDOW_WIDTH * .115) # Pos Y
+            )
+
+            spell_number += 1
+
+    def await_response(self):
+        self.draw_menu(True)
+        while True:
+            update = False
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+                    if self.selected == len(self.spells) - 1:
+                        self.selected = 0
+                        self.last_selected = len(self.spells) - 1
+                    else:
+                        self.last_selected = self.selected
+                        self.selected += 1
+                    update = True
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+                    if self.selected == 0:
+                        self.selected = len(self.spells) - 1
+                        self.last_selected = 0
+                    else:
+                        self.last_selected = self.selected
+                        self.selected -= 1
+                    update = True
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    total_refresh_drawing()
+                    return self.selected
+                elif event.type == pygame.QUIT:
+                    quit_game()
+
+            if update:
+                self.draw_menu()
+

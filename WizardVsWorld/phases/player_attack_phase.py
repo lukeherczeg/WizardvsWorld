@@ -1,6 +1,6 @@
 from WizardVsWorld.phases.player_movement_phase import *
-from WizardVsWorld.classes.user_interface import MessageBox
-from WizardVsWorld.classes.attack import CounterAttack, perform_attack
+from WizardVsWorld.classes.user_interface import MessageBox, SpellMenu
+from WizardVsWorld.classes.attack import CounterAttack, cast_spell
 
 
 class PlayerAttackPhase(Phase):
@@ -18,13 +18,34 @@ class PlayerAttackPhase(Phase):
         self.is_tutorial = True
 
     def attack(self, enemy, enemy_tiles):
-        perform_attack(self.player, enemy)
+        cast_spell(self.player, enemy)
 
-        if enemy.health <= 0:
-            enemy.currentTile.occupied = False
-            ENTITIES.remove(enemy)
-            animate_death(enemy)
-        elif enemy.health > 0:
+        # Check if player died to the spell
+        if self.player.health <= 0:
+            ENTITIES.remove(self.player)
+            animate_death(self.player)
+            MessageBox('Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
+            pygame.quit()
+            sys.exit()
+        elif self.player.health > 0:
+            self.player.damaged = False
+
+        # # Check if any entities died in the attack or its effects
+        # dead_entities = []
+        # for entity in ENTITIES:
+        #     if entity.health <= 0:
+        #         entity.currentTile.occupied = False
+        #         dead_entities.append(entity)
+        #     else:
+        #         entity.damaged = False
+        #
+        # # Remove all of the dead
+        # for entity in dead_entities:
+        #     ENTITIES.remove(entity)
+        #     animate_death(entity)
+
+        # Potential counterattack from enemy
+        if self.player is not enemy and enemy.health > 0:
             enemy.damaged = False
             attacker = CounterAttack(enemy, self.player, enemy_tiles)
             attacker.attempt_counter_attack()
@@ -35,7 +56,14 @@ class PlayerAttackPhase(Phase):
             self.attack(enemy, enemy_tiles)
 
     def attack_selection(self):
-        enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, self.player.range)
+        if self.player.prepared_spell.range == 0:
+            self.enemyTile = self.player.currentTile #TODO: WILL CHANGING THE NAME OF ENEMYTILE BREAK ANYTHING?
+
+        enemy_tiles = GRID.get_attack(
+            self.player.currentTile.row,
+            self.player.currentTile.col,
+            self.player.prepared_spell.range
+        )
 
         self.data_from_movement.enemy_tiles = enemy_tiles
 
@@ -89,7 +117,14 @@ class PlayerAttackPhase(Phase):
 
     def enter(self):
         if not self.data_from_movement.level_complete:
-            total_refresh_drawing()  # Attack radius can overwrite text
+            # Attack radius can overwrite text
+            total_refresh_drawing()
+
+            # Select a spell
+            spell_menu = SpellMenu(self.player.spellbook)
+            spell_number = spell_menu.await_response()
+            self.player.prepared_spell = self.player.spellbook[spell_number]
+
             self.attack_selection()
 
     def update(self):

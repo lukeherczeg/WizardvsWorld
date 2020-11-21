@@ -1,6 +1,7 @@
 from typing import List
 
 from WizardVsWorld.classes.tile import Tile
+from WizardVsWorld.classes.spell import Spell
 
 
 # entity will have various shared data types
@@ -50,6 +51,11 @@ class Player(Entity):
         self.hit_chance = 95
         self.tiles = None
         self.healing = False
+        self.uses = 1 # Base uses for special spells
+        self.creep = 1  # Base "creep" or spread of aoe spells
+        self.spellbook = None # Populated by self.refresh_spell()
+        self.prepared_spell = None # Keeps track of current spell to cast (jank)
+        self.refresh_spells()
 
     def level_up(self, new_level):
         self.level = new_level
@@ -57,22 +63,85 @@ class Player(Entity):
         self.health = self.max_health
         self.attack += 5
         self.defense += 1
+        self.refresh_spells()
 
     def boost_attack(self):
         """End of level boost for attack"""
         self.attack += 5
+        self.refresh_spells()
 
     def boost_health(self):
         """End of level boost for health"""
         self.health += 15
+        self.refresh_spells()
 
     def boost_movement(self):
         """End of level boost for movement"""
         self.max_movement += 1
+        self.refresh_spells()
+
+    def decrease_health(self, health):
+        """Decrease the health of player by a certain amount; Clamped at 0 and Max Health. Can be used for healing"""
+        self.health -= health
+        if self.health > self.max_health:
+            self.health = self.max_health
+        elif self.health < 0:
+            self.health = 0
 
     def get_name(self):
         return "The Wizard"
 
+    def heal(self, target):
+        target.health = target.max_health
+
+    def refresh_spells(self):
+        """Called to initialize the spellbook and to refresh between levels (Rescales spells to current stats)"""
+        self.spellbook = [
+            # Example Spell
+            # Spell(
+            #   'Name',                     # Name of Spell
+            #   'Description Goes Here',    # Description
+            #   0,                          # Max Uses
+            #   self.range,                 # Range
+            #   self.attack,                # Spell Power (Positive for Damage, Negative for Healing)
+            #   aoe=self.creep,             # AoE of the Spell (Default = 0)
+            #   exclude=True,               # Exclude the caster from AoE
+            #   effect=some_function,       # On cast effect
+            #   impact=other_function       # On hit effect
+            #),
+            Spell(
+                'Fireball',
+                'Basic Fireball.',
+                999,
+                self.range,
+                self.attack
+            ),
+            Spell(
+                'Heal',
+                'Heal to full.',
+                self.uses,
+                0,
+                -self.max_health,
+                effect=self.heal
+            ),
+            Spell(
+                'Greater Fireball',
+                f'Cast a stronger fireball with AoE of {self.creep}',
+                self.uses,
+                self.range + 1,
+                self.attack + 5 * (self.level + 1),
+                aoe=self.creep
+            ),
+            Spell(
+                'Flame Nova',
+                f'Fire out flames in all directions with AoE of {self.creep}',
+                self.uses,
+                0,
+                50 + self.attack + 2 * (self.level + 1),
+                aoe= self.creep,
+                exclude=True
+            )
+        ]
 
 class Enemy(Entity):
     def __init__(self):
