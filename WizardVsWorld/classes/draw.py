@@ -166,9 +166,10 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
                      background=None, background_opacity_decrease=0):
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
+    opacity_tick = 5
     opacity = 0
 
-    while opacity != 250:
+    while opacity < 250:
         draw_grid()
         draw_entities(hard=False)
         if not background is None:
@@ -176,11 +177,11 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         CLOCK.tick(FPS)
         pygame.display.flip()
-        opacity = opacity + 10
+        opacity = opacity + opacity_tick
 
     time.sleep(onscreen_time)
 
-    while opacity != 0:
+    while opacity > 0:
         draw_grid()
         draw_entities(hard=False)
         if not background is None:
@@ -188,7 +189,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         CLOCK.tick(FPS)
         pygame.display.flip()
-        opacity = opacity - 10
+        opacity = opacity - opacity_tick
 
     total_refresh_drawing()
 
@@ -224,7 +225,7 @@ def animate_move(entity, old_pos, new_pos):
     wiggle_index = 0
 
     # move horizontally
-    while old_x != target_x:
+    while not (target_x - 2 < old_x < target_x + 2):
         if old_x < target_x:
             entity_rect = entity_rect.move([MOVEMENT_SPEED, move_wiggle[wiggle_index]])
             old_x = old_x + MOVEMENT_SPEED
@@ -243,7 +244,7 @@ def animate_move(entity, old_pos, new_pos):
         pygame.display.flip()
 
     # TO BE CHANGED, move vertically
-    while old_y != target_y:
+    while  not (target_y - 2 < old_y < target_y + 2):
         if old_y < target_y:
             entity_rect = entity_rect.move([move_wiggle[wiggle_index], MOVEMENT_SPEED])
             old_y = old_y + MOVEMENT_SPEED
@@ -278,13 +279,13 @@ def animate_attack(attacker, victim):
 
         # get proportion of x movement to y movement needed
         if target_y == start_y:
-            x_diff = 6
+            x_diff = 2.4
         else:
-            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y))) * 3
+            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y))) * 1.3
         if target_x == start_x:
-            y_diff = 6
+            y_diff = 2.4
         else:
-            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x))) * 3
+            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x))) * 1.3
 
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
         if isinstance(attacker, Player):
@@ -309,8 +310,9 @@ def animate_death(entity):
     entity_img = _get_entity_img(entity)
     wiggle_index = 0
     opacity = 250
+    opacity_tick = 8
 
-    while opacity != 0:
+    while opacity > 0:
         draw_grid()
         draw_entities()
         entity_pos = (entity.get_position().col, entity.get_position().row)
@@ -320,7 +322,7 @@ def animate_death(entity):
         pygame.display.flip()
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
-        opacity = opacity - 10
+        opacity = opacity - opacity_tick
 
     total_refresh_drawing()
 
@@ -328,6 +330,7 @@ def animate_death(entity):
 def animate_map_transition(old_grid, old_enemies, player):
     new_grid_offset = WINDOW_WIDTH
     old_grid_offset = 0
+    grid_offset_speed = 3.5
 
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
@@ -381,8 +384,8 @@ def animate_map_transition(old_grid, old_enemies, player):
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
 
-        new_grid_offset = new_grid_offset - 10
-        old_grid_offset = old_grid_offset - 10
+        new_grid_offset = new_grid_offset - grid_offset_speed
+        old_grid_offset = old_grid_offset - grid_offset_speed
 
         CLOCK.tick(FPS)
         pygame.display.flip()
@@ -449,6 +452,8 @@ def _animate_knight_attack():
 
 def _animate_archer_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
+    x_diff = x_diff + .5
+    y_diff = y_diff + .5
     trans_arrow = pygame.transform.rotate(ARROW_PNG, angle)
     trans_arrow = pygame.transform.scale(trans_arrow, (30, 30))
 
@@ -529,7 +534,7 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     number_text = number_font.render(str(damage_diff), True, BRIGHT_RED)
     number_rect = number_text.get_rect()
     number_y_var = (victim.get_position().row * BLOCK_SIZE + 12) if crit else \
-        (victim.get_position().row * BLOCK_SIZE + 8)
+        (victim.get_position().row * BLOCK_SIZE + 4)
     number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
     number_rect = number_rect.move([number_x_fixed, number_y_var])
 
@@ -541,13 +546,15 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     # animation arrays and indexes
     wiggle_index = 0
     # They wiggle for more time if they get crit
-    wiggle_length = (30 if crit else 20)
+    wiggle_length = (120 if crit else 100)
     for i in range(wiggle_length):
         # animate
-        number_rect = number_rect.move([0, -1])
+        if i % 5 == 0:
+            number_rect = number_rect.move([0, -1])
 
         if crit:
-            crit_rect = crit_rect.move([0, -1])
+            if i % 5 == 0:
+                crit_rect = crit_rect.move([0, -1])
             victim_rect = victim_rect.move([move_wiggle[wiggle_index] * 1.9, 0])
         else:
             victim_rect = victim_rect.move([move_wiggle[wiggle_index], 0])
@@ -587,8 +594,12 @@ def _animate_damage_bar(victim, victim_old_hp):
     green_hp_bar_x_pos = math.floor(bar_length * old_hp_ratio)
     green_hp_bar_x_final = math.floor(bar_length * new_hp_ratio)
 
+    done = False
+
     # animate
     while green_hp_bar_x_pos >= green_hp_bar_x_final:
+        if green_hp_bar_x_pos == green_hp_bar_x_final:
+            done = True
         # draw
         draw_grid()
         draw_entities(hard=False)
@@ -599,7 +610,9 @@ def _animate_damage_bar(victim, victim_old_hp):
         pygame.display.flip()
 
         # load next animation frame
-        green_hp_bar_x_pos = green_hp_bar_x_pos - 1
+        green_hp_bar_x_pos = green_hp_bar_x_pos - (20/victim.max_health)
+        if green_hp_bar_x_pos <= green_hp_bar_x_final and not done:
+            green_hp_bar_x_pos = green_hp_bar_x_final
 
 
 def _blit_alpha(target, source, location, opacity, centered=False):

@@ -44,6 +44,8 @@ def entity_cleanup(victim, damage, crit):
     else:
         victim.damaged = False
 
+    time.sleep(.3)
+
 
 def perform_attack(attacker, victim, spell=None):
     attacker.attacking = True
@@ -181,7 +183,7 @@ class CounterAttack:
                 self.victim.damaged = False
 
     def attempt_counter_attack(self):
-        time.sleep(1)
+        time.sleep(.5)
         if isinstance(self.attacker, Enemy):
             if can_attack(self.attacker, self.victim):
                 self.counter_attack()
