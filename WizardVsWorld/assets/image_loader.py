@@ -25,8 +25,8 @@ FPS = 60
 GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
 
 
-MOVEMENT_SPEED = 2
-move_wiggle = [-2, 0, -1, 0, -1, 0, 0, 1, 0, 1, 0, 2]
+MOVEMENT_SPEED = 4
+move_wiggle = [-2, -1, 0, -1, 0, 1, 0, 1, 2]
 dodge_wiggle = [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0]
 # move_wiggle = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
 

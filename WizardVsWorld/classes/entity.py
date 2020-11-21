@@ -1,5 +1,3 @@
-from typing import List
-
 from WizardVsWorld.classes.tile import Tile
 from WizardVsWorld.classes.spell import Spell
 
@@ -49,13 +47,13 @@ class Player(Entity):
         self.level = 0
         self.crit_chance = 25
         self.hit_chance = 95
-        self.tiles = None
-        self.healing = False
         self.uses = 1 # Base uses for special spells
         self.creep = 1  # Base "creep" or spread of aoe spells
         self.spellbook = None # Populated by self.refresh_spell()
         self.prepared_spell = None # Keeps track of current spell to cast (jank)
         self.refresh_spells()
+        self.tiles = None
+        self.healing = False
 
     def level_up(self, new_level):
         self.level = new_level

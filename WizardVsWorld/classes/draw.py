@@ -47,17 +47,6 @@ def draw_rectangular_area(top_left, bottom_right):
 def clear_tinted_tiles(tile_list, entity):
     draw_tinted_tiles(tile_list, entity, TileTint.NONE)
 
-def draw_entity(entity):
-    for tile in entity.tiles:
-        draw_tile(tile)
-    entity_img = _get_entity_img(entity)
-    entity_rect = entity_img.get_rect()
-    
-    entity_coords = (entity.get_position().col, entity.get_position().row)
-    entity_rect = entity_rect.move(_calc_player_coords(entity_coords, entity_rect))
-    SCREEN.blit(entity_img, entity_rect)
-    pygame.display.update(entity_rect)
-
 def draw_tinted_tiles(tile_list, entity, tint):
     for tile in tile_list:
         tile.tint = tint
@@ -392,8 +381,8 @@ def animate_map_transition(old_grid, old_enemies, player):
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
 
-        new_grid_offset = new_grid_offset - 5
-        old_grid_offset = old_grid_offset - 5
+        new_grid_offset = new_grid_offset - 10
+        old_grid_offset = old_grid_offset - 10
 
         CLOCK.tick(FPS)
         pygame.display.flip()
