@@ -16,6 +16,7 @@ class Entity:
     level: int
 
     def __init__(self):
+        self.tiles = [self.currentTile]
         self.damaged = False
         self.attacking = False
 
@@ -51,6 +52,8 @@ class Player(Entity):
         self.spellbook = None # Populated by self.refresh_spell()
         self.prepared_spell = None # Keeps track of current spell to cast (jank)
         self.refresh_spells()
+        self.tiles = None
+        self.healing = False
 
     def level_up(self, new_level):
         self.level = new_level
@@ -177,7 +180,6 @@ class Archer(Enemy):
 
 class Boss(Enemy):
     ranged: bool
-    tiles: [Tile]
 
     def __init__(self):
         super().__init__()

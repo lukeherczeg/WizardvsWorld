@@ -52,15 +52,8 @@ class PlayerAttackPhase(Phase):
             time.sleep(.5)
 
     def attack_enemy_procedure(self, enemy, enemy_tiles):
-        # If the enemy isn't a boss, or if it is but it only occupies one tile
-        is_boss = isinstance(enemy, Boss)
-        if not is_boss or (is_boss and isinstance(enemy.tiles, Tile)):
-            if enemy.currentTile is self.enemyTile:
-                self.attack(enemy, enemy_tiles)
-        elif is_boss:
-            for tile in enemy.tiles:
-                if tile is self.enemyTile:
-                    self.attack(enemy, enemy_tiles)
+        if enemy.currentTile is self.enemyTile:
+            self.attack(enemy, enemy_tiles)
 
     def attack_selection(self):
         if self.player.prepared_spell.range == 0:
@@ -95,8 +88,12 @@ class PlayerAttackPhase(Phase):
 
             start_index = len(occupied_enemy_tiles) - 1
             self.data_from_movement.occupied_index = start_index
-            self.data_from_movement.select_tile(occupied_enemy_tiles[start_index].row,
-                                                occupied_enemy_tiles[start_index].col)
+            row = occupied_enemy_tiles[start_index].row
+            col = occupied_enemy_tiles[start_index].col
+
+            self.data_from_movement.select_tile(row, col)
+            self.data_from_movement.prev_tile = GRID.game_map[row][col]
+
             selecting = True
             while selecting:
                 if self.data_from_movement.selection():
@@ -106,7 +103,7 @@ class PlayerAttackPhase(Phase):
 
                     self.enemyTile = self.data_from_movement.currentTile
                     self.player.selected = False
-                    draw_entities()
+                    #draw_entities()
                     selecting = False
         else:
             time.sleep(1)
@@ -116,7 +113,7 @@ class PlayerAttackPhase(Phase):
                 MessageBox('No enemies are close enough to attack. Let\'s pass for now.')
                 total_refresh_drawing()
 
-        draw_tinted_tiles(enemy_tiles, self.player, TileTint.NONE)
+        clear_tinted_tiles(enemy_tiles, self.player)
 
     def enter(self):
         if not self.data_from_movement.level_complete:
@@ -132,7 +129,7 @@ class PlayerAttackPhase(Phase):
 
     def update(self):
         if not self.data_from_movement.level_complete:
-            for enemy in ENTITIES:
+            for enemy in ENTITIES[1:]:
                 if enemy.currentTile is self.enemyTile:
                     self.attack_enemy_procedure(enemy, self.data_from_movement.enemy_tiles)
                     break
