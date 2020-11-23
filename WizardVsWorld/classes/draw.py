@@ -296,13 +296,15 @@ def animate_move(entity, old_pos, new_pos):
         pygame.display.flip()
 
 
-def animate_attack(attacker, victim):
+def animate_attack(attacker, victim, GreaterFireball = False):
     if isinstance(attacker, Knight) or isinstance(attacker, GreatKnight):
         _animate_knight_attack()
     else:
         # Initialize start and end points and covert to pixel values
         start_x = attacker.get_position().col * BLOCK_SIZE
         start_y = attacker.get_position().row * BLOCK_SIZE
+
+
         target_x = victim.get_position().col * BLOCK_SIZE
         target_y = victim.get_position().row * BLOCK_SIZE
 
@@ -321,14 +323,54 @@ def animate_attack(attacker, victim):
             y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x)))
 
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
+
+        splash_of_fireball = None
         if isinstance(attacker, Player):
-            _animate_player_attack(coords)
+            #check if the attack is greater fire ball and draw splash damage
+            if GreaterFireball:
+                row = int(target_y // BLOCK_SIZE)
+                col = int(target_x // BLOCK_SIZE)
+                splash_of_fireball = GRID.get_attack(
+                    row,
+                    col,
+                    2
+                )
+                #fix the range to actual effective range of enemies
+                for tile in splash_of_fireball:
+                    if tile.col == (col + 2):
+                        splash_of_fireball.remove(tile)
+                    elif tile.col == (col - 2):
+                        splash_of_fireball.remove(tile)
+                    elif tile.row == (row + 2):
+                        splash_of_fireball.remove(tile)
+                    elif tile.row == (row - 2):
+                        splash_of_fireball.remove(tile)
+                #remove wizard from splash damage
+                for tile in splash_of_fireball:
+                    if tile.row == attacker.get_position().row and tile.col == attacker.get_position().col:
+                        splash_of_fireball.remove(tile)
+                #draw the tinted tiles
+                draw_tinted_tiles(splash_of_fireball, victim, TileTint.FIRE)
+                _animate_player_attack(coords, True)
+            else:
+                _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
             _animate_archer_attack(coords)
 
 
 def animate_miss(victim):
     _animate_miss_text(victim)
+    #clear fire if fireball missed
+    row = int(victim.get_position().row)
+    col = int(victim.get_position().col)
+    splash_of_fireball = GRID.get_attack(
+        row,
+        col,
+        2
+    )
+    clear_tinted_tiles(splash_of_fireball, victim)
+    print(row)
+    print(col)
 
 
 def animate_damage(victim, victim_old_hp, crit=False):
@@ -444,24 +486,38 @@ def update_coordinates(coords, diffs):
     return start_x, start_y
 
 
-def _animate_player_attack(coords):
+def _animate_player_attack(coords, GreaterFireball=False):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     # For animating fireball gif
     animation_index = 0
 
     trans_fireballs = []
-    for fireball in FIREBALL_GIF:
-        trans_fireball = pygame.transform.rotate(fireball, angle - 135)
-        trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
+    if GreaterFireball:
+        for fireball in FIREBALL_LARGE_GIF:
+            trans_fireball = pygame.transform.rotate(fireball, angle - 135)
+            trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
+    else:
+        for fireball in FIREBALL_GIF:
+            trans_fireball = pygame.transform.rotate(fireball, angle - 135)
+            trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
 
     while abs(start_x - target_x) >= 15 or abs(start_y - target_y) >= 15:
-        # update animation position and frame
-        fire_rect = trans_fireballs[animation_index].get_rect()
-        fire_rect = fire_rect.move([start_x, start_y])
+        if GreaterFireball:
+            # update animation position and frame
+            fire_rect = trans_fireballs[animation_index].get_rect()
+            fire_rect = fire_rect.move([start_x - BLOCK_SIZE, start_y - BLOCK_SIZE])
 
-        start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
+            start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
 
-        animation_index = 0 if animation_index == len(FIREBALL_GIF) - 1 else animation_index + 1
+            animation_index = 0 if animation_index == len(FIREBALL_LARGE_GIF) - 1 else animation_index + 1
+        else:
+            # update animation position and frame
+            fire_rect = trans_fireballs[animation_index].get_rect()
+            fire_rect = fire_rect.move([start_x, start_y])
+
+            start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
+
+            animation_index = 0 if animation_index == len(FIREBALL_GIF) - 1 else animation_index + 1
 
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity

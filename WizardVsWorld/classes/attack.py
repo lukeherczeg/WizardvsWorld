@@ -47,7 +47,10 @@ def entity_cleanup(victim, damage, crit):
 
 def perform_attack(attacker, victim, spell=None):
     attacker.attacking = True
-    animate_attack(attacker, victim)
+    if spell is not None and spell.name == "Greater Fireball":
+        animate_attack(attacker, victim, True)
+    else:
+        animate_attack(attacker, victim)
     attacker.attacking = False
 
     # Check if spell is being cast
@@ -67,6 +70,21 @@ def perform_attack(attacker, victim, spell=None):
 
     if spell is not None:
         perform_aoe(attacker, victim, damage_taken, crit)
+
+        #clean splash damage
+        col = victim.get_position().col
+        row = victim.get_position().row
+        tiles = GRID.get_attack(row, col, 2)
+        for tile in tiles:
+            if tile.col == (col + 2):
+                tiles.remove(tile)
+            elif tile.col == (col - 2):
+                tiles.remove(tile)
+            elif tile.row == (row + 2):
+                tiles.remove(tile)
+            elif tile.row == (row - 2):
+                tiles.remove(tile)
+        clear_tinted_tiles(tiles, victim)
 
 
 def calculate_damage(attacker, victim, spell=None):
