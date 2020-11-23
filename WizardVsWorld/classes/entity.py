@@ -90,6 +90,7 @@ class Player(Entity):
         return "The Wizard"
 
     def heal(self, target):
+        self.healing = True
         target.health = target.max_health
 
     def refresh_spells(self):

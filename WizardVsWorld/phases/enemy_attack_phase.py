@@ -19,6 +19,7 @@ class EnemyAICombatPhase(Phase):
         self.counter_tutorial = True
 
     def attack_player_procedure(self, enemy):
+        self.Player.healing = False
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
         if can_attack(enemy, self.Player):
             # TUTORIAL

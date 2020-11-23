@@ -71,6 +71,8 @@ class PlayerAttackPhase(Phase):
                 occupied_enemy_tiles.append(tile)
                 enemies_within_range += 1
 
+        #if statement if we want to eliminate the orange square when healing
+        #if self.player.healing:
         draw_tinted_tiles(enemy_tiles, self.player, TileTint.ORANGE)
 
         # Spells cast on self trigger here
