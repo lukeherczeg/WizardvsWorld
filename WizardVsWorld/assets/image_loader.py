@@ -45,25 +45,29 @@ def get_block_sized_texture(path, texture_type, block_size=BLOCK_SIZE):
 
 
 # load textures
+BUSH_PNG = get_block_sized_texture('bush.png', TextureType.TILE_TEXTURE)
+BUSH_FIRE_PNG = get_block_sized_texture('bushFIRE.png', TextureType.TILE_TEXTURE)
+BUSH_ORANGE_PNG = get_block_sized_texture('bushORANGE.png', TextureType.TILE_TEXTURE)
+BUSH_RED_PNG = get_block_sized_texture('bushRED.png', TextureType.TILE_TEXTURE)
 DIRT_PNG = get_block_sized_texture('dirt.png', TextureType.TILE_TEXTURE)
 DIRT_BLUE_PNG = get_block_sized_texture('dirtBLUE.png', TextureType.TILE_TEXTURE)
+DIRT_FIRE_PNG = get_block_sized_texture('dirtFIRE.png', TextureType.TILE_TEXTURE)
 DIRT_ORANGE_PNG = get_block_sized_texture('dirtORANGE.png', TextureType.TILE_TEXTURE)
 DIRT_RED_PNG = get_block_sized_texture('dirtRED.png', TextureType.TILE_TEXTURE)
 FLOOR_PNG = get_block_sized_texture('floor.png', TextureType.TILE_TEXTURE)
 FLOOR_BLUE_PNG = get_block_sized_texture('floorBLUE.png', TextureType.TILE_TEXTURE)
+FLOOR_FIRE_PNG = get_block_sized_texture('floorFIRE.png', TextureType.TILE_TEXTURE)
 FLOOR_ORANGE_PNG = get_block_sized_texture('floorORANGE.png', TextureType.TILE_TEXTURE)
 FLOOR_RED_PNG = get_block_sized_texture('floorRED.png', TextureType.TILE_TEXTURE)
 GRASS_PNG = get_block_sized_texture('grass.png', TextureType.TILE_TEXTURE)
 GRASS_BLUE_PNG = get_block_sized_texture('grassBLUE.png', TextureType.TILE_TEXTURE)
+GRASS_FIRE_PNG = get_block_sized_texture('grassFIRE.png', TextureType.TILE_TEXTURE)
 GRASS_ORANGE_PNG = get_block_sized_texture('grassORANGE.png', TextureType.TILE_TEXTURE)
 GRASS_RED_PNG = get_block_sized_texture('grassRED.png', TextureType.TILE_TEXTURE)
 STONE_PNG = get_block_sized_texture('stone.png', TextureType.TILE_TEXTURE)
 STONE_BLUE_PNG = get_block_sized_texture('stoneBLUE.png', TextureType.TILE_TEXTURE)
 STONE_ORANGE_PNG = get_block_sized_texture('stoneORANGE.png', TextureType.TILE_TEXTURE)
 STONE_RED_PNG = get_block_sized_texture('stoneRED.png', TextureType.TILE_TEXTURE)
-BUSH_PNG = pygame.image.load(os.path.join(asset_path, 'bush.png')).convert()
-BUSH_ORANGE_PNG = pygame.image.load(os.path.join(asset_path, 'bushORANGE.png')).convert()
-BUSH_RED_PNG = pygame.image.load(os.path.join(asset_path, 'bushRED.png')).convert()
 
 # Load entities
 ARCHER_PNG = get_block_sized_texture('archer.png', TextureType.ENTITY)

@@ -121,6 +121,8 @@ def calculate_aoe(caster, victim):
         if lo[0] <= entity.currentTile.row <= hi[0] and lo[1] <= entity.currentTile.col <= hi[1] \
                 and entity is not victim:  # No double dipping
             affected_entities.append(entity)
+            #entity.currentTile.onFire = True
+
 
     # Exclude caster from effects of spell
     if caster.prepared_spell.exclude_self:

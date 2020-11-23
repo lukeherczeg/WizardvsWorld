@@ -658,6 +658,8 @@ def _get_tile_img(tile):
             return GRASS_RED_PNG
         elif tile.tint == TileTint.ORANGE:
             return GRASS_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return GRASS_FIRE_PNG
         else:
             return GRASS_PNG
     if tile.texture_type == TileTexture.DIRT:
@@ -667,6 +669,8 @@ def _get_tile_img(tile):
             return DIRT_RED_PNG
         elif tile.tint == TileTint.ORANGE:
             return DIRT_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return DIRT_FIRE_PNG
         else:
             return DIRT_PNG
     elif tile.texture_type == TileTexture.STONE:
@@ -685,6 +689,8 @@ def _get_tile_img(tile):
             return FLOOR_RED_PNG
         elif tile.tint == TileTint.ORANGE:
             return FLOOR_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return FLOOR_FIRE_PNG
         else:
             return FLOOR_PNG
     elif tile.texture_type == TileTexture.BUSH:
@@ -692,6 +698,8 @@ def _get_tile_img(tile):
             return BUSH_ORANGE_PNG
         elif tile.tint == TileTint.RED:
             return BUSH_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return BUSH_FIRE_PNG
         else:
             return BUSH_PNG
 
