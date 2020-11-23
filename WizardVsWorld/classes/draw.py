@@ -350,8 +350,7 @@ def animate_attack(attacker, victim, GreaterFireball = False):
                     if tile.row == attacker.get_position().row and tile.col == attacker.get_position().col:
                         splash_of_fireball.remove(tile)
                 #draw the tinted tiles
-                draw_tinted_tiles(splash_of_fireball, victim, TileTint.FIRE)
-                _animate_player_attack(coords, True)
+                _animate_player_attack(coords, True, splash_of_fireball, victim)
             else:
                 _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
@@ -369,8 +368,6 @@ def animate_miss(victim):
         2
     )
     clear_tinted_tiles(splash_of_fireball, victim)
-    print(row)
-    print(col)
 
 
 def animate_damage(victim, victim_old_hp, crit=False):
@@ -408,6 +405,8 @@ def animate_map_transition(old_grid, old_enemies, player):
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_x = player_x + BLOCK_SIZE
 
+    #heal player since health is regenerated automatically
+    player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
     x_index = 0
@@ -486,7 +485,7 @@ def update_coordinates(coords, diffs):
     return start_x, start_y
 
 
-def _animate_player_attack(coords, GreaterFireball=False):
+def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim = None):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     # For animating fireball gif
     animation_index = 0
@@ -510,6 +509,8 @@ def _animate_player_attack(coords, GreaterFireball=False):
             start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
 
             animation_index = 0 if animation_index == len(FIREBALL_LARGE_GIF) - 1 else animation_index + 1
+            #delay so you can see the glory of the fireball
+            time.sleep(0.002)
         else:
             # update animation position and frame
             fire_rect = trans_fireballs[animation_index].get_rect()
@@ -525,7 +526,8 @@ def _animate_player_attack(coords, GreaterFireball=False):
         draw_entities(hard=False)
         SCREEN.blit(trans_fireballs[animation_index], fire_rect)
         pygame.display.flip()
-
+    if GreaterFireball:
+        draw_tinted_tiles(tiles, victim, TileTint.FIRE)
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
 

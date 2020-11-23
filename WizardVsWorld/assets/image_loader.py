@@ -98,11 +98,11 @@ FIREBALL_GIF = [
     get_block_sized_texture('fireball/fireball_4.png', TextureType.MISC),
 ]
 FIREBALL_LARGE_GIF = [
-    get_block_sized_texture('fireball/fireball_0.png', TextureType.MISC, 40),
-    get_block_sized_texture('fireball/fireball_1.png', TextureType.MISC, 40),
-    get_block_sized_texture('fireball/fireball_2.png', TextureType.MISC, 40),
-    get_block_sized_texture('fireball/fireball_3.png', TextureType.MISC, 40),
-    get_block_sized_texture('fireball/fireball_4.png', TextureType.MISC, 40),
+    get_block_sized_texture('fireball/fireball_0.png', TextureType.MISC, 45),
+    get_block_sized_texture('fireball/fireball_1.png', TextureType.MISC, 45),
+    get_block_sized_texture('fireball/fireball_2.png', TextureType.MISC, 45),
+    get_block_sized_texture('fireball/fireball_3.png', TextureType.MISC, 45),
+    get_block_sized_texture('fireball/fireball_4.png', TextureType.MISC, 45),
 ]
 LOGO_PNG = get_texture('logo.png', TextureType.MISC)
 BACKGROUND_PNG = get_texture('background.png', TextureType.MISC)

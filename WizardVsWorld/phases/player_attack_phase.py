@@ -161,6 +161,9 @@ class PlayerAttackPhase(Phase):
             # Attack radius can overwrite text
             total_refresh_drawing()
 
+            #stop heal from level progression
+            self.player.healing = False
+
             # Select a spell
             spell_menu = SpellMenu(self.player.spellbook)
             spell_number = spell_menu.await_response()
