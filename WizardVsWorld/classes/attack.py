@@ -116,11 +116,13 @@ def calculate_damage(attacker, victim, spell=None):
 def perform_aoe(attacker, victim, damage, crit):
     """Check if any entities (not enemies) are in the spell's AoE"""
     spell = attacker.prepared_spell
-
+    if spell.name == "Flame Nova":
+        attacker.attacking = True
     if spell is not None and spell.aoe > 0:
         affected_entities = calculate_aoe(attacker, victim)
         for entity in affected_entities:
             entity_cleanup(entity, damage, crit)
+    attacker.attacking = False
 
 
 def calculate_aoe(caster, victim):
