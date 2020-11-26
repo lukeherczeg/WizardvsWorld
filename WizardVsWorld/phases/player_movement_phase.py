@@ -285,9 +285,6 @@ class PlayerMovementPhase(Phase):
         if bosses_remaining < 1:
             self.all_bosses_defeated = True
 
-        if self.all_bosses_defeated:
-            self.level_win_tile.tint = TileTint.ORANGE
-
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
         # Stop heal from level advance
@@ -298,38 +295,45 @@ class PlayerMovementPhase(Phase):
         animate_text_abs('Player Phase', 75, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 1, background, 15)
         total_refresh_drawing()
 
-        # TUTORIAL
-        if self.is_tutorial:
-            MessageBox('In order to win, defeat the boss inside the castle guarding the exit!')
-            MessageBox('After defeating the boss, the entrance to the next level will be highlighted.')
-            GRID.game_map[7][24].tint = TileTint.ORANGE
-            total_refresh_drawing()
-            MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
-            GRID.game_map[7][24].tint = TileTint.NONE
-            MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
-                       + 'You are the lone wizard in blue. Select the wizard!')
+        if self.all_bosses_defeated:
+            self.level_win_tile.tint = TileTint.ORANGE
+            if self.player.currentTile == self.level_win_tile:
+                self.level_complete = True
 
-            total_refresh_drawing()
+        if not self.level_complete:
+            # TUTORIAL
+            if self.is_tutorial:
+                MessageBox('In order to win, defeat the boss inside the castle guarding the exit!')
+                MessageBox('After defeating the boss, the entrance to the next level will be highlighted.')
+                GRID.game_map[7][24].tint = TileTint.ORANGE
+                total_refresh_drawing()
+                MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
+                GRID.game_map[7][24].tint = TileTint.NONE
+                MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
+                           + 'You are the lone wizard in blue. Select the wizard!')
 
-        entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
-        self.display_tile_info(entities_in_top_left)
-        select(self.currentTile.row, self.currentTile.col)
-        draw_entity_from_tile(self.currentTile)
-        selecting = True
-        while selecting:
-            if self.selection():
-                if self.currentTile == self.player.currentTile:
+                total_refresh_drawing()
 
-                    # TUTORIAL
-                    if self.is_tutorial:
-                        MessageBox('Great job! Now pick one of the blue spaces to move to.')
+            entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
+            self.display_tile_info(entities_in_top_left)
+            select(self.currentTile.row, self.currentTile.col)
+            draw_entity_from_tile(self.currentTile)
+            selecting = True
+            while selecting:
+                if self.selection():
+                    if self.currentTile == self.player.currentTile:
 
-                    total_refresh_drawing()
+                        # TUTORIAL
+                        if self.is_tutorial:
+                            MessageBox('Great job! Now pick one of the blue spaces to move to.')
 
-                    selecting = False
+                        total_refresh_drawing()
+
+                        selecting = False
 
     def update(self):
-        self.movement()
+        if not self.level_complete:
+            self.movement()
 
     def exit(self):
         self.movable_tiles = None
