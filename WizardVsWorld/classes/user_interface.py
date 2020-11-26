@@ -64,7 +64,7 @@ class MessageBox:
         SCREEN.blit(background, rect)
 
         for offset in range(length):
-            draw_text_abs(self.__lines[offset], 24, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 35))
+            draw_text_abs(self.__lines[offset], 24, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 50))
 
         pygame.display.update()
 

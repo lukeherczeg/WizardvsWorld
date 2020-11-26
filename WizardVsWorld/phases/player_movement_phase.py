@@ -305,7 +305,7 @@ class PlayerMovementPhase(Phase):
             MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
             GRID.game_map[7][24].tint = TileTint.NONE
             MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
-                       + 'You are the lone wizard in blue. Please select yourself!')
+                       + 'You are the lone wizard in blue. Select the wizard!')
 
             total_refresh_drawing()
 

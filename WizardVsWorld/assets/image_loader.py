@@ -19,12 +19,14 @@ BLOCK_SIZE = 40  # 45
 wsl.set_display_to_host()
 SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.init()
+CLOCK = pygame.time.Clock()
+FPS = 110
 
 GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
 
 
-MOVEMENT_SPEED = 2
-move_wiggle = [-1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0]
+MOVEMENT_SPEED = 3
+move_wiggle = [-2, 0, -1, 0, -1, 0, 0, 1, 0, 1, 0, 2]
 dodge_wiggle = [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0]
 # move_wiggle = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
 
