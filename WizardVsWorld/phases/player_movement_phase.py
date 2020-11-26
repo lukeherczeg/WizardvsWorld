@@ -309,6 +309,8 @@ class PlayerMovementPhase(Phase):
 
             total_refresh_drawing()
 
+        entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
+        self.display_tile_info(entities_in_top_left)
         select(self.currentTile.row, self.currentTile.col)
         draw_entity_from_tile(self.currentTile)
         selecting = True
