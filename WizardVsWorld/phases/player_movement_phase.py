@@ -290,6 +290,8 @@ class PlayerMovementPhase(Phase):
 
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
+        # Stop heal from level advance
+        self.player.healing = False
         total_refresh_drawing()
 
         background = pygame.transform.scale(BACKGROUND_PNG, (562, 225))
