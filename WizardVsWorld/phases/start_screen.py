@@ -2,6 +2,7 @@ from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.phase import Phase
 from WizardVsWorld.classes.user_interface import Button
 from WizardVsWorld.classes.draw import quit_game, draw_text_abs
+from WizardVsWorld.assets.sounds.sound_loader import menu_music
 
 class StartScreen(Phase):
     def __init__(self):
@@ -24,6 +25,8 @@ class StartScreen(Phase):
 
         # Completion
         self.__completed = None
+
+        menu_music.play(loops=-1)
 
     def complete(self):
         self.__completed = True
@@ -67,4 +70,5 @@ class StartScreen(Phase):
             return False
 
     def exit(self):
+        menu_music.stop()
         pass
