@@ -4,7 +4,7 @@ import math
 import time
 from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.const import TileTexture, TileTint, ENTITIES
-from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight
+from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight, GreatMarksman, WizardKing
 
 
 # NOTES:
@@ -166,9 +166,10 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
                      background=None, background_opacity_decrease=0):
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
+    opacity_tick = 5
     opacity = 0
 
-    while opacity != 250:
+    while opacity < 250:
         draw_grid()
         draw_entities(hard=False)
         if not background is None:
@@ -176,11 +177,11 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         CLOCK.tick(FPS)
         pygame.display.flip()
-        opacity = opacity + 10
+        opacity = opacity + opacity_tick
 
     time.sleep(onscreen_time)
 
-    while opacity != 0:
+    while opacity > 0:
         draw_grid()
         draw_entities(hard=False)
         if not background is None:
@@ -188,7 +189,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         _blit_alpha(SCREEN, message_text, (x_pos, y_pos), opacity, True)
         CLOCK.tick(FPS)
         pygame.display.flip()
-        opacity = opacity - 10
+        opacity = opacity - opacity_tick
 
     total_refresh_drawing()
 
@@ -224,7 +225,7 @@ def animate_move(entity, old_pos, new_pos):
     wiggle_index = 0
 
     # move horizontally
-    while old_x != target_x:
+    while not (target_x - 2 < old_x < target_x + 2):
         if old_x < target_x:
             entity_rect = entity_rect.move([MOVEMENT_SPEED, move_wiggle[wiggle_index]])
             old_x = old_x + MOVEMENT_SPEED
@@ -243,7 +244,7 @@ def animate_move(entity, old_pos, new_pos):
         pygame.display.flip()
 
     # TO BE CHANGED, move vertically
-    while old_y != target_y:
+    while  not (target_y - 2 < old_y < target_y + 2):
         if old_y < target_y:
             entity_rect = entity_rect.move([move_wiggle[wiggle_index], MOVEMENT_SPEED])
             old_y = old_y + MOVEMENT_SPEED
@@ -262,13 +263,15 @@ def animate_move(entity, old_pos, new_pos):
         pygame.display.flip()
 
 
-def animate_attack(attacker, victim):
+def animate_attack(attacker, victim, GreaterFireball = False):
     if isinstance(attacker, Knight) or isinstance(attacker, GreatKnight):
         _animate_knight_attack()
     else:
         # Initialize start and end points and covert to pixel values
         start_x = attacker.get_position().col * BLOCK_SIZE
         start_y = attacker.get_position().row * BLOCK_SIZE
+
+
         target_x = victim.get_position().col * BLOCK_SIZE
         target_y = victim.get_position().row * BLOCK_SIZE
 
@@ -278,23 +281,60 @@ def animate_attack(attacker, victim):
 
         # get proportion of x movement to y movement needed
         if target_y == start_y:
-            x_diff = 6
+            x_diff = 2.4
         else:
-            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y))) * 3
+            x_diff = math.ceil(abs((target_x - start_x) / (target_y - start_y))) * 1.3
         if target_x == start_x:
-            y_diff = 6
+            y_diff = 2.4
         else:
-            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x))) * 3
+            y_diff = math.ceil(abs((target_y - start_y) / (target_x - start_x))) * 1.3
 
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
+
+        splash_of_fireball = None
         if isinstance(attacker, Player):
-            _animate_player_attack(coords)
+            #check if the attack is greater fire ball and draw splash damage
+            if GreaterFireball:
+                row = int(target_y // BLOCK_SIZE)
+                col = int(target_x // BLOCK_SIZE)
+                splash_of_fireball = GRID.get_attack(
+                    row,
+                    col,
+                    2
+                )
+                #fix the range to actual effective range of enemies
+                for tile in splash_of_fireball:
+                    if tile.col == (col + 2):
+                        splash_of_fireball.remove(tile)
+                    elif tile.col == (col - 2):
+                        splash_of_fireball.remove(tile)
+                    elif tile.row == (row + 2):
+                        splash_of_fireball.remove(tile)
+                    elif tile.row == (row - 2):
+                        splash_of_fireball.remove(tile)
+                #remove wizard from splash damage
+                for tile in splash_of_fireball:
+                    if tile.row == attacker.get_position().row and tile.col == attacker.get_position().col:
+                        splash_of_fireball.remove(tile)
+                #draw the tinted tiles
+                _animate_player_attack(coords, True, splash_of_fireball, victim)
+            else:
+                _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
             _animate_archer_attack(coords)
 
 
 def animate_miss(victim):
     _animate_miss_text(victim)
+    #clear fire if fireball missed
+    row = int(victim.get_position().row)
+    col = int(victim.get_position().col)
+    splash_of_fireball = GRID.get_attack(
+        row,
+        col,
+        2
+    )
+    clear_tinted_tiles(splash_of_fireball, victim)
 
 
 def animate_damage(victim, victim_old_hp, crit=False):
@@ -309,8 +349,9 @@ def animate_death(entity):
     entity_img = _get_entity_img(entity)
     wiggle_index = 0
     opacity = 250
+    opacity_tick = 8
 
-    while opacity != 0:
+    while opacity > 0:
         draw_grid()
         draw_entities()
         entity_pos = (entity.get_position().col, entity.get_position().row)
@@ -320,19 +361,22 @@ def animate_death(entity):
         pygame.display.flip()
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
-        opacity = opacity - 10
+        opacity = opacity - opacity_tick
 
     total_refresh_drawing()
 
-
+#animate the transition to grass level
 def animate_map_transition(old_grid, old_enemies, player):
     new_grid_offset = WINDOW_WIDTH
     old_grid_offset = 0
+    grid_offset_speed = 3.5
 
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_x = player_x + BLOCK_SIZE
 
+    #heal player since health is regenerated automatically
+    player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
 
@@ -381,14 +425,147 @@ def animate_map_transition(old_grid, old_enemies, player):
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
 
-        new_grid_offset = new_grid_offset - 10
-        old_grid_offset = old_grid_offset - 10
+        new_grid_offset = new_grid_offset - grid_offset_speed
+        old_grid_offset = old_grid_offset - grid_offset_speed
 
         CLOCK.tick(FPS)
         pygame.display.flip()
 
     total_refresh_drawing()
 
+#animate transition to the sand level
+def animate_map_transition_up(old_grid, old_enemies, player):
+    new_grid_offset = WINDOW_HEIGHT
+    old_grid_offset = 0
+    grid_offset_speed = 3.5
+
+    player_x = player.get_position().col * BLOCK_SIZE
+    player_y = player.get_position().row * BLOCK_SIZE
+    player_target_y = player_y + BLOCK_SIZE
+    #heal player since health is regenerated automatically
+    player.healing = True
+    # For animating perpendicular wiggle while walking and movement speed
+    wiggle_index = 0
+
+    while new_grid_offset >= 0:
+        for _, col in enumerate(old_grid.game_map):
+            for _, tile in enumerate(col):
+                tile_img = _get_tile_img(tile)
+                tile_rect = tile_img.get_rect()
+                tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE), (tile.row * BLOCK_SIZE) + old_grid_offset])
+                SCREEN.blit(tile_img, tile_rect)
+
+        for _, col in enumerate(GRID.game_map):
+            for _, tile in enumerate(col):
+                tile_img = _get_tile_img(tile)
+                tile_rect = tile_img.get_rect()
+                tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE), (tile.row * BLOCK_SIZE) + new_grid_offset])
+                SCREEN.blit(tile_img, tile_rect)
+
+        if (player_y < player_target_y):
+            player_x = player_x
+            player_y = player_y + 1 + move_wiggle[wiggle_index]
+
+            wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
+
+        player_img = _get_entity_img(player)
+        player_rect = player_img.get_rect()
+        player_rect = player_rect.move([player_x, player_y + old_grid_offset])
+
+        SCREEN.blit(player_img, player_rect)
+
+        for entity in old_enemies:
+            entity_img = _get_entity_img(entity)
+            entity_rect = entity_img.get_rect()
+            entity_pos = (entity.get_position().col, entity.get_position().row)
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, (0, old_grid_offset))
+            entity_rect = entity_rect.move(entity_pos)
+            SCREEN.blit(entity_img, entity_rect)
+
+        entities = ENTITIES[1:]
+
+        for entity in entities:
+            entity_img = _get_entity_img(entity)
+            entity_rect = entity_img.get_rect()
+            entity_pos = (entity.get_position().col, entity.get_position().row)
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, (0, new_grid_offset))
+            entity_rect = entity_rect.move(entity_pos)
+            SCREEN.blit(entity_img, entity_rect)
+
+        new_grid_offset = new_grid_offset - grid_offset_speed
+        old_grid_offset = old_grid_offset - grid_offset_speed
+
+        CLOCK.tick(FPS)
+        pygame.display.flip()
+
+    total_refresh_drawing()
+
+#animate for snow level transition
+def animate_map_transition_down(old_grid, old_enemies, player):
+    new_grid_offset = WINDOW_HEIGHT
+    old_grid_offset = 0
+    grid_offset_speed = 3.5
+
+    player_x = player.get_position().col * BLOCK_SIZE
+    player_y = player.get_position().row * BLOCK_SIZE
+    player_target_y = player_y + (14 * BLOCK_SIZE)
+    #heal player since health is regenerated automatically
+    player.healing = True
+    # For animating perpendicular wiggle while walking and movement speed
+    wiggle_index = 0
+
+    while new_grid_offset >= 0:
+        for _, col in enumerate(old_grid.game_map):
+            for _, tile in enumerate(col):
+                tile_img = _get_tile_img(tile)
+                tile_rect = tile_img.get_rect()
+                tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE), (tile.row * BLOCK_SIZE) - old_grid_offset])
+                SCREEN.blit(tile_img, tile_rect)
+
+        for _, col in enumerate(GRID.game_map):
+            for _, tile in enumerate(col):
+                tile_img = _get_tile_img(tile)
+                tile_rect = tile_img.get_rect()
+                tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE), (tile.row * BLOCK_SIZE) - new_grid_offset])
+                SCREEN.blit(tile_img, tile_rect)
+
+        if (player_y < player_target_y):
+            player_x = player_x
+            player_y = player_y - 0.1 - move_wiggle[wiggle_index]
+
+            wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
+
+        player_img = _get_entity_img(player)
+        player_rect = player_img.get_rect()
+        player_rect = player_rect.move([player_x, player_y - old_grid_offset])
+
+        SCREEN.blit(player_img, player_rect)
+
+        for entity in old_enemies:
+            entity_img = _get_entity_img(entity)
+            entity_rect = entity_img.get_rect()
+            entity_pos = (entity.get_position().col, entity.get_position().row)
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, (0, (-1 * old_grid_offset)))
+            entity_rect = entity_rect.move(entity_pos)
+            SCREEN.blit(entity_img, entity_rect)
+
+        entities = ENTITIES[1:]
+
+        for entity in entities:
+            entity_img = _get_entity_img(entity)
+            entity_rect = entity_img.get_rect()
+            entity_pos = (entity.get_position().col, entity.get_position().row)
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, (0, (-1 * new_grid_offset)))
+            entity_rect = entity_rect.move(entity_pos)
+            SCREEN.blit(entity_img, entity_rect)
+
+        new_grid_offset = new_grid_offset - grid_offset_speed
+        old_grid_offset = old_grid_offset - grid_offset_speed
+
+        CLOCK.tick(FPS)
+        pygame.display.flip()
+
+    total_refresh_drawing()
 
 def update_coordinates(coords, diffs):
     start_x, start_y, target_x, target_y = coords
@@ -408,24 +585,40 @@ def update_coordinates(coords, diffs):
     return start_x, start_y
 
 
-def _animate_player_attack(coords):
+def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim = None):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     # For animating fireball gif
     animation_index = 0
 
     trans_fireballs = []
-    for fireball in FIREBALL_GIF:
-        trans_fireball = pygame.transform.rotate(fireball, angle - 135)
-        trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
+    if GreaterFireball:
+        for fireball in FIREBALL_LARGE_GIF:
+            trans_fireball = pygame.transform.rotate(fireball, angle - 135)
+            trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
+    else:
+        for fireball in FIREBALL_GIF:
+            trans_fireball = pygame.transform.rotate(fireball, angle - 135)
+            trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
 
     while abs(start_x - target_x) >= 15 or abs(start_y - target_y) >= 15:
-        # update animation position and frame
-        fire_rect = trans_fireballs[animation_index].get_rect()
-        fire_rect = fire_rect.move([start_x, start_y])
+        if GreaterFireball:
+            # update animation position and frame
+            fire_rect = trans_fireballs[animation_index].get_rect()
+            fire_rect = fire_rect.move([start_x - BLOCK_SIZE, start_y - BLOCK_SIZE])
 
-        start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
+            start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
 
-        animation_index = 0 if animation_index == len(FIREBALL_GIF) - 1 else animation_index + 1
+            animation_index = 0 if animation_index == len(FIREBALL_LARGE_GIF) - 1 else animation_index + 1
+            #delay so you can see the glory of the fireball
+            time.sleep(0.002)
+        else:
+            # update animation position and frame
+            fire_rect = trans_fireballs[animation_index].get_rect()
+            fire_rect = fire_rect.move([start_x, start_y])
+
+            start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
+
+            animation_index = 0 if animation_index == len(FIREBALL_GIF) - 1 else animation_index + 1
 
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity
@@ -434,7 +627,8 @@ def _animate_player_attack(coords):
         SCREEN.blit(trans_fireballs[animation_index], fire_rect)
         CLOCK.tick(FPS)
         pygame.display.flip()
-
+    if GreaterFireball:
+        draw_tinted_tiles(tiles, victim, TileTint.FIRE)
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
 
@@ -449,6 +643,8 @@ def _animate_knight_attack():
 
 def _animate_archer_attack(coords):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
+    x_diff = x_diff + .5
+    y_diff = y_diff + .5
     trans_arrow = pygame.transform.rotate(ARROW_PNG, angle)
     trans_arrow = pygame.transform.scale(trans_arrow, (30, 30))
 
@@ -529,7 +725,7 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     number_text = number_font.render(str(damage_diff), True, BRIGHT_RED)
     number_rect = number_text.get_rect()
     number_y_var = (victim.get_position().row * BLOCK_SIZE + 12) if crit else \
-        (victim.get_position().row * BLOCK_SIZE + 8)
+        (victim.get_position().row * BLOCK_SIZE + 4)
     number_x_fixed = (victim.get_position().col * BLOCK_SIZE) + 30
     number_rect = number_rect.move([number_x_fixed, number_y_var])
 
@@ -541,13 +737,15 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     # animation arrays and indexes
     wiggle_index = 0
     # They wiggle for more time if they get crit
-    wiggle_length = (30 if crit else 20)
+    wiggle_length = (120 if crit else 100)
     for i in range(wiggle_length):
         # animate
-        number_rect = number_rect.move([0, -1])
+        if i % 5 == 0:
+            number_rect = number_rect.move([0, -1])
 
         if crit:
-            crit_rect = crit_rect.move([0, -1])
+            if i % 5 == 0:
+                crit_rect = crit_rect.move([0, -1])
             victim_rect = victim_rect.move([move_wiggle[wiggle_index] * 1.9, 0])
         else:
             victim_rect = victim_rect.move([move_wiggle[wiggle_index], 0])
@@ -587,8 +785,12 @@ def _animate_damage_bar(victim, victim_old_hp):
     green_hp_bar_x_pos = math.floor(bar_length * old_hp_ratio)
     green_hp_bar_x_final = math.floor(bar_length * new_hp_ratio)
 
+    done = False
+
     # animate
     while green_hp_bar_x_pos >= green_hp_bar_x_final:
+        if green_hp_bar_x_pos == green_hp_bar_x_final:
+            done = True
         # draw
         draw_grid()
         draw_entities(hard=False)
@@ -599,7 +801,9 @@ def _animate_damage_bar(victim, victim_old_hp):
         pygame.display.flip()
 
         # load next animation frame
-        green_hp_bar_x_pos = green_hp_bar_x_pos - 1
+        green_hp_bar_x_pos = green_hp_bar_x_pos - (20/victim.max_health)
+        if green_hp_bar_x_pos <= green_hp_bar_x_final and not done:
+            green_hp_bar_x_pos = green_hp_bar_x_final
 
 
 def _blit_alpha(target, source, location, opacity, centered=False):
@@ -620,6 +824,8 @@ def _get_tile_img(tile):
             return GRASS_RED_PNG
         elif tile.tint == TileTint.ORANGE:
             return GRASS_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return GRASS_FIRE_PNG
         else:
             return GRASS_PNG
     if tile.texture_type == TileTexture.DIRT:
@@ -629,6 +835,8 @@ def _get_tile_img(tile):
             return DIRT_RED_PNG
         elif tile.tint == TileTint.ORANGE:
             return DIRT_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return DIRT_FIRE_PNG
         else:
             return DIRT_PNG
     elif tile.texture_type == TileTexture.STONE:
@@ -647,6 +855,8 @@ def _get_tile_img(tile):
             return FLOOR_RED_PNG
         elif tile.tint == TileTint.ORANGE:
             return FLOOR_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return FLOOR_FIRE_PNG
         else:
             return FLOOR_PNG
     elif tile.texture_type == TileTexture.BUSH:
@@ -654,8 +864,76 @@ def _get_tile_img(tile):
             return BUSH_ORANGE_PNG
         elif tile.tint == TileTint.RED:
             return BUSH_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return BUSH_FIRE_PNG
         else:
             return BUSH_PNG
+    elif tile.texture_type == TileTexture.WOOD:
+        if tile.tint == TileTint.BLUE:
+            return WOOD_BLUE_PNG
+        elif tile.tint == TileTint.RED:
+            return WOOD_RED_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return WOOD_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return WOOD_FIRE_PNG
+        else:
+            return WOOD_PNG
+    elif tile.texture_type == TileTexture.DARK_BRICK:
+        if tile.tint == TileTint.RED:
+            return DARK_BRICK_RED_PNG
+        else:
+            return DARK_BRICK_PNG
+    elif tile.texture_type == TileTexture.SNOW:
+        if tile.tint == TileTint.BLUE:
+            return SNOW_BLUE_PNG
+        elif tile.tint == TileTint.RED:
+            return SNOW_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return SNOW_FIRE_PNG
+        else:
+            return SNOW_PNG
+    elif tile.texture_type == TileTexture.ROCK:
+        if tile.tint == TileTint.RED:
+            return ROCK_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return ROCK_FIRE_PNG
+        else:
+            return ROCK_PNG
+    elif tile.texture_type == TileTexture.MUD:
+        if tile.tint == TileTint.BLUE:
+            return MUD_BLUE_PNG
+        elif tile.tint == TileTint.RED:
+            return MUD_RED_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return MUD_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return MUD_FIRE_PNG
+        else:
+            return MUD_PNG
+    elif tile.texture_type == TileTexture.MUD_BRICK:
+        if tile.tint == TileTint.RED:
+            return MUD_BRICK_RED_PNG
+        else:
+            return MUD_BRICK_PNG
+    elif tile.texture_type == TileTexture.SAND:
+        if tile.tint == TileTint.BLUE:
+            return SAND_BLUE_PNG
+        elif tile.tint == TileTint.RED:
+            return SAND_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return SAND_FIRE_PNG
+        else:
+            return SAND_PNG
+    elif tile.texture_type == TileTexture.CACTUS:
+        if tile.tint == TileTint.RED:
+            return CACTUS_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return CACTUS_FIRE_PNG
+        else:
+            return CACTUS_PNG
+
+
 
 
 def _get_entity_img(entity):
@@ -698,6 +976,22 @@ def _get_entity_img(entity):
             return ARCHER_ATTACKABLE_PNG
         else:
             return ARCHER_PNG
+
+    if isinstance(entity, GreatMarksman):
+        if entity.attacking:
+            return GREAT_MARKSMAN_ATTACK_PNG
+        elif entity.damaged:
+            return GREAT_MARKSMAN_HURT_PNG
+        else:
+            return GREAT_MARKSMAN_PNG
+
+    if isinstance(entity, WizardKing):
+        if entity.attacking:
+            return WIZARD_KING_ATTACK_PNG
+        elif entity.damaged:
+            return WIZARD_KING_HURT_PNG
+        else:
+            return WIZARD_KING_PNG
 
 
 def _calc_player_coords(entity_pos, entity_rect, offset=None):

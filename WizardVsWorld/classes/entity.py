@@ -90,6 +90,7 @@ class Player(Entity):
         return "The Wizard"
 
     def heal(self, target):
+        self.healing = True
         target.health = target.max_health
 
     def refresh_spells(self):
@@ -128,15 +129,16 @@ class Player(Entity):
                 self.uses,
                 self.range + 1,
                 self.attack + 5 * (self.level + 1),
-                aoe=self.creep
+                aoe=self.creep,
+                exclude=True
             ),
             Spell(
                 'Flame Nova',
-                f'Fire out flames in all directions with AoE of {self.creep}',
+                f'A cloak of flames with AoE of {self.creep}',
                 self.uses,
                 0,
                 50 + self.attack + 2 * (self.level + 1),
-                aoe= self.creep,
+                aoe=self.creep,
                 exclude=True
             )
         ]
@@ -182,6 +184,7 @@ class Boss(Enemy):
     ranged: bool
 
     def __init__(self):
+        super()
         super().__init__()
 
 
@@ -212,8 +215,11 @@ class GreatMarksman(Boss):
         self.max_health = self.health
         self.attack = 40 + (level * 4)
         self.defense = 0 + (level * 2)
-        self.critical_chance = 8
+        self.crit_chance = 8
         self.range = 3
+
+    def get_name(self):
+        return "Great Marksman"
 
 
 class WizardKing(Boss):
@@ -226,5 +232,8 @@ class WizardKing(Boss):
         self.max_health = self.health
         self.attack = 35 + (level * 6)
         self.defense = 10 + (level * 3)
-        self.critical_chance = 7
+        self.crit_chance = 7
         self.range = 2
+
+    def get_name(self):
+        return "Wizard King"

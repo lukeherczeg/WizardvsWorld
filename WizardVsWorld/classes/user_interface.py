@@ -64,7 +64,7 @@ class MessageBox:
         SCREEN.blit(background, rect)
 
         for offset in range(length):
-            draw_text_abs(self.__lines[offset], 24, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 35))
+            draw_text_abs(self.__lines[offset], 24, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 50))
 
         pygame.display.update()
 
@@ -175,51 +175,58 @@ class SpellMenu:
     """
 
     def __init__(self, spells):
-        longest_name = max(spells, key=attrgetter('name'))
+        longest_spell = max(spells, key=attrgetter('name'))
 
-        self.width = len(longest_name.name)
-        self.height = len(spells)
+
+        self.pos_x = WINDOW_WIDTH // 2
+        self.pos_y = WINDOW_HEIGHT // 2
+        self.width = len(longest_spell.description)
         self.header = 'Choose a Spell'
         self.spells = spells
 
         self.selected = 0
-        self.last_selected = 0
 
     def draw_menu(self, initialize=None):
+        # Build the Dialogue Box
+        background = pygame.transform.scale(BACKGROUND_PNG, (self.width * 20, 40))
+        rect = background.get_rect()
+        rect.center = (self.pos_x, self.pos_y + 10)
+        SCREEN.blit(background, rect)
+
+        # Draw Title
+        if initialize is not None and initialize != False:
+            draw_text_abs(
+                'Choose a Spell (Up and Down Arrow Keys for Choices)',
+                18,
+                self.pos_x,
+                self.pos_y - 20,
+                WHITE
+            )
+
+        spell = self.spells[self.selected]
+
+        # Draw option name
         draw_text_abs(
-            self.header,
-            18,
-            WINDOW_WIDTH // 2,
-            WINDOW_WIDTH // 2
+            spell.name + f'  ({spell.current_uses}/{spell.max_uses})',
+            14,
+            self.pos_x,
+            self.pos_y,
+            WHITE
         )
 
-        spell_number = 0
-        for spell in self.spells:
-            position = (
-                WINDOW_WIDTH // 20, # Left
-                25 * spell_number + WINDOW_WIDTH * .020, # Top
-                18 * (self.width + 5),  # Width
-                25 # Height
-            )
-            if spell_number == self.selected:
-                pygame.draw.rect(SCREEN, BRIGHT_RED, position)
-            elif initialize is not None or (self.last_selected == spell_number):
-                pygame.draw.rect(SCREEN, RED, position)
-            else:
-                spell_number += 1
-                continue
+        # Draw option description
+        draw_text_abs(
+            self.spells[self.selected].description,
+            12,
+            self.pos_x,
+            self.pos_y + 20,
+            WHITE
+        )
 
-            draw_text_abs(
-                spell.name, # Text
-                int(WINDOW_WIDTH * .018), # Font size
-                (position[0] + position[2]) // 2, # Pos X
-                100 * spell_number + int(WINDOW_WIDTH * .115) # Pos Y
-            )
-
-            spell_number += 1
+        pygame.display.update()
 
     def await_response(self):
-        self.draw_menu(True)
+        self.draw_menu(initialize=True)
         while True:
             update = False
             for event in pygame.event.get():
@@ -240,8 +247,12 @@ class SpellMenu:
                         self.selected -= 1
                     update = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    total_refresh_drawing()
-                    return self.selected
+                    if self.spells[self.selected].can_cast() is not False:
+                        total_refresh_drawing()
+                        return self.selected
+                    else:
+                        # TODO: ADD VISUAL CUE THAT TELLS USER THEY CAN'T CAST THIS
+                        pass
                 elif event.type == pygame.QUIT:
                     quit_game()
 

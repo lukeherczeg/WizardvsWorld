@@ -47,9 +47,15 @@ class PlayerMovementPhase(Phase):
         self.enemy_tiles = None
         self.occupied_index = 0
         self.is_tutorial = True
-        self.level_win_tile = GRID.game_map[7][24]
+        self.level_win_snow_tile = GRID.game_map[0][16]
+        self.level_win_grass_tile = GRID.game_map[7][24]
+        self.level_win_sand_tile = GRID.game_map[14][8]
         self.all_bosses_defeated = False
         self.level_complete = False
+        #bools used for knowing which maps to load and which animations
+        self.load_grass = False
+        self.load_snow = False
+        self.load_sand = False
 
     def cyclic_last(self, tile_list, current_tile):
         self.occupied_index -= 1
@@ -244,8 +250,21 @@ class PlayerMovementPhase(Phase):
                         return True
                     elif self.movable_tiles:
                         if self.currentTile in self.movable_tiles:
-                            if self.all_bosses_defeated and self.currentTile == self.level_win_tile:
-                                self.level_complete = True
+                            #Several win tiles, level is complete if on any one of them and all bosses defeated
+                            if self.all_bosses_defeated:
+                                self.level_win_grass_tile.tint = TileTint.ORANGE
+                                self.level_win_snow_tile.tint = TileTint.ORANGE
+                                self.level_win_sand_tile.tint = TileTint.ORANGE
+                                #if player is on a win tile acknowledge this and level is complete
+                                if self.player.currentTile == self.level_win_grass_tile:
+                                    self.load_grass = True
+                                    self.level_complete = True
+                                elif self.player.currentTile == self.level_win_snow_tile:
+                                    self.load_snow = True
+                                    self.level_complete = True
+                                elif self.player.currentTile == self.level_win_sand_tile:
+                                    self.load_sand = True
+                                    self.level_complete = True
                             return True
                     elif self.enemy_tiles:
                         if self.currentTile in self.enemy_tiles and self.currentTile.occupied:
@@ -285,49 +304,65 @@ class PlayerMovementPhase(Phase):
         if bosses_remaining < 1:
             self.all_bosses_defeated = True
 
-        if self.all_bosses_defeated:
-            self.level_win_tile.tint = TileTint.ORANGE
-
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
+        # Stop heal from level advance
+        self.player.healing = False
         total_refresh_drawing()
 
         background = pygame.transform.scale(BACKGROUND_PNG, (562, 225))
         animate_text_abs('Player Phase', 75, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 1, background, 15)
         total_refresh_drawing()
 
-        # TUTORIAL
-        if self.is_tutorial:
-            MessageBox('In order to win, defeat the boss inside the castle guarding the exit!')
-            MessageBox('After defeating the boss, the entrance to the next level will be highlighted.')
-            GRID.game_map[7][24].tint = TileTint.ORANGE
-            total_refresh_drawing()
-            MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
-            GRID.game_map[7][24].tint = TileTint.NONE
-            MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
-                       + 'You are the lone wizard in blue. Please select yourself!')
+        if self.all_bosses_defeated:
+            self.level_win_grass_tile.tint = TileTint.ORANGE
+            self.level_win_snow_tile.tint = TileTint.ORANGE
+            self.level_win_sand_tile.tint = TileTint.ORANGE
+            if self.player.currentTile == self.level_win_grass_tile:
+                self.load_grass = True
+                self.level_complete = True
+            if self.player.currentTile == self.level_win_snow_tile:
+                self.load_snow = True
+                self.level_complete = True
+            if self.player.currentTile == self.level_win_sand_tile:
+                self.load_sand = True
+                self.level_complete = True
 
-            total_refresh_drawing()
 
-        entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
-        self.display_tile_info(entities_in_top_left)
-        select(self.currentTile.row, self.currentTile.col)
-        draw_entity_from_tile(self.currentTile)
-        selecting = True
-        while selecting:
-            if self.selection():
-                if self.currentTile == self.player.currentTile:
+        if not self.level_complete:
+            # TUTORIAL
+            if self.is_tutorial:
+                MessageBox('In order to win, defeat the boss inside the castle guarding the exit!')
+                MessageBox('After defeating the boss, the entrance to the next level will be highlighted.')
+                GRID.game_map[7][24].tint = TileTint.ORANGE
+                total_refresh_drawing()
+                MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
+                GRID.game_map[7][24].tint = TileTint.NONE
+                MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
+                           + 'You are the lone wizard in blue. Select the wizard!')
 
-                    # TUTORIAL
-                    if self.is_tutorial:
-                        MessageBox('Great job! Now pick one of the blue spaces to move to.')
+                total_refresh_drawing()
 
-                    total_refresh_drawing()
+            entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
+            self.display_tile_info(entities_in_top_left)
+            select(self.currentTile.row, self.currentTile.col)
+            draw_entity_from_tile(self.currentTile)
+            selecting = True
+            while selecting:
+                if self.selection():
+                    if self.currentTile == self.player.currentTile:
 
-                    selecting = False
+                        # TUTORIAL
+                        if self.is_tutorial:
+                            MessageBox('Great job! Now pick one of the blue spaces to move to.')
+
+                        total_refresh_drawing()
+
+                        selecting = False
 
     def update(self):
-        self.movement()
+        if not self.level_complete:
+            self.movement()
 
     def exit(self):
         self.movable_tiles = None
@@ -340,7 +375,6 @@ class PlayerMovementPhase(Phase):
                 ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
             upgrade_menu.draw_menu()
             upgrade_menu.await_response()
-            prev_map = GRID
             prev_enemies = []
             prev_location = [self.player.currentTile.row, self.player.currentTile.col]
 
@@ -350,17 +384,40 @@ class PlayerMovementPhase(Phase):
                 ENTITIES.clear()
                 ENTITIES.append(wiz)
 
-            GRID.update_layout()
-            new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
-            GRID.set_game_map(new_map)
-            GRID.generate_enemies(self.player.level)
-
-            animate_map_transition(prev_map, prev_enemies, self.player)
-            self.player.currentTile = GRID.game_map[prev_location[0]][0]
+            if self.load_grass:
+                #for grid.update_layout 1,2,3 depending on level type 1 is grass, 2 is sand 3 is snow
+                GRID.update_layout(1)
+                new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
+                GRID.set_game_map(new_map)
+                GRID.generate_enemies(self.player.level)
+                prev_map = GRID
+                animate_map_transition(prev_map, prev_enemies, self.player)
+                self.player.currentTile = GRID.game_map[prev_location[0]][0]
+                self.load_grass = False
+            elif self.load_sand:
+                GRID.update_layout(2)
+                new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
+                GRID.set_game_map(new_map)
+                GRID.generate_enemies(self.player.level)
+                prev_map = GRID
+                animate_map_transition_up(prev_map, prev_enemies, self.player)
+                self.player.currentTile = GRID.game_map[0][8]
+                self.load_sand = False
+            elif self.load_snow:
+                GRID.update_layout(3)
+                new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
+                GRID.set_game_map(new_map)
+                GRID.generate_enemies(self.player.level)
+                prev_map = GRID
+                animate_map_transition_down(prev_map, prev_enemies, self.player)
+                self.player.currentTile = GRID.game_map[14][16]
+                self.load_snow = False
             self.player.health = self.player.max_health
             self.all_bosses_defeated = False
             self.level_complete = False
-            self.level_win_tile = GRID.win_tile
+            self.level_win_grass_tile = GRID.win_tile
+            self.level_win_snow_tile = GRID.win_tile
+            self.level_win_sand_tile = GRID.win_tile
             self.enter()
             self.update()
             self.exit()

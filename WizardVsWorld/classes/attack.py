@@ -28,6 +28,7 @@ def cast_spell(caster, target):
 
     # If not cast on self, its susceptible to attack roll
     if spell.range > 0:
+        spell.cast(target)
         perform_attack(caster, target, spell)
 
 
@@ -44,10 +45,15 @@ def entity_cleanup(victim, damage, crit):
     else:
         victim.damaged = False
 
+    time.sleep(.3)
+
 
 def perform_attack(attacker, victim, spell=None):
     attacker.attacking = True
-    animate_attack(attacker, victim)
+    if spell is not None and spell.name == "Greater Fireball":
+        animate_attack(attacker, victim, True)
+    else:
+        animate_attack(attacker, victim)
     attacker.attacking = False
 
     # Check if spell is being cast
@@ -67,6 +73,21 @@ def perform_attack(attacker, victim, spell=None):
 
     if spell is not None:
         perform_aoe(attacker, victim, damage_taken, crit)
+
+        #clean splash damage
+        col = victim.get_position().col
+        row = victim.get_position().row
+        tiles = GRID.get_attack(row, col, 2)
+        for tile in tiles:
+            if tile.col == (col + 2):
+                tiles.remove(tile)
+            elif tile.col == (col - 2):
+                tiles.remove(tile)
+            elif tile.row == (row + 2):
+                tiles.remove(tile)
+            elif tile.row == (row - 2):
+                tiles.remove(tile)
+        clear_tinted_tiles(tiles, victim)
 
 
 def calculate_damage(attacker, victim, spell=None):
@@ -98,11 +119,13 @@ def calculate_damage(attacker, victim, spell=None):
 def perform_aoe(attacker, victim, damage, crit):
     """Check if any entities (not enemies) are in the spell's AoE"""
     spell = attacker.prepared_spell
-
+    if spell.name == "Flame Nova":
+        attacker.attacking = True
     if spell is not None and spell.aoe > 0:
         affected_entities = calculate_aoe(attacker, victim)
         for entity in affected_entities:
             entity_cleanup(entity, damage, crit)
+    attacker.attacking = False
 
 
 def calculate_aoe(caster, victim):
@@ -118,9 +141,10 @@ def calculate_aoe(caster, victim):
 
     # Check if any entities are in the AoE
     for entity in ENTITIES:
-        if lo[0] <= entity.currentTile.row <= hi[0] and lo[1] <= entity.currentTile.col <= hi[
-            1] and entity is not victim:  # No double dipping
+        if lo[0] <= entity.currentTile.row <= hi[0] and lo[1] <= entity.currentTile.col <= hi[1] \
+                and entity is not victim:  # No double dipping
             affected_entities.append(entity)
+
 
     # Exclude caster from effects of spell
     if caster.prepared_spell.exclude_self:
@@ -181,7 +205,7 @@ class CounterAttack:
                 self.victim.damaged = False
 
     def attempt_counter_attack(self):
-        time.sleep(1)
+        time.sleep(.5)
         if isinstance(self.attacker, Enemy):
             if can_attack(self.attacker, self.victim):
                 self.counter_attack()

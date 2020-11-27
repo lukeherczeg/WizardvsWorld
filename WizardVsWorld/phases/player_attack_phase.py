@@ -22,8 +22,8 @@ class PlayerAttackPhase(Phase):
 
         # Check if player died to the spell
         if self.player.health <= 0:
-            ENTITIES.remove(self.player)
-            animate_death(self.player)
+            #ENTITIES.remove(self.player)
+            #animate_death(self.player)
             MessageBox('Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
             pygame.quit()
             sys.exit()
@@ -56,9 +56,6 @@ class PlayerAttackPhase(Phase):
             self.attack(enemy, enemy_tiles)
 
     def attack_selection(self):
-        if self.player.prepared_spell.range == 0:
-            self.enemyTile = self.player.currentTile #TODO: WILL CHANGING THE NAME OF ENEMYTILE BREAK ANYTHING?
-
         enemy_tiles = GRID.get_attack(
             self.player.currentTile.row,
             self.player.currentTile.col,
@@ -74,7 +71,51 @@ class PlayerAttackPhase(Phase):
                 occupied_enemy_tiles.append(tile)
                 enemies_within_range += 1
 
-        draw_tinted_tiles(enemy_tiles, self.player, TileTint.ORANGE)
+        #if statement to eliminate the orange square when healing
+        if not self.player.healing:
+            draw_tinted_tiles(enemy_tiles, self.player, None)
+        else:
+            draw_tinted_tiles(enemy_tiles, self.player, TileTint.ORANGE)
+
+        # Spells cast on self trigger here
+        if self.player.prepared_spell.range == 0:
+            self.enemyTile = self.player.currentTile #TODO: WILL CHANGING THE NAME OF ENEMYTILE BREAK ANYTHING?
+            time.sleep(1)
+            self.player.selected = False
+
+            #since the Flame Nova is range 0 and triggered in this block, it is a constant range and cannot be changer
+            #without refactoring, 2 is used here as a constant to help draw fire
+            tiles_in_range_of_spell = GRID.get_attack(
+                self.player.currentTile.row,
+                self.player.currentTile.col,
+                2
+            )
+
+            #check if spell is flame nova and tint surrounding tiles
+            if self.player.prepared_spell.name == "Flame Nova":
+
+                #remove tiles that are not immediately adjacent or diagonal
+                for tile in tiles_in_range_of_spell:
+                    if tile.col == (self.player.currentTile.col + 2):
+                        tiles_in_range_of_spell.remove(tile)
+                    elif tile.col == (self.player.currentTile.col - 2):
+                        tiles_in_range_of_spell.remove(tile)
+                    elif tile.row == (self.player.currentTile.row + 2):
+                        tiles_in_range_of_spell.remove(tile)
+                    elif tile.row == (self.player.currentTile.row - 2):
+                        tiles_in_range_of_spell.remove(tile)
+                    #we dont want the wizard's square on fire
+                    elif tile.row == self.player.currentTile.row and tile.col == self.player.currentTile.col:
+                        tiles_in_range_of_spell.remove(tile)
+
+                draw_tinted_tiles(tiles_in_range_of_spell, self.player, TileTint.FIRE)
+            cast_spell(self.player, self.player)
+            clear_tinted_tiles(tiles_in_range_of_spell, self.player)
+            return
+
+
+
+
 
         if enemies_within_range != 0:
 
@@ -119,6 +160,7 @@ class PlayerAttackPhase(Phase):
         if not self.data_from_movement.level_complete:
             # Attack radius can overwrite text
             total_refresh_drawing()
+
 
             # Select a spell
             spell_menu = SpellMenu(self.player.spellbook)
