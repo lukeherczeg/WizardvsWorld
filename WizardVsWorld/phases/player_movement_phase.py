@@ -385,19 +385,25 @@ class PlayerMovementPhase(Phase):
                 ENTITIES.clear()
                 ENTITIES.append(wiz)
 
-            GRID.update_layout()
-            new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
-            GRID.set_game_map(new_map)
-            GRID.generate_enemies(self.player.level)
             if self.load_grass:
+                #for grid.update_layout 1,2,3 depending on level type 1 is grass, 2 is sand 3 is snow
+                GRID.update_layout(1)
+                new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
+                GRID.set_game_map(new_map)
                 animate_map_transition(prev_map, prev_enemies, self.player)
                 self.player.currentTile = GRID.game_map[prev_location[0]][0]
                 self.load_grass = False
             elif self.load_sand:
+                GRID.update_layout(2)
+                new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
+                GRID.set_game_map(new_map)
                 animate_map_transition_up(prev_map, prev_enemies, self.player)
                 self.player.currentTile = GRID.game_map[0][8]
                 self.load_sand = False
             elif self.load_snow:
+                GRID.update_layout(3)
+                new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
+                GRID.set_game_map(new_map)
                 animate_map_transition_down(prev_map, prev_enemies, self.player)
                 self.player.currentTile = GRID.game_map[14][16]
                 self.load_snow = False

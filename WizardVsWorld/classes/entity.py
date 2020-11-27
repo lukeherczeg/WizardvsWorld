@@ -184,6 +184,7 @@ class Boss(Enemy):
     ranged: bool
 
     def __init__(self):
+        super()
         super().__init__()
 
 
@@ -214,8 +215,11 @@ class GreatMarksman(Boss):
         self.max_health = self.health
         self.attack = 40 + (level * 4)
         self.defense = 0 + (level * 2)
-        self.critical_chance = 8
+        self.crit_chance = 8
         self.range = 3
+
+    def get_name(self):
+        return "Great Marksman"
 
 
 class WizardKing(Boss):
@@ -228,5 +232,8 @@ class WizardKing(Boss):
         self.max_health = self.health
         self.attack = 35 + (level * 6)
         self.defense = 10 + (level * 3)
-        self.critical_chance = 7
+        self.crit._chance = 7
         self.range = 2
+
+    def get_name(self):
+        return "Wizard King"

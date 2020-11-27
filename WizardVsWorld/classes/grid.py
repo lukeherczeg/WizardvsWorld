@@ -3,7 +3,7 @@ from WizardVsWorld.classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
 
-from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight
+from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight, GreatMarksman, WizardKing
 from WizardVsWorld.classes.const import *
 
 
@@ -13,8 +13,11 @@ class Grid:
     def __init__(self, width, height, level=-1):
         self.GRID_WIDTH = width
         self.GRID_HEIGHT = height
+        #variables to keep track of level, level=grass, Ulevel=snow and up, Dlevel=sand and down
         self.level = level
-        self.map_layout = self.update_layout()
+        self.Ulevel = -1
+        self.Dlevel = -1
+        self.map_layout = self.update_layout(1)
         # INDEX WITH [ROW][COL]
         self._game_map = [[self.generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
         self.win_tile = None
@@ -239,7 +242,7 @@ class Grid:
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
         elif layout[index] == '2':
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.STONE)
-        elif layout[index] == '3' or layout[index] == 'f':
+        elif layout[index] == '3' or layout[index] == 'f' or layout[index] == 'G':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
         elif layout[index] == '4' or layout[index] == 'g':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
@@ -261,7 +264,8 @@ class Grid:
         index = 0
         while index < len(layout):
             if layout[index] == 'r' or layout[index] == 'd' or layout[index] == 'f' or layout[index] == 'g' or \
-                    layout[index] == 'K' or layout[index] == 'R':
+                    layout[index] == 'K' or layout[index] == 'R' or layout[index] == 'G' or layout[index] == 'A' or \
+                    layout[index] == 'W':
                 # need to translate index into a set of coordinates
                 x = index % self.GRID_WIDTH
                 y = index // self.GRID_WIDTH
@@ -275,6 +279,21 @@ class Grid:
                     archer.currentTile = self.game_map[y][x]
                     archer.currentTile.occupied = True
                     ENTITIES.append(archer)
+                elif layout[index] == 'G':
+                    boss = GreatKnight(level)
+                    boss.currentTile = self.game_map[y][x]
+                    boss.currentTile.occupied = True
+                    ENTITIES.append(boss)
+                elif layout[index] == 'A':
+                    boss = GreatMarksman(level)
+                    boss.currentTile = self.game_map[y][x]
+                    boss.currentTile.occupied = True
+                    ENTITIES.append(boss)
+                elif layout[index] == 'W':
+                    boss = WizardKing(level)
+                    boss.currentTile = self.game_map[y][x]
+                    boss.currentTile.occupied = True
+                    ENTITIES.append(boss)
                 elif self.__generate_true(.7):  # create archer
                     archer = Archer(level)
                     archer.currentTile = self.game_map[y][x]
@@ -288,16 +307,72 @@ class Grid:
             index += 1
 
         # Luke testing
-        boss = GreatKnight(level)
-        boss.currentTile = self.game_map[0][15]
-        boss.currentTile.occupied = True
-        ENTITIES.append(boss)
+        #boss = GreatKnight(level)
+        #boss.currentTile = self.game_map[0][15]
+        #boss.currentTile.occupied = True
+        #ENTITIES.append(boss)
 
     # function used in init to get path to file names for map layouts
-    def update_layout(self):
-        self.level += 1
-        if self.level > 4:
-            self.level = 0
+    def update_layout(self, type):
+        #grass level
+        if type == 1:
+            self.level += 1
+            if self.level > 4:
+                self.level = 0
+            if self.level == 0:
+                self.map_layout = map_0
+                return map_0
+            elif self.level == 1:
+                self.map_layout = map_1
+                return map_1
+            elif self.level == 2:
+                self.map_layout = map_2
+                return map_2
+            elif self.level == 3:
+                self.map_layout = map_3
+                return map_3
+            elif self.level == 4:
+                self.map_layout = map_4
+                return map_4
+        #sand level
+        elif type == 2:
+            self.Dlevel += 1
+            if self.Dlevel > 4:
+                self.Dlevel = 0
+            if self.Dlevel == 0:
+                self.map_layout = map_D0
+                return map_D0
+            elif self.Dlevel == 1:
+                self.map_layout = map_D1
+                return map_D1
+            elif self.Dlevel == 2:
+                self.map_layout = map_D2
+                return map_D2
+            elif self.Dlevel == 3:
+                self.map_layout = map_D3
+                return map_D3
+            elif self.Dlevel == 4:
+                self.map_layout = map_D4
+                return map_D4
+        elif type == 3:
+            self.Ulevel += 1
+            if self.Ulevel > 4:
+                self.Ulevel = 0
+            if self.Ulevel == 0:
+                self.map_layout = map_U0
+                return map_U0
+            elif self.Ulevel == 1:
+                self.map_layout = map_U1
+                return map_U1
+            elif self.Ulevel == 2:
+                self.map_layout = map_U2
+                return map_U2
+            elif self.Ulevel == 3:
+                self.map_layout = map_U3
+                return map_U3
+            elif self.Ulevel == 4:
+                self.map_layout = map_U4
+                return map_U4
         # lev = str(self.level)
         # get the path of the map
         # main_directory = os.path.dirname('WizardvsWorld')
@@ -310,18 +385,4 @@ class Grid:
         #     string = file.read().replace('\n', '')
         #     self.map_layout = string
         # return string
-        if self.level == 0:
-            self.map_layout = map_0
-            return map_0
-        elif self.level == 1:
-            self.map_layout = map_1
-            return map_1
-        elif self.level == 2:
-            self.map_layout = map_2
-            return map_2
-        elif self.level == 3:
-            self.map_layout = map_3
-            return map_3
-        elif self.level == 4:
-            self.map_layout = map_4
-            return map_4
+
