@@ -4,7 +4,7 @@ import math
 import time
 from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.const import TileTexture, TileTint, ENTITIES
-from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight
+from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight, GreatMarksman, WizardKing
 
 
 # NOTES:
@@ -868,6 +868,72 @@ def _get_tile_img(tile):
             return BUSH_FIRE_PNG
         else:
             return BUSH_PNG
+    elif tile.texture_type == TileTexture.WOOD:
+        if tile.tint == TileTint.BLUE:
+            return WOOD_BLUE_PNG
+        elif tile.tint == TileTint.RED:
+            return WOOD_RED_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return WOOD_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return WOOD_FIRE_PNG
+        else:
+            return WOOD_PNG
+    elif tile.texture_type == TileTexture.DARK_BRICK:
+        if tile.tint == TileTint.RED:
+            return DARK_BRICK_RED_PNG
+        else:
+            return DARK_BRICK_PNG
+    elif tile.texture_type == TileTexture.SNOW:
+        if tile.tint == TileTint.BLUE:
+            return SNOW_BLUE_PNG
+        elif tile.tint == TileTint.RED:
+            return SNOW_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return SNOW_FIRE_PNG
+        else:
+            return SNOW_PNG
+    elif tile.texture_type == TileTexture.ROCK:
+        if tile.tint == TileTint.RED:
+            return ROCK_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return ROCK_FIRE_PNG
+        else:
+            return ROCK_PNG
+    elif tile.texture_type == TileTexture.MUD:
+        if tile.tint == TileTint.BLUE:
+            return MUD_BLUE_PNG
+        elif tile.tint == TileTint.RED:
+            return MUD_RED_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return MUD_ORANGE_PNG
+        elif tile.tint == TileTint.FIRE:
+            return MUD_FIRE_PNG
+        else:
+            return MUD_PNG
+    elif tile.texture_type == TileTexture.MUD_BRICK:
+        if tile.tint == TileTint.RED:
+            return MUD_BRICK_RED_PNG
+        else:
+            return MUD_BRICK_PNG
+    elif tile.texture_type == TileTexture.SAND:
+        if tile.tint == TileTint.BLUE:
+            return SAND_BLUE_PNG
+        elif tile.tint == TileTint.RED:
+            return SAND_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return SAND_FIRE_PNG
+        else:
+            return SAND_PNG
+    elif tile.texture_type == TileTexture.CACTUS:
+        if tile.tint == TileTint.RED:
+            return CACTUS_RED_PNG
+        elif tile.tint == TileTint.FIRE:
+            return CACTUS_FIRE_PNG
+        else:
+            return CACTUS_PNG
+
+
 
 
 def _get_entity_img(entity):
@@ -910,6 +976,22 @@ def _get_entity_img(entity):
             return ARCHER_ATTACKABLE_PNG
         else:
             return ARCHER_PNG
+
+    if isinstance(entity, GreatMarksman):
+        if entity.attacking:
+            return GREAT_MARKSMAN_ATTACK_PNG
+        elif entity.damaged:
+            return GREAT_MARKSMAN_HURT_PNG
+        else:
+            return GREAT_MARKSMAN_PNG
+
+    if isinstance(entity, WizardKing):
+        if entity.attacking:
+            return WIZARD_KING_ATTACK_PNG
+        elif entity.damaged:
+            return WIZARD_KING_HURT_PNG
+        else:
+            return WIZARD_KING_PNG
 
 
 def _calc_player_coords(entity_pos, entity_rect, offset=None):

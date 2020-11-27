@@ -26,6 +26,14 @@ class TileTexture(Enum):
     STONE = 2
     FLOOR = 3
     BUSH = 4
+    WOOD = 5
+    DARK_BRICK = 6
+    SNOW = 7
+    ROCK = 8
+    MUD = 9
+    MUD_BRICK = 10
+    SAND = 11
+    CACTUS = 12
 
 
 map_0 = "0000000000000000w00000000" \

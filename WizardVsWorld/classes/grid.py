@@ -289,7 +289,7 @@ class Grid:
 
         # Luke testing
         boss = GreatKnight(level)
-        boss.currentTile = self.game_map[0][16]
+        boss.currentTile = self.game_map[0][15]
         boss.currentTile.occupied = True
         ENTITIES.append(boss)
 
