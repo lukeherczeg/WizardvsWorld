@@ -28,6 +28,7 @@ def cast_spell(caster, target):
 
     # If not cast on self, its susceptible to attack roll
     if spell.range > 0:
+        spell.cast(target)
         perform_attack(caster, target, spell)
 
 

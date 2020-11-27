@@ -134,7 +134,7 @@ class Player(Entity):
             ),
             Spell(
                 'Flame Nova',
-                f'Fire out flames in all directions with AoE of {self.creep}',
+                f'A cloak of flames with AoE of {self.creep}',
                 self.uses,
                 0,
                 50 + self.attack + 2 * (self.level + 1),
