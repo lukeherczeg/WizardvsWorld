@@ -47,9 +47,15 @@ class PlayerMovementPhase(Phase):
         self.enemy_tiles = None
         self.occupied_index = 0
         self.is_tutorial = True
-        self.level_win_tile = GRID.game_map[7][24]
+        self.level_win_snow_tile = GRID.game_map[0][16]
+        self.level_win_grass_tile = GRID.game_map[7][24]
+        self.level_win_sand_tile = GRID.game_map[14][8]
         self.all_bosses_defeated = False
         self.level_complete = False
+        #bools used for knowing which maps to load and which animations
+        self.load_grass = False
+        self.load_snow = False
+        self.load_sand = False
 
     def cyclic_last(self, tile_list, current_tile):
         self.occupied_index -= 1
@@ -244,8 +250,21 @@ class PlayerMovementPhase(Phase):
                         return True
                     elif self.movable_tiles:
                         if self.currentTile in self.movable_tiles:
-                            if self.all_bosses_defeated and self.currentTile == self.level_win_tile:
-                                self.level_complete = True
+                            #Several win tiles, level is complete if on any one of them and all bosses defeated
+                            if self.all_bosses_defeated:
+                                self.level_win_grass_tile.tint = TileTint.ORANGE
+                                self.level_win_snow_tile.tint = TileTint.ORANGE
+                                self.level_win_sand_tile.tint = TileTint.ORANGE
+                                #if player is on a win tile acknowledge this and level is complete
+                                if self.player.currentTile == self.level_win_grass_tile:
+                                    self.load_grass = True
+                                    self.level_complete = True
+                                elif self.player.currentTile == self.level_win_snow_tile:
+                                    self.load_snow = True
+                                    self.level_complete = True
+                                elif self.player.currentTile == self.level_win_sand_tile:
+                                    self.load_sand = True
+                                    self.level_complete = True
                             return True
                     elif self.enemy_tiles:
                         if self.currentTile in self.enemy_tiles and self.currentTile.occupied:
@@ -296,9 +315,19 @@ class PlayerMovementPhase(Phase):
         total_refresh_drawing()
 
         if self.all_bosses_defeated:
-            self.level_win_tile.tint = TileTint.ORANGE
-            if self.player.currentTile == self.level_win_tile:
+            self.level_win_grass_tile.tint = TileTint.ORANGE
+            self.level_win_snow_tile.tint = TileTint.ORANGE
+            self.level_win_sand_tile.tint = TileTint.ORANGE
+            if self.player.currentTile == self.level_win_grass_tile:
+                self.load_grass = True
                 self.level_complete = True
+            if self.player.currentTile == self.level_win_snow_tile:
+                self.load_snow = True
+                self.level_complete = True
+            if self.player.currentTile == self.level_win_sand_tile:
+                self.load_sand = True
+                self.level_complete = True
+
 
         if not self.level_complete:
             # TUTORIAL
@@ -360,13 +389,24 @@ class PlayerMovementPhase(Phase):
             new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
             GRID.set_game_map(new_map)
             GRID.generate_enemies(self.player.level)
-
-            animate_map_transition(prev_map, prev_enemies, self.player)
-            self.player.currentTile = GRID.game_map[prev_location[0]][0]
+            if self.load_grass:
+                animate_map_transition(prev_map, prev_enemies, self.player)
+                self.player.currentTile = GRID.game_map[prev_location[0]][0]
+                self.load_grass = False
+            elif self.load_sand:
+                animate_map_transition_up(prev_map, prev_enemies, self.player)
+                self.player.currentTile = GRID.game_map[0][8]
+                self.load_sand = False
+            elif self.load_snow:
+                animate_map_transition_down(prev_map, prev_enemies, self.player)
+                self.player.currentTile = GRID.game_map[14][16]
+                self.load_snow = False
             self.player.health = self.player.max_health
             self.all_bosses_defeated = False
             self.level_complete = False
-            self.level_win_tile = GRID.win_tile
+            self.level_win_grass_tile = GRID.win_tile
+            self.level_win_snow_tile = GRID.win_tile
+            self.level_win_sand_tile = GRID.win_tile
             self.enter()
             self.update()
             self.exit()
