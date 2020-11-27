@@ -238,16 +238,45 @@ class Grid:
             else:
                 return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
         # load a texture based on layout
+        #grass spawnable tiles
         elif layout[index] == '1' or layout[index] == 'd':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
-        elif layout[index] == '2':
-            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.STONE)
+        elif layout[index] == '2' or layout[index] == 'g':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
         elif layout[index] == '3' or layout[index] == 'f' or layout[index] == 'G':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
-        elif layout[index] == '4' or layout[index] == 'g':
-            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
+        #sand spawnable tiles
+        elif layout[index] == '4' or layout[index] == 's':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.SAND)
+        elif layout[index] == '5' or layout[index] == 'm' or layout[index] == 'A':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.MUD)
+        #snow spawnable tiles
+        elif layout[index] == '6' or layout[index] == 'i':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.SNOW)
+        elif layout[index] == '7' or layout[index] == 'p' or layout[index] == 'W':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.WOOD)
+        #unstandable/unspawnable tiles
+        elif layout[index] == 'b':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.BUSH)
+        elif layout[index] == 'C':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.CACTUS)
+        elif layout[index] == 'c':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.ROCK)
+        elif layout[index] == '[':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.STONE)
+        elif layout[index] == '{':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.MUD_BRICK)
+        elif layout[index] == '<':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.DARK_BRICK)
+        #win tiles are as follows, w for grass level, v for sand level, and x for snow level
         elif layout[index] == 'w':
             self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR, win_tile=True)
+            return self.win_tile
+        elif layout[index] == 'v':
+            self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.MUD, win_tile=True)
+            return self.win_tile
+        elif layout[index] == 'x':
+            self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.WOOD, win_tile=True)
             return self.win_tile
         else:
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.BUSH)
@@ -265,7 +294,8 @@ class Grid:
         while index < len(layout):
             if layout[index] == 'r' or layout[index] == 'd' or layout[index] == 'f' or layout[index] == 'g' or \
                     layout[index] == 'K' or layout[index] == 'R' or layout[index] == 'G' or layout[index] == 'A' or \
-                    layout[index] == 'W':
+                    layout[index] == 'W' or layout[index] == 's' or layout[index] == 'm' or layout[index] == 'i' or \
+                    layout[index] == 'p':
                 # need to translate index into a set of coordinates
                 x = index % self.GRID_WIDTH
                 y = index // self.GRID_WIDTH

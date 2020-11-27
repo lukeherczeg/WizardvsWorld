@@ -375,7 +375,6 @@ class PlayerMovementPhase(Phase):
                 ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
             upgrade_menu.draw_menu()
             upgrade_menu.await_response()
-            prev_map = GRID
             prev_enemies = []
             prev_location = [self.player.currentTile.row, self.player.currentTile.col]
 
@@ -390,6 +389,8 @@ class PlayerMovementPhase(Phase):
                 GRID.update_layout(1)
                 new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
                 GRID.set_game_map(new_map)
+                GRID.generate_enemies(self.player.level)
+                prev_map = GRID
                 animate_map_transition(prev_map, prev_enemies, self.player)
                 self.player.currentTile = GRID.game_map[prev_location[0]][0]
                 self.load_grass = False
@@ -397,6 +398,8 @@ class PlayerMovementPhase(Phase):
                 GRID.update_layout(2)
                 new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
                 GRID.set_game_map(new_map)
+                GRID.generate_enemies(self.player.level)
+                prev_map = GRID
                 animate_map_transition_up(prev_map, prev_enemies, self.player)
                 self.player.currentTile = GRID.game_map[0][8]
                 self.load_sand = False
@@ -404,6 +407,8 @@ class PlayerMovementPhase(Phase):
                 GRID.update_layout(3)
                 new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
                 GRID.set_game_map(new_map)
+                GRID.generate_enemies(self.player.level)
+                prev_map = GRID
                 animate_map_transition_down(prev_map, prev_enemies, self.player)
                 self.player.currentTile = GRID.game_map[14][16]
                 self.load_snow = False

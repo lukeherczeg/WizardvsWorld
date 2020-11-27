@@ -232,7 +232,7 @@ class WizardKing(Boss):
         self.max_health = self.health
         self.attack = 35 + (level * 6)
         self.defense = 10 + (level * 3)
-        self.crit._chance = 7
+        self.crit_chance = 7
         self.range = 2
 
     def get_name(self):

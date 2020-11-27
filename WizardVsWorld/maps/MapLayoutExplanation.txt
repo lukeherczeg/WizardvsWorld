@@ -15,7 +15,7 @@ empty map full of random tiles has the format:
         "0000000000000000000000000" \
         "0000000000000000000000000"
 Starter map with win tiles in correct position (same place always) as w
-        "0000000000000000w00000000" \
+        "0000000000000000x00000000" \
         "0000000000000000000000000" \
         "0000000000000000000000000" \
         "0000000000000000000000000" \
@@ -29,12 +29,38 @@ Starter map with win tiles in correct position (same place always) as w
         "0000000000000000000000000" \
         "0000000000000000000000000" \
         "0000000000000000000000000" \
-        "00000000w0000000000000000"
+        "00000000v0000000000000000"
 
 Dictionary
-0 =
-1 =
-2 =
-3 =
-4 =
-5 =
+0 = rand grass level textures
+
+1 = dirt
+2 = grass
+3 = floor tile
+
+4 = sand
+5 = mud
+
+6 = snow
+7 = wood
+
+d = dirt w/ random non-boss enemy
+g = grass w/ random non-boss enemy
+f = floor tile w/ random non-boss enemy
+
+s = sand w/ random non-boss enemy
+m = mud w/ random non-boss enemy
+
+i = snow w/ random non-boss enemy
+p = wood planks w/ random non-boss enemy
+
+
+Unstandable Nature
+b = bush (grass)
+C = cactus (sand)
+c = rock (snow)
+
+Walls
+[ = stone wall (grass levels)
+{ = mud brick wall (sand levels)
+< = dark brick wall (snow levels)
