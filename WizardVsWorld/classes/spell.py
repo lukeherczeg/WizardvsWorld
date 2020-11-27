@@ -67,7 +67,7 @@ class Spell:
                     self._effect(target)
                 else:
                     self._effect()
-                self._current_uses -= 1
+            self._current_uses -= 1
 
     def on_hit(self, target):
         """Any effects that are dependant on the spell hitting the enemy"""
