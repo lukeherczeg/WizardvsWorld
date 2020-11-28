@@ -62,6 +62,8 @@ class FSM:
                 if event.type == pygame.QUIT:
                     quit_game()
 
+        start_screen.exit()
+
         # Starting the game
         self.__phase_number = 0
         self.__current_phase = self.__phases[0]

@@ -2,7 +2,9 @@ import pygame
 import sys
 import math
 import time
+import threading
 from WizardVsWorld.assets.image_loader import *
+from WizardVsWorld.assets.sounds.sound_loader import *
 from WizardVsWorld.classes.const import TileTexture, TileTint, ENTITIES
 from WizardVsWorld.classes.entity import Player, Archer, Knight, GreatKnight, GreatMarksman, WizardKing
 
@@ -599,6 +601,11 @@ def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim =
         for fireball in FIREBALL_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
+
+    # sound_thread = threading.Thread(target=pygame.mixer.Sound.play, args=(fireball_attack_sound,))
+    # sound_thread.start()
+
+    pygame.mixer.Sound.play(fireball_attack_sound)
 
     while abs(start_x - target_x) >= 15 or abs(start_y - target_y) >= 15:
         if GreaterFireball:
