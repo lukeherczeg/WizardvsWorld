@@ -21,15 +21,23 @@ def cast_spell(caster, target):
 
     spell = caster.prepared_spell
 
-    # Typically Buffs and defense spells
-    if spell.range == 0:
+    #healing spell animation
+    if spell.name == "Heal":
+        old_hp = target.health
         spell.cast(target)
-        perform_aoe(caster, target, spell.power, False)
+        target.healing = True
+        animate_healing(target, old_hp)
+        target.healing = False
+    else:
+        # Typically Buffs and defense spells
+        if spell.range == 0:
+            spell.cast(target)
+            perform_aoe(caster, target, spell.power, False)
 
-    # If not cast on self, its susceptible to attack roll
-    if spell.range > 0:
-        spell.cast(target)
-        perform_attack(caster, target, spell)
+        # If not cast on self, its susceptible to attack roll
+        if spell.range > 0:
+            spell.cast(target)
+            perform_attack(caster, target, spell)
 
 
 def entity_cleanup(victim, damage, crit):

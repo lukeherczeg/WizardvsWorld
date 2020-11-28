@@ -181,9 +181,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         pygame.display.flip()
         opacity = opacity + opacity_tick
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quit_game()
+        pygame.event.pump()
 
     time.sleep(onscreen_time)
 
@@ -197,9 +195,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         pygame.display.flip()
         opacity = opacity - opacity_tick
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quit_game()
+        pygame.event.pump()
 
     total_refresh_drawing()
 
@@ -348,12 +344,18 @@ def animate_miss(victim):
 
 
 def animate_damage(victim, victim_old_hp, crit=False):
-    _animate_damage_number(victim, victim_old_hp, crit)
+    _animate_hp_number(victim, victim_old_hp, crit)
 
     time.sleep(0.2)
 
-    _animate_damage_bar(victim, victim_old_hp)
+    _animate_hp_bar(victim, victim_old_hp)
 
+def animate_healing(victim, victim_old_hp):
+    _animate_hp_number(victim, victim_old_hp)
+
+    time.sleep(0.2)
+
+    _animate_hp_bar(victim, victim_old_hp)
 
 def animate_death(entity):
     entity_img = _get_entity_img(entity)
@@ -725,7 +727,7 @@ def _animate_miss_text(victim):
     total_refresh_drawing()
 
 
-def _animate_damage_number(victim, victim_old_hp, crit):
+def _animate_hp_number(victim, victim_old_hp, crit=False):
     damage_diff = victim_old_hp - victim.health
 
     if crit:
@@ -742,7 +744,7 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     number_font = pygame.font.Font('freesansbold.ttf', 17 if crit else 16)
     number_font.set_bold(True)
     number_font.set_italic(True) if crit else number_font.set_italic(False)
-    number_text = number_font.render(str(damage_diff), True, BRIGHT_RED)
+    number_text = number_font.render(str(abs(damage_diff)), True, BRIGHT_RED if damage_diff > 0 else BRIGHT_GREEN)
     number_rect = number_text.get_rect()
     number_y_var = (victim.get_position().row * BLOCK_SIZE + 12) if crit else \
         (victim.get_position().row * BLOCK_SIZE + 4)
@@ -786,7 +788,7 @@ def _animate_damage_number(victim, victim_old_hp, crit):
     total_refresh_drawing()
 
 
-def _animate_damage_bar(victim, victim_old_hp):
+def _animate_hp_bar(victim, victim_old_hp):
     # HP bar math 4px by 42px (old : 24)
     hp_bar_y = ((victim.get_position().row + 1) * BLOCK_SIZE) - _get_entity_img(victim).get_rect().size[1]
     hp_bar_x = (victim.get_position().col * BLOCK_SIZE) - 1  # (old: + 4)
@@ -806,24 +808,42 @@ def _animate_damage_bar(victim, victim_old_hp):
     green_hp_bar_x_final = math.floor(bar_length * new_hp_ratio)
 
     done = False
-
+    
     # animate
-    while green_hp_bar_x_pos >= green_hp_bar_x_final:
-        if green_hp_bar_x_pos == green_hp_bar_x_final:
-            done = True
-        # draw
-        draw_grid()
-        draw_entities(hard=False)
-        pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, bar_length, bar_height))
-        if ((green_hp_bar_x_final != green_hp_bar_x_pos) or new_hp_ratio != 0):
-            pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
-        CLOCK.tick(FPS)
-        pygame.display.flip()
+    if green_hp_bar_x_pos > green_hp_bar_x_final:
+        while green_hp_bar_x_pos >= green_hp_bar_x_final:
+            if green_hp_bar_x_pos == green_hp_bar_x_final:
+                done = True
+            # draw
+            draw_grid()
+            draw_entities(hard=False)
+            pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, bar_length, bar_height))
+            if ((green_hp_bar_x_final != green_hp_bar_x_pos) or new_hp_ratio != 0):
+                pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
+            CLOCK.tick(FPS)
+            pygame.display.flip()
 
-        # load next animation frame
-        green_hp_bar_x_pos = green_hp_bar_x_pos - (20/victim.max_health)
-        if green_hp_bar_x_pos <= green_hp_bar_x_final and not done:
-            green_hp_bar_x_pos = green_hp_bar_x_final
+            # load next animation frame
+            green_hp_bar_x_pos = green_hp_bar_x_pos - (20/victim.max_health)
+            if green_hp_bar_x_pos <= green_hp_bar_x_final and not done:
+                green_hp_bar_x_pos = green_hp_bar_x_final
+    elif green_hp_bar_x_pos < green_hp_bar_x_final:
+        while green_hp_bar_x_pos <= green_hp_bar_x_final:
+            if green_hp_bar_x_pos == green_hp_bar_x_final:
+                done = True
+            # draw
+            draw_grid()
+            draw_entities(hard=False)
+            pygame.draw.rect(SCREEN, BRIGHT_RED, (hp_bar_x, hp_bar_y, bar_length, bar_height))
+            if ((green_hp_bar_x_final != green_hp_bar_x_pos) or new_hp_ratio != 0):
+                pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
+            CLOCK.tick(FPS)
+            pygame.display.flip()
+
+            # load next animation frame
+            green_hp_bar_x_pos = green_hp_bar_x_pos + (20/victim.max_health)
+            if green_hp_bar_x_pos >= green_hp_bar_x_final and not done:
+                green_hp_bar_x_pos = green_hp_bar_x_final
 
 
 def _blit_alpha(target, source, location, opacity, centered=False):

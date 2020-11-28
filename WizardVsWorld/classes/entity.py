@@ -1,7 +1,6 @@
 from WizardVsWorld.classes.tile import Tile
 from WizardVsWorld.classes.spell import Spell
 
-
 # entity will have various shared data types
 class Entity:
     currentTile: Tile = None
