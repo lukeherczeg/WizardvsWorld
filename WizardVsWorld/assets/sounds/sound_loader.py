@@ -1,10 +1,8 @@
 import os
 from WizardVsWorld.classes.draw import pygame
 
-pygame.mixer.pre_init(44100, -16, 1, 64)
+pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.mixer.init()
-pygame.mixer.quit()
-pygame.mixer.init(44100, -16, 1, 64)
 
 asset_path = os.path.dirname(__file__)
 
