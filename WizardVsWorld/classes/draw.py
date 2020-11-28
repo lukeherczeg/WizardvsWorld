@@ -353,6 +353,8 @@ def animate_death(entity):
     opacity = 250
     opacity_tick = 8
 
+    pygame.mixer.Sound.play(death_sound)
+
     while opacity > 0:
         draw_grid()
         draw_entities()
@@ -641,6 +643,7 @@ def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim =
 
 
 def _animate_knight_attack():
+    pygame.mixer.Sound.play(sword_attack_sound)
     draw_grid()
     draw_entities(hard=False)
     time.sleep(0.2)
@@ -654,6 +657,8 @@ def _animate_archer_attack(coords):
     y_diff = y_diff + .5
     trans_arrow = pygame.transform.rotate(ARROW_PNG, angle)
     trans_arrow = pygame.transform.scale(trans_arrow, (30, 30))
+
+    pygame.mixer.Sound.play(arrow_attack_sound)
 
     while abs(start_x - target_x) >= 3 or abs(start_y - target_y) >= 3:
         # update animation position and frame
