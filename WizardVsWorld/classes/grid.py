@@ -47,6 +47,7 @@ class Grid:
         else:
             return False
 
+
     def handle_tile(self, row, col, movable_tiles, adjacent_movable_tiles,
                     non_standable_tiles, valid_edge_tiles, valid_tiles):
         if self.is_valid_tile(row, col):
@@ -59,6 +60,7 @@ class Grid:
                 valid_edge_tiles.append(new_tile)
         else:
             valid_tiles -= 1
+
 
     def get_movement_border(self, movable_tiles, attack_range):
         tile_list = []
@@ -103,6 +105,7 @@ class Grid:
         tile_list.extend(non_standable_tiles)
         return tile_list
 
+
     def get_attack(self, row, col, range):
 
         tile_list = [self._game_map[row][col]]
@@ -127,6 +130,7 @@ class Grid:
 
         # array syntax flattens and dict.fromKeys removes duplicates
         return list(dict.fromkeys(tile_list))
+
 
     def get_movement(self, row, col, num_moves, player=None):
 

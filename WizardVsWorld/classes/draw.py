@@ -48,17 +48,17 @@ def draw_rectangular_area(top_left, bottom_right):
             # print(f"Drew tile [{i}, {j}].")
 
 
-def clear_tinted_tiles(tile_list, entity):
-    draw_tinted_tiles(tile_list, entity, TileTint.NONE)
+def clear_tinted_tiles(tile_list):
+    draw_tinted_tiles(tile_list, TileTint.NONE)
 
-def draw_tinted_tiles(tile_list, entity, tint):
+
+def draw_tinted_tiles(tile_list, tint):
     for tile in tile_list:
         tile.tint = tint
         draw_tile(tile)
     for tile in tile_list:
         draw_entity_from_tile(tile)
 
-    draw_entity(entity)
     pygame.display.flip()
 
 
@@ -257,7 +257,7 @@ def animate_move(entity, old_pos, new_pos):
         listen_events()
 
     # TO BE CHANGED, move vertically
-    while  not (target_y - 2 < old_y < target_y + 2):
+    while not (target_y - 2 < old_y < target_y + 2):
         if old_y < target_y:
             entity_rect = entity_rect.move([move_wiggle[wiggle_index], MOVEMENT_SPEED])
             old_y = old_y + MOVEMENT_SPEED
@@ -276,14 +276,13 @@ def animate_move(entity, old_pos, new_pos):
         pygame.display.flip()
 
 
-def animate_attack(attacker, victim, GreaterFireball = False):
+def animate_attack(attacker, victim, GreaterFireball=False):
     if isinstance(attacker, Knight) or isinstance(attacker, GreatKnight):
         _animate_knight_attack()
     else:
         # Initialize start and end points and covert to pixel values
         start_x = attacker.get_position().col * BLOCK_SIZE
         start_y = attacker.get_position().row * BLOCK_SIZE
-
 
         target_x = victim.get_position().col * BLOCK_SIZE
         target_y = victim.get_position().row * BLOCK_SIZE
@@ -304,32 +303,26 @@ def animate_attack(attacker, victim, GreaterFireball = False):
 
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
 
-        splash_of_fireball = None
         if isinstance(attacker, Player):
-            #check if the attack is greater fire ball and draw splash damage
+            # check if the attack is greater fire ball and draw splash damage
             if GreaterFireball:
                 row = int(target_y // BLOCK_SIZE)
                 col = int(target_x // BLOCK_SIZE)
                 splash_of_fireball = GRID.get_attack(
                     row,
                     col,
-                    2
+                    attacker.creep + 1
                 )
-                #fix the range to actual effective range of enemies
+                # fix the range to actual effective range of enemies
                 for tile in splash_of_fireball:
-                    if tile.col == (col + 2):
+                    if tile.col == (col + (attacker.creep + 1)) or \
+                       tile.col == (col - (attacker.creep + 1)) or \
+                       tile.row == (row + (attacker.creep + 1)) or \
+                       tile.row == (row - (attacker.creep + 1)) or \
+                       tile.row == attacker.get_position().row and tile.col == attacker.get_position().col:
                         splash_of_fireball.remove(tile)
-                    elif tile.col == (col - 2):
-                        splash_of_fireball.remove(tile)
-                    elif tile.row == (row + 2):
-                        splash_of_fireball.remove(tile)
-                    elif tile.row == (row - 2):
-                        splash_of_fireball.remove(tile)
-                #remove wizard from splash damage
-                for tile in splash_of_fireball:
-                    if tile.row == attacker.get_position().row and tile.col == attacker.get_position().col:
-                        splash_of_fireball.remove(tile)
-                #draw the tinted tiles
+
+                # Draw the fire tiles
                 _animate_player_attack(coords, True, splash_of_fireball, victim)
             else:
                 _animate_player_attack(coords)
@@ -339,16 +332,6 @@ def animate_attack(attacker, victim, GreaterFireball = False):
 
 def animate_miss(victim):
     _animate_miss_text(victim)
-    #clear fire if fireball missed
-    row = int(victim.get_position().row)
-    col = int(victim.get_position().col)
-    splash_of_fireball = GRID.get_attack(
-        row,
-        col,
-        2
-    )
-    clear_tinted_tiles(splash_of_fireball, victim)
-
 
 def animate_damage(victim, victim_old_hp, crit=False):
     _animate_hp_number(victim, victim_old_hp, crit)
@@ -387,7 +370,8 @@ def animate_death(entity):
 
     total_refresh_drawing()
 
-#animate the transition to grass level
+
+# animate the transition to grass level
 def animate_map_transition(old_grid, old_enemies, player):
     new_grid_offset = WINDOW_WIDTH
     old_grid_offset = 0
@@ -397,7 +381,7 @@ def animate_map_transition(old_grid, old_enemies, player):
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_x = player_x + BLOCK_SIZE
 
-    #heal player since health is regenerated automatically
+    # heal player since health is regenerated automatically
     player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
@@ -459,7 +443,8 @@ def animate_map_transition(old_grid, old_enemies, player):
 
     total_refresh_drawing()
 
-#animate transition to the sand level
+
+# animate transition to the sand level
 def animate_map_transition_up(old_grid, old_enemies, player):
     new_grid_offset = WINDOW_HEIGHT
     old_grid_offset = 0
@@ -468,7 +453,7 @@ def animate_map_transition_up(old_grid, old_enemies, player):
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_y = player_y + BLOCK_SIZE
-    #heal player since health is regenerated automatically
+    # heal player since health is regenerated automatically
     player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
@@ -526,7 +511,8 @@ def animate_map_transition_up(old_grid, old_enemies, player):
 
     total_refresh_drawing()
 
-#animate for snow level transition
+
+# animate for snow level transition
 def animate_map_transition_down(old_grid, old_enemies, player):
     new_grid_offset = WINDOW_HEIGHT
     old_grid_offset = 0
@@ -535,7 +521,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_y = player_y + (14 * BLOCK_SIZE)
-    #heal player since health is regenerated automatically
+    # heal player since health is regenerated automatically
     player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
     wiggle_index = 0
@@ -597,6 +583,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
 
     total_refresh_drawing()
 
+
 def update_coordinates(coords, diffs):
     start_x, start_y, target_x, target_y = coords
     x_diff, y_diff = diffs
@@ -615,13 +602,13 @@ def update_coordinates(coords, diffs):
     return start_x, start_y
 
 
-def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim = None):
+def _animate_player_attack(coords, greater_fireball=False, tiles=None, victim=None):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     # For animating fireball gif
     animation_index = 0
 
     trans_fireballs = []
-    if GreaterFireball:
+    if greater_fireball:
         for fireball in FIREBALL_LARGE_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
@@ -636,7 +623,7 @@ def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim =
     pygame.mixer.Sound.play(fireball_attack_sound)
 
     while abs(start_x - target_x) >= 15 or abs(start_y - target_y) >= 15:
-        if GreaterFireball:
+        if greater_fireball:
             # update animation position and frame
             fire_rect = trans_fireballs[animation_index].get_rect()
             fire_rect = fire_rect.move([start_x - BLOCK_SIZE, start_y - BLOCK_SIZE])
@@ -644,7 +631,7 @@ def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim =
             start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
 
             animation_index = 0 if animation_index == len(FIREBALL_LARGE_GIF) - 1 else animation_index + 1
-            #delay so you can see the glory of the fireball
+            # delay so you can see the glory of the fireball
             time.sleep(0.002)
         else:
             # update animation position and frame
@@ -663,8 +650,8 @@ def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim =
         SCREEN.blit(trans_fireballs[animation_index], fire_rect)
         CLOCK.tick(FPS)
         pygame.display.flip()
-    if GreaterFireball:
-        draw_tinted_tiles(tiles, victim, TileTint.FIRE)
+    if greater_fireball:
+        draw_tinted_tiles(tiles, TileTint.FIRE)
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
 
@@ -944,6 +931,8 @@ def _get_tile_img(tile):
     elif tile.texture_type == TileTexture.DARK_BRICK:
         if tile.tint == TileTint.RED:
             return DARK_BRICK_RED_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return DARK_BRICK_ORANGE_PNG
         else:
             return DARK_BRICK_PNG
     elif tile.texture_type == TileTexture.SNOW:
@@ -953,6 +942,8 @@ def _get_tile_img(tile):
             return SNOW_RED_PNG
         elif tile.tint == TileTint.FIRE:
             return SNOW_FIRE_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return SNOW_ORANGE_PNG
         else:
             return SNOW_PNG
     elif tile.texture_type == TileTexture.ROCK:
@@ -960,6 +951,8 @@ def _get_tile_img(tile):
             return ROCK_RED_PNG
         elif tile.tint == TileTint.FIRE:
             return ROCK_FIRE_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return ROCK_ORANGE_PNG
         else:
             return ROCK_PNG
     elif tile.texture_type == TileTexture.MUD:
@@ -976,6 +969,8 @@ def _get_tile_img(tile):
     elif tile.texture_type == TileTexture.MUD_BRICK:
         if tile.tint == TileTint.RED:
             return MUD_BRICK_RED_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return MUD_BRICK_ORANGE_PNG
         else:
             return MUD_BRICK_PNG
     elif tile.texture_type == TileTexture.SAND:
@@ -985,6 +980,8 @@ def _get_tile_img(tile):
             return SAND_RED_PNG
         elif tile.tint == TileTint.FIRE:
             return SAND_FIRE_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return SAND_ORANGE_PNG
         else:
             return SAND_PNG
     elif tile.texture_type == TileTexture.CACTUS:
@@ -992,10 +989,10 @@ def _get_tile_img(tile):
             return CACTUS_RED_PNG
         elif tile.tint == TileTint.FIRE:
             return CACTUS_FIRE_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return CACTUS_ORANGE_PNG
         else:
             return CACTUS_PNG
-
-
 
 
 def _get_entity_img(entity):

@@ -91,14 +91,14 @@ class EnemyAIMovement(Phase):
                     break
 
         # Drawing enemy movement decision
-        draw_tinted_tiles(movable_tiles, enemy, TileTint.BLUE)
+        draw_tinted_tiles(movable_tiles, TileTint.BLUE)
         draw_selected_tile(enemy.currentTile)
         time.sleep(.2)
         draw_tile(enemy.currentTile)
         draw_entity_from_tile(enemy.currentTile)
         draw_selected_tile(new_tile)
         time.sleep(.2)
-        clear_tinted_tiles(movable_tiles, enemy)
+        clear_tinted_tiles(movable_tiles)
 
         enemy.currentTile.occupied = False
         enemy.currentTile = new_tile

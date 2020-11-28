@@ -72,6 +72,16 @@ def perform_attack(attacker, victim, spell=None):
 
     if damage_taken is None:
         animate_miss(victim)
+        if isinstance(attacker, Player):
+            # Clear fire if fireball missed
+            row = int(victim.get_position().row)
+            col = int(victim.get_position().col)
+            splash_of_fireball = GRID.get_attack(
+                row,
+                col,
+                attacker.creep + 1
+            )
+            clear_tinted_tiles(splash_of_fireball)
         return
 
     if damage_taken < 0:
@@ -82,20 +92,11 @@ def perform_attack(attacker, victim, spell=None):
     if spell is not None:
         perform_aoe(attacker, victim, damage_taken, crit)
 
-        #clean splash damage
+        # Clean splash damage
         col = victim.get_position().col
         row = victim.get_position().row
-        tiles = GRID.get_attack(row, col, 2)
-        for tile in tiles:
-            if tile.col == (col + 2):
-                tiles.remove(tile)
-            elif tile.col == (col - 2):
-                tiles.remove(tile)
-            elif tile.row == (row + 2):
-                tiles.remove(tile)
-            elif tile.row == (row - 2):
-                tiles.remove(tile)
-        clear_tinted_tiles(tiles, victim)
+        tiles = GRID.get_attack(row, col, attacker.creep + 1)
+        clear_tinted_tiles(tiles)
 
 
 def calculate_damage(attacker, victim, spell=None):
@@ -153,7 +154,6 @@ def calculate_aoe(caster, victim):
                 and entity is not victim:  # No double dipping
             affected_entities.append(entity)
 
-
     # Exclude caster from effects of spell
     if caster.prepared_spell.exclude_self:
         affected_entities = [entity for entity in affected_entities if entity is not caster]  # Yay listcomps!
@@ -179,6 +179,16 @@ class CounterAttack:
 
         if damage_taken is None:
             animate_miss(self.victim)
+            if isinstance(self.attacker, Player):
+                # Clear fire if fireball missed
+                row = int(self.victim.get_position().row)
+                col = int(self.victim.get_position().col)
+                splash_of_fireball = GRID.get_attack(
+                    row,
+                    col,
+                    self.attacker.creep + 1
+                )
+                clear_tinted_tiles(splash_of_fireball)
             return
 
         if damage_taken < 0:
