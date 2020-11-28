@@ -71,51 +71,42 @@ class PlayerAttackPhase(Phase):
                 occupied_enemy_tiles.append(tile)
                 enemies_within_range += 1
 
-        #if statement to eliminate the orange square when healing
+        # If statement to eliminate the orange square when healing
         if not self.player.healing:
-            draw_tinted_tiles(enemy_tiles, self.player, None)
+            draw_tinted_tiles(enemy_tiles, None)
         else:
-            draw_tinted_tiles(enemy_tiles, self.player, TileTint.ORANGE)
+            draw_tinted_tiles(enemy_tiles, TileTint.ORANGE)
 
         # Spells cast on self trigger here
         if self.player.prepared_spell.range == 0:
-            self.enemyTile = self.player.currentTile #TODO: WILL CHANGING THE NAME OF ENEMYTILE BREAK ANYTHING?
+            self.enemyTile = self.player.currentTile
             time.sleep(1)
             self.player.selected = False
 
-            #since the Flame Nova is range 0 and triggered in this block, it is a constant range and cannot be changer
-            #without refactoring, 2 is used here as a constant to help draw fire
+            # Here, we use player creep to draw fire
             tiles_in_range_of_spell = GRID.get_attack(
                 self.player.currentTile.row,
                 self.player.currentTile.col,
-                2
+                self.player.creep + 1
             )
 
-            #check if spell is flame nova and tint surrounding tiles
+            # Check if spell is flame nova and tint surrounding tiles
             if self.player.prepared_spell.name == "Flame Nova":
 
-                #remove tiles that are not immediately adjacent or diagonal
+                # Remove tiles that are not immediately adjacent or diagonal / the wizard's tile
                 for tile in tiles_in_range_of_spell:
-                    if tile.col == (self.player.currentTile.col + 2):
-                        tiles_in_range_of_spell.remove(tile)
-                    elif tile.col == (self.player.currentTile.col - 2):
-                        tiles_in_range_of_spell.remove(tile)
-                    elif tile.row == (self.player.currentTile.row + 2):
-                        tiles_in_range_of_spell.remove(tile)
-                    elif tile.row == (self.player.currentTile.row - 2):
-                        tiles_in_range_of_spell.remove(tile)
-                    #we dont want the wizard's square on fire
-                    elif tile.row == self.player.currentTile.row and tile.col == self.player.currentTile.col:
+                    if tile.col == (self.player.currentTile.col + (self.player.creep + 1)) or \
+                       tile.col == (self.player.currentTile.col - (self.player.creep + 1)) or \
+                       tile.row == (self.player.currentTile.row + (self.player.creep + 1)) or \
+                       tile.row == (self.player.currentTile.row - (self.player.creep + 1)) or \
+                       tile.row == self.player.currentTile.row and tile.col == self.player.currentTile.col:
                         tiles_in_range_of_spell.remove(tile)
 
-                draw_tinted_tiles(tiles_in_range_of_spell, self.player, TileTint.FIRE)
+                draw_tinted_tiles(tiles_in_range_of_spell, TileTint.FIRE)
+
             cast_spell(self.player, self.player)
-            clear_tinted_tiles(tiles_in_range_of_spell, self.player)
+            clear_tinted_tiles(tiles_in_range_of_spell)
             return
-
-
-
-
 
         if enemies_within_range != 0:
 
@@ -144,7 +135,6 @@ class PlayerAttackPhase(Phase):
 
                     self.enemyTile = self.data_from_movement.currentTile
                     self.player.selected = False
-                    #draw_entities()
                     selecting = False
         else:
             time.sleep(1)
@@ -154,7 +144,7 @@ class PlayerAttackPhase(Phase):
                 MessageBox('No enemies are close enough to attack. Let\'s pass for now.')
                 total_refresh_drawing()
 
-        clear_tinted_tiles(enemy_tiles, self.player)
+        clear_tinted_tiles(enemy_tiles)
 
     def enter(self):
         if not self.data_from_movement.level_complete:

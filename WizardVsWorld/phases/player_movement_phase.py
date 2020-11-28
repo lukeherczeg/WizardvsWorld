@@ -184,14 +184,14 @@ class PlayerMovementPhase(Phase):
 
         # Movement selection phase
         elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
-            draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
+            draw_tinted_tiles(self.movable_tiles, TileTint.BLUE)
             self.currentTile = self.grid.game_map[row][col]
             select(self.currentTile.row, self.currentTile.col)
             draw_entity_from_tile(self.currentTile)
 
         # Attack selection phase
         elif self.enemy_tiles and self.grid.is_valid_tile_in_list(row, col, self.enemy_tiles):
-            draw_tinted_tiles(self.enemy_tiles, self.player, TileTint.ORANGE)
+            draw_tinted_tiles(self.enemy_tiles, TileTint.ORANGE)
             self.currentTile = self.grid.game_map[row][col]
             select(self.currentTile.row, self.currentTile.col)
             draw_entity_from_tile(self.currentTile)
@@ -277,8 +277,8 @@ class PlayerMovementPhase(Phase):
         self.immovable_tiles = GRID.get_movement_border(movable_tiles, self.player.range)
         self.movable_tiles = list(set(movable_tiles).difference(set(self.immovable_tiles)))
 
-        draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
-        draw_tinted_tiles(self.immovable_tiles, self.player, TileTint.RED)
+        draw_tinted_tiles(self.movable_tiles, TileTint.BLUE)
+        draw_tinted_tiles(self.immovable_tiles, TileTint.RED)
 
         select(self.currentTile.row, self.currentTile.col)
         draw_entity_from_tile(self.currentTile)
@@ -289,8 +289,8 @@ class PlayerMovementPhase(Phase):
             if self.selection():
                 selecting = False
 
-        clear_tinted_tiles(self.movable_tiles, self.player)
-        clear_tinted_tiles(self.immovable_tiles, self.player)
+        clear_tinted_tiles(self.movable_tiles)
+        clear_tinted_tiles(self.immovable_tiles)
 
         self.player.currentTile = self.currentTile
 
