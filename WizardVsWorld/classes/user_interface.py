@@ -2,6 +2,7 @@ from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.draw import quit_game, draw_text_abs, total_refresh_drawing
 from operator import attrgetter
 
+
 class Button:
     # Inspired by the tutorial at https://pythonprogramming.net/pygame-button-function/
     def __init__(self, pos_x, pos_y, width, height, text, color_active, color_inactive, on_click=None):
@@ -167,6 +168,7 @@ class SelectionMenu:
             if update:
                 self.draw_menu()
 
+
 class SpellMenu:
     """Overlay the current screen with selection menu.
 
@@ -176,7 +178,6 @@ class SpellMenu:
 
     def __init__(self, spells):
         longest_spell = max(spells, key=attrgetter('name'))
-
 
         self.pos_x = WINDOW_WIDTH // 2
         self.pos_y = WINDOW_HEIGHT // 2
@@ -194,12 +195,33 @@ class SpellMenu:
         SCREEN.blit(background, rect)
 
         # Draw Title
-        if initialize is not None and initialize != False:
+        if initialize is not None and initialize is not False:
             draw_text_abs(
-                'Choose a Spell (Up and Down Arrow Keys for Choices)',
+                'Choose a Spell!',
                 18,
                 self.pos_x,
-                self.pos_y - 20,
+                self.pos_y - 25,
+                WHITE
+            )
+            draw_text_abs(
+                '^',
+                25,
+                self.pos_x - self.pos_x / 3.5,
+                self.pos_y + self.pos_y / 45,
+                WHITE
+            )
+            draw_text_abs(
+                'v',
+                20,
+                self.pos_x - self.pos_x / 3.5,
+                self.pos_y + self.pos_y / 15,
+                WHITE
+            )
+            draw_text_abs(
+                '(Use the \'Up\' and \'Down\' arrow keys!)',
+                14,
+                self.pos_x,
+                self.pos_y + self.pos_y / 7,
                 WHITE
             )
 
@@ -268,4 +290,3 @@ class SpellMenu:
 
             if update:
                 self.draw_menu()
-
