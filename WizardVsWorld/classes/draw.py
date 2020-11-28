@@ -27,6 +27,7 @@ def draw_grid():
             tile_rect = tile_img.get_rect()
             tile_rect = tile_rect.move([tile.col * BLOCK_SIZE, tile.row * BLOCK_SIZE])
             SCREEN.blit(tile_img, tile_rect)
+            listen_events()
 
 
 def draw_tile(tile):
@@ -43,6 +44,7 @@ def draw_rectangular_area(top_left, bottom_right):
     for i in range(start[0], end[0] + 1):
         for j in range(start[1], end[1] + 1):
             draw_tile(GRID.game_map[i][j])
+            listen_events()
             # print(f"Drew tile [{i}, {j}].")
 
 
@@ -133,6 +135,7 @@ def draw_entities(ignorables=None, hard=True):
         entity_coords = (entity.get_position().col, entity.get_position().row)
         entity_rect = entity_rect.move(_calc_player_coords(entity_coords, entity_rect))
         SCREEN.blit(entity_img, entity_rect)
+        listen_events()
 
         if hard: pygame.display.update(entity_rect)
 
@@ -180,6 +183,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         CLOCK.tick(FPS)
         pygame.display.flip()
         opacity = opacity + opacity_tick
+        listen_events()
 
         pygame.event.pump()
 
@@ -194,6 +198,7 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         CLOCK.tick(FPS)
         pygame.display.flip()
         opacity = opacity - opacity_tick
+        listen_events()
 
         pygame.event.pump()
 
@@ -212,6 +217,7 @@ def animate_entity_movement(entity, prev_tile, player=None):
         old_pos = _calc_player_coords(old_coords, _get_entity_img(entity).get_rect())
         new_pos = _calc_player_coords(new_coords, _get_entity_img(entity).get_rect())
         animate_move(entity, old_pos, new_pos)
+        listen_events()
 
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
@@ -248,6 +254,7 @@ def animate_move(entity, old_pos, new_pos):
         SCREEN.blit(entity_img, entity_rect)
         CLOCK.tick(FPS)
         pygame.display.flip()
+        listen_events()
 
     # TO BE CHANGED, move vertically
     while  not (target_y - 2 < old_y < target_y + 2):
@@ -376,6 +383,7 @@ def animate_death(entity):
 
         wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
         opacity = opacity - opacity_tick
+        listen_events()
 
     total_refresh_drawing()
 
@@ -401,6 +409,7 @@ def animate_map_transition(old_grid, old_enemies, player):
                 tile_rect = tile_img.get_rect()
                 tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE) + old_grid_offset, tile.row * BLOCK_SIZE])
                 SCREEN.blit(tile_img, tile_rect)
+                listen_events()
 
         for _, col in enumerate(GRID.game_map):
             for _, tile in enumerate(col):
@@ -408,6 +417,7 @@ def animate_map_transition(old_grid, old_enemies, player):
                 tile_rect = tile_img.get_rect()
                 tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE) + new_grid_offset, tile.row * BLOCK_SIZE])
                 SCREEN.blit(tile_img, tile_rect)
+                listen_events()
 
         if (player_x < player_target_x):
             player_x = player_x + 1
@@ -428,6 +438,7 @@ def animate_map_transition(old_grid, old_enemies, player):
             entity_pos = _calc_player_coords(entity_pos, entity_rect, (old_grid_offset, 0))
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
+            listen_events()
 
         entities = ENTITIES[1:]
 
@@ -438,6 +449,7 @@ def animate_map_transition(old_grid, old_enemies, player):
             entity_pos = _calc_player_coords(entity_pos, entity_rect, (new_grid_offset, 0))
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
+            listen_events()
 
         new_grid_offset = new_grid_offset - grid_offset_speed
         old_grid_offset = old_grid_offset - grid_offset_speed
@@ -535,6 +547,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
                 tile_rect = tile_img.get_rect()
                 tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE), (tile.row * BLOCK_SIZE) - old_grid_offset])
                 SCREEN.blit(tile_img, tile_rect)
+                listen_events()
 
         for _, col in enumerate(GRID.game_map):
             for _, tile in enumerate(col):
@@ -542,6 +555,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
                 tile_rect = tile_img.get_rect()
                 tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE), (tile.row * BLOCK_SIZE) - new_grid_offset])
                 SCREEN.blit(tile_img, tile_rect)
+                listen_events()
 
         if (player_y < player_target_y):
             player_x = player_x
@@ -562,6 +576,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
             entity_pos = _calc_player_coords(entity_pos, entity_rect, (0, (-1 * old_grid_offset)))
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
+            listen_events()
 
         entities = ENTITIES[1:]
 
@@ -572,6 +587,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
             entity_pos = _calc_player_coords(entity_pos, entity_rect, (0, (-1 * new_grid_offset)))
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
+            listen_events()
 
         new_grid_offset = new_grid_offset - grid_offset_speed
         old_grid_offset = old_grid_offset - grid_offset_speed
@@ -638,6 +654,7 @@ def _animate_player_attack(coords, GreaterFireball=False, tiles = None, victim =
             start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
 
             animation_index = 0 if animation_index == len(FIREBALL_GIF) - 1 else animation_index + 1
+        listen_events()
 
         # redraw the grid and entities besides the one being animated,
         # then draw animation frame of entity
@@ -684,6 +701,7 @@ def _animate_archer_attack(coords):
         SCREEN.blit(trans_arrow, arrow_rect)
         CLOCK.tick(FPS)
         pygame.display.flip()
+        listen_events()
 
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
@@ -723,6 +741,7 @@ def _animate_miss_text(victim):
         SCREEN.blit(_get_entity_img(victim), victim_rect)
         SCREEN.blit(number_text, number_rect)
         pygame.display.flip()
+        listen_events()
 
     total_refresh_drawing()
 
@@ -784,6 +803,7 @@ def _animate_hp_number(victim, victim_old_hp, crit=False):
         SCREEN.blit(number_text, number_rect)
         CLOCK.tick(FPS)
         pygame.display.flip()
+        listen_events()
 
     total_refresh_drawing()
 
@@ -822,6 +842,7 @@ def _animate_hp_bar(victim, victim_old_hp):
                 pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
             CLOCK.tick(FPS)
             pygame.display.flip()
+            listen_events()
 
             # load next animation frame
             green_hp_bar_x_pos = green_hp_bar_x_pos - (20/victim.max_health)
@@ -839,6 +860,7 @@ def _animate_hp_bar(victim, victim_old_hp):
                 pygame.draw.rect(SCREEN, BRIGHT_GREEN, (hp_bar_x, hp_bar_y, green_hp_bar_x_pos, bar_height))
             CLOCK.tick(FPS)
             pygame.display.flip()
+            listen_events()
 
             # load next animation frame
             green_hp_bar_x_pos = green_hp_bar_x_pos + (20/victim.max_health)
@@ -1043,6 +1065,12 @@ def _calc_player_coords(entity_pos, entity_rect, offset=None):
         y_point = y_point + offset[1]
 
     return [x_point, y_point]
+
+
+def listen_events():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            quit_game()
 
 
 def quit_game():

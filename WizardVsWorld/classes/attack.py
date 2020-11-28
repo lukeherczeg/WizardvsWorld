@@ -53,7 +53,7 @@ def entity_cleanup(victim, damage, crit):
     else:
         victim.damaged = False
 
-    time.sleep(.3)
+    #time.sleep(.3)
 
 
 def perform_attack(attacker, victim, spell=None):
