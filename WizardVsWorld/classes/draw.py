@@ -181,6 +181,10 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         pygame.display.flip()
         opacity = opacity + opacity_tick
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit_game()
+
     time.sleep(onscreen_time)
 
     while opacity > 0:
@@ -192,6 +196,10 @@ def animate_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, onscreen_time
         CLOCK.tick(FPS)
         pygame.display.flip()
         opacity = opacity - opacity_tick
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit_game()
 
     total_refresh_drawing()
 
