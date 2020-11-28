@@ -882,6 +882,8 @@ def _get_tile_img(tile):
     elif tile.texture_type == TileTexture.DARK_BRICK:
         if tile.tint == TileTint.RED:
             return DARK_BRICK_RED_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return DARK_BRICK_ORANGE_PNG
         else:
             return DARK_BRICK_PNG
     elif tile.texture_type == TileTexture.SNOW:
@@ -891,6 +893,8 @@ def _get_tile_img(tile):
             return SNOW_RED_PNG
         elif tile.tint == TileTint.FIRE:
             return SNOW_FIRE_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return SNOW_ORANGE_PNG
         else:
             return SNOW_PNG
     elif tile.texture_type == TileTexture.ROCK:
@@ -898,6 +902,8 @@ def _get_tile_img(tile):
             return ROCK_RED_PNG
         elif tile.tint == TileTint.FIRE:
             return ROCK_FIRE_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return ROCK_ORANGE_PNG
         else:
             return ROCK_PNG
     elif tile.texture_type == TileTexture.MUD:
@@ -914,6 +920,8 @@ def _get_tile_img(tile):
     elif tile.texture_type == TileTexture.MUD_BRICK:
         if tile.tint == TileTint.RED:
             return MUD_BRICK_RED_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return MUD_BRICK_ORANGE_PNG
         else:
             return MUD_BRICK_PNG
     elif tile.texture_type == TileTexture.SAND:
@@ -923,6 +931,8 @@ def _get_tile_img(tile):
             return SAND_RED_PNG
         elif tile.tint == TileTint.FIRE:
             return SAND_FIRE_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return SAND_ORANGE_PNG
         else:
             return SAND_PNG
     elif tile.texture_type == TileTexture.CACTUS:
@@ -930,10 +940,10 @@ def _get_tile_img(tile):
             return CACTUS_RED_PNG
         elif tile.tint == TileTint.FIRE:
             return CACTUS_FIRE_PNG
+        elif tile.tint == TileTint.ORANGE:
+            return CACTUS_ORANGE_PNG
         else:
             return CACTUS_PNG
-
-
 
 
 def _get_entity_img(entity):
