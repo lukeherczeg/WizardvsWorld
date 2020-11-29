@@ -60,7 +60,12 @@ def draw_tinted_tiles(tile_list, tint):
 
 def draw_selected_tile(tile, enemy=None):
     if enemy is None:
-        tile_img = SELECT_PNG
+        if tile.texture_type == TileTexture.SNOW or \
+           tile.texture_type == TileTexture.ROCK or \
+           tile.texture_type == TileTexture.WOOD:
+            tile_img = SELECT_DARK_PNG
+        else:
+            tile_img = SELECT_PNG
     elif isinstance(enemy, Knight):
         tile_img = KNIGHT_ATTACKABLE_PNG
     elif isinstance(enemy, Archer):
@@ -135,7 +140,7 @@ def draw_entities(ignorables=None, hard=True):
         if hard: pygame.display.update(entity_rect)
 
 
-def draw_text(message, size, tile=None, offset=None, color=WHITE):
+def draw_text(message, size, tile=None, offset=None, color=WHITE, outline_color=BLACK):
     # GOTO provided tile
     x_pos = tile.col if tile is not None else 0
     y_pos = tile.row if tile is not None else 0
@@ -144,7 +149,19 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     x_offset, y_offset = offset if offset is not None else (0, 0)
     x_pos, y_pos = x_pos + x_offset, y_pos + y_offset
 
-    # Draw text
+    # Draw outline around text, one pixel in each direction
+    outline_message_font = pygame.font.Font('freesansbold.ttf', size)
+    outline_message_text = outline_message_font.render(str(message), True, outline_color)
+    outline_message_rect_base = outline_message_text.get_rect()
+    outline_message_rect = outline_message_rect_base.move([x_pos * BLOCK_SIZE - 1, y_pos * BLOCK_SIZE])
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect = outline_message_rect_base.move([x_pos * BLOCK_SIZE + 1, y_pos * BLOCK_SIZE])
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect = outline_message_rect_base.move([x_pos * BLOCK_SIZE, y_pos * BLOCK_SIZE + 1])
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect = outline_message_rect_base.move([x_pos * BLOCK_SIZE, y_pos * BLOCK_SIZE - 1])
+    SCREEN.blit(outline_message_text, outline_message_rect)
+
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
     message_rect = message_text.get_rect()
@@ -152,7 +169,20 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     SCREEN.blit(message_text, message_rect)
 
 
-def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
+def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, outline_color=BLACK):
+    # Draw outline around text, one pixel in each direction
+    outline_message_font = pygame.font.Font('freesansbold.ttf', size)
+    outline_message_text = outline_message_font.render(str(message), True, outline_color)
+    outline_message_rect = outline_message_text.get_rect()
+    outline_message_rect.center = (x_pos - 1, y_pos)
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect.center = (x_pos + 1, y_pos)
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect.center = (x_pos, y_pos + 1)
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect.center = (x_pos, y_pos - 1)
+    SCREEN.blit(outline_message_text, outline_message_rect)
+
     # Draw text
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)

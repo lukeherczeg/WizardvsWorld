@@ -7,6 +7,8 @@ import os
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+LIGHT_GREY = (220, 245, 245)
+GREY = (150, 163, 163)
 RED = (100, 0, 0)
 BRIGHT_RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -131,6 +133,7 @@ WIZARD_KING_HURT_PNG = get_block_sized_texture('wizardkinghurt.png', TextureType
 
 # Miscellaneous
 SELECT_PNG = get_block_sized_texture('select.png', TextureType.MISC)
+SELECT_DARK_PNG = get_block_sized_texture('selectDARK.png', TextureType.MISC)
 ARROW_PNG = get_block_sized_texture('arrow.png', TextureType.MISC)
 FIREBALL_GIF = [
     get_block_sized_texture('fireball/fireball_0.png', TextureType.MISC),
