@@ -61,8 +61,8 @@ def draw_tinted_tiles(tile_list, tint):
 def draw_selected_tile(tile, enemy=None):
     if enemy is None:
         if tile.texture_type == TileTexture.SNOW or \
-           tile.texture_type == TileTexture.ROCK or \
-           tile.texture_type == TileTexture.WOOD:
+                tile.texture_type == TileTexture.ROCK or \
+                tile.texture_type == TileTexture.WOOD:
             tile_img = SELECT_DARK_PNG
         else:
             tile_img = SELECT_PNG
@@ -293,7 +293,7 @@ def animate_move(entity, old_pos, new_pos):
         pygame.display.flip()
 
 
-def animate_attack(attacker, victim, GreaterFireball=False):
+def animate_attack(attacker, victim, spell=""):
     if isinstance(attacker, Knight) or isinstance(attacker, GreatKnight):
         _animate_knight_attack()
     else:
@@ -304,11 +304,11 @@ def animate_attack(attacker, victim, GreaterFireball=False):
         target_x = victim.get_position().col * BLOCK_SIZE
         target_y = victim.get_position().row * BLOCK_SIZE
 
-        # point attack at enemy
+        # Point attack at enemy
         angle = math.atan2(-(start_y - target_y), start_x - target_x)
         angle = math.degrees(angle)
 
-        # get proportion of x movement to y movement needed
+        # Get proportion of x movement to y movement needed
         if target_y == start_y:
             x_diff = 2.4
         else:
@@ -321,26 +321,9 @@ def animate_attack(attacker, victim, GreaterFireball=False):
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
 
         if isinstance(attacker, Player):
-            # check if the attack is greater fire ball and draw splash damage
-            if GreaterFireball:
-                row = int(target_y // BLOCK_SIZE)
-                col = int(target_x // BLOCK_SIZE)
-                splash_of_fireball = GRID.get_attack(
-                    row,
-                    col,
-                    attacker.creep + 1
-                )
-                # fix the range to actual effective range of enemies
-                for tile in splash_of_fireball:
-                    if tile.col == (col + (attacker.creep + 1)) or \
-                       tile.col == (col - (attacker.creep + 1)) or \
-                       tile.row == (row + (attacker.creep + 1)) or \
-                       tile.row == (row - (attacker.creep + 1)) or \
-                       tile.row == attacker.get_position().row and tile.col == attacker.get_position().col:
-                        splash_of_fireball.remove(tile)
-
-                # Draw the fire tiles
-                _animate_player_attack(coords, True, splash_of_fireball, victim)
+            # Check if the attack is greater fire ball and draw splash damage
+            if spell == "Greater Fireball":
+                _animate_player_attack(coords, spell)
             else:
                 _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
@@ -349,6 +332,7 @@ def animate_attack(attacker, victim, GreaterFireball=False):
 
 def animate_miss(victim):
     _animate_miss_text(victim)
+
 
 def animate_damage(victim, victim_old_hp, crit=False):
     _animate_damage_number(victim, victim_old_hp, crit)
@@ -604,13 +588,13 @@ def update_coordinates(coords, diffs):
     return start_x, start_y
 
 
-def _animate_player_attack(coords, greater_fireball=False, tiles=None, victim=None):
+def _animate_player_attack(coords, spell=""):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     # For animating fireball gif
     animation_index = 0
 
     trans_fireballs = []
-    if greater_fireball:
+    if spell == "Greater Fireball":
         for fireball in FIREBALL_LARGE_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
@@ -620,7 +604,7 @@ def _animate_player_attack(coords, greater_fireball=False, tiles=None, victim=No
             trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
 
     while abs(start_x - target_x) >= 15 or abs(start_y - target_y) >= 15:
-        if greater_fireball:
+        if spell == "Greater Fireball":
             # update animation position and frame
             fire_rect = trans_fireballs[animation_index].get_rect()
             fire_rect = fire_rect.move([start_x - BLOCK_SIZE, start_y - BLOCK_SIZE])
@@ -646,8 +630,6 @@ def _animate_player_attack(coords, greater_fireball=False, tiles=None, victim=No
         SCREEN.blit(trans_fireballs[animation_index], fire_rect)
         CLOCK.tick(FPS)
         pygame.display.flip()
-    if greater_fireball:
-        draw_tinted_tiles(tiles, TileTint.FIRE)
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
 

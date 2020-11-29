@@ -1,6 +1,6 @@
 from WizardVsWorld.phases.player_movement_phase import *
 from WizardVsWorld.classes.user_interface import MessageBox, SpellMenu
-from WizardVsWorld.classes.attack import CounterAttack, cast_spell, remove_non_aoe_tiles
+from WizardVsWorld.classes.attack import CounterAttack, cast_spell, get_aoe_tiles
 
 
 class PlayerAttackPhase(Phase):
@@ -62,7 +62,7 @@ class PlayerAttackPhase(Phase):
             self.player.currentTile.col,
             self.player.prepared_spell.range
         )
-        tiles_in_range_of_spell = []
+        aoe_tiles = []
 
         self.data_from_movement.enemy_tiles = enemy_tiles
 
@@ -77,13 +77,9 @@ class PlayerAttackPhase(Phase):
         if self.player.prepared_spell.name == 'Heal':
             draw_tinted_tiles(enemy_tiles, None)
         elif self.player.prepared_spell.name == 'Flame Nova':
-            tiles_in_range_of_spell = GRID.get_attack(
-                self.player.currentTile.row,
-                self.player.currentTile.col,
-                self.player.creep + 1
-            )
-            remove_non_aoe_tiles(self.player, tiles_in_range_of_spell)
-            draw_tinted_tiles(tiles_in_range_of_spell, TileTint.ORANGE)
+            aoe_tiles = get_aoe_tiles(self.player, self.player)
+            aoe_tiles.remove(self.player.currentTile)
+            draw_tinted_tiles(aoe_tiles, TileTint.ORANGE)
         else:
             draw_tinted_tiles(enemy_tiles, TileTint.ORANGE)
 
@@ -95,7 +91,7 @@ class PlayerAttackPhase(Phase):
             self.player.selected = False
 
             cast_spell(self.player, self.player)
-            clear_tinted_tiles(tiles_in_range_of_spell)
+            clear_tinted_tiles(aoe_tiles)
             return
 
         if enemies_within_range != 0:

@@ -7,15 +7,20 @@ from random import randint, randrange
 from math import ceil
 
 
-def remove_non_aoe_tiles(player, tiles):
-    # Remove tiles that are not immediately adjacent or diagonal / the wizard's tile
-    for tile in tiles:
-        if tile.col == (player.currentTile.col + (player.creep + 1)) or \
-                tile.col == (player.currentTile.col - (player.creep + 1)) or \
-                tile.row == (player.currentTile.row + (player.creep + 1)) or \
-                tile.row == (player.currentTile.row - (player.creep + 1)) or \
-                tile.row == (player.currentTile.row and tile.col == player.currentTile.col):
-            tiles.remove(tile)
+def get_aoe_tiles(caster, victim=None):
+    aoe_tiles = []
+    # Fetch AoE of a spell
+    aoe = caster.prepared_spell.aoe
+
+    # Calculate bounds of AoE
+    lo = [victim.currentTile.row - aoe, victim.currentTile.col - aoe]  # lower [row, col] affected
+    hi = [victim.currentTile.row + aoe, victim.currentTile.col + aoe]  # upper [row, col] affected
+
+    for i in range(lo[0], hi[0] + 1):
+        for j in range(lo[1], hi[1] + 1):
+            aoe_tiles.append(GRID.game_map[i][j])
+
+    return aoe_tiles
 
 
 def can_attack(attacker, victim):
@@ -61,8 +66,11 @@ def entity_cleanup(victim, damage, crit):
 
 def perform_attack(attacker, victim, spell=None):
     attacker.attacking = True
+    aoe_tiles = []
     if spell is not None and spell.name == "Greater Fireball":
-        animate_attack(attacker, victim, True)
+        animate_attack(attacker, victim, spell.name)
+        aoe_tiles = get_aoe_tiles(attacker, victim)
+        draw_tinted_tiles(aoe_tiles, TileTint.FIRE)
     else:
         animate_attack(attacker, victim)
     attacker.attacking = False
@@ -75,16 +83,9 @@ def perform_attack(attacker, victim, spell=None):
 
     if damage_taken is None:
         animate_miss(victim)
-        if isinstance(attacker, Player):
-            # Clear fire if fireball missed
-            row = int(victim.get_position().row)
-            col = int(victim.get_position().col)
-            splash_of_fireball = GRID.get_attack(
-                row,
-                col,
-                attacker.creep + 1
-            )
-            clear_tinted_tiles(splash_of_fireball)
+        if spell is not None:
+            # Clean aoe tiles
+            clear_tinted_tiles(aoe_tiles)
         return
 
     if damage_taken < 0:
@@ -95,11 +96,9 @@ def perform_attack(attacker, victim, spell=None):
     if spell is not None:
         perform_aoe(attacker, victim, damage_taken, crit)
 
-        # Clean splash damage
-        col = victim.get_position().col
-        row = victim.get_position().row
-        tiles = GRID.get_attack(row, col, attacker.creep + 1)
-        clear_tinted_tiles(tiles)
+        # Clean aoe tiles
+        aoe_tiles = get_aoe_tiles(attacker, victim)
+        clear_tinted_tiles(aoe_tiles)
 
 
 def calculate_damage(attacker, victim, spell=None):
@@ -131,29 +130,22 @@ def calculate_damage(attacker, victim, spell=None):
 def perform_aoe(attacker, victim, damage, crit):
     """Check if any entities (not enemies) are in the spell's AoE"""
     spell = attacker.prepared_spell
-    tiles_in_range_of_spell = []
-    if spell.name == "Flame Nova":
-        attacker.attacking = True
+    aoe_tiles = []
     if spell is not None and spell.aoe > 0:
         affected_entities = calculate_aoe(attacker, victim)
         if spell.name == "Flame Nova":
             attacker.attacking = True
             if len(affected_entities) > 0:
                 # Here, we use player creep to draw fire
-                tiles_in_range_of_spell = GRID.get_attack(
-                    attacker.currentTile.row,
-                    attacker.currentTile.col,
-                    attacker.creep + 1
-                )
-
                 # Tint surrounding tiles
-                remove_non_aoe_tiles(attacker, tiles_in_range_of_spell)
-                draw_tinted_tiles(tiles_in_range_of_spell, TileTint.FIRE)
+                aoe_tiles = get_aoe_tiles(attacker, victim)
+                aoe_tiles.remove(attacker.currentTile)
+                draw_tinted_tiles(aoe_tiles, TileTint.FIRE)
 
         for entity in affected_entities:
             entity_cleanup(entity, damage, crit)
     attacker.attacking = False
-    clear_tinted_tiles(tiles_in_range_of_spell)
+    clear_tinted_tiles(aoe_tiles)
 
 
 def calculate_aoe(caster, victim):
