@@ -227,7 +227,7 @@ class SpellMenu:
 
         spell = self.spells[self.selected]
 
-        if spell.max_uses != 999:
+        if spell.max_uses < 999:
             # Draw option name
             draw_text_abs(
                 spell.name + f'  ({spell.current_uses}/{spell.max_uses})',
@@ -237,7 +237,7 @@ class SpellMenu:
                 WHITE
             )
         else:
-            # Draw option name
+            # Infinite use spells
             draw_text_abs(
                 spell.name + f'  (infinite)',
                 14,
