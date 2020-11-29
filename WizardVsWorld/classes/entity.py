@@ -140,7 +140,7 @@ class Player(Entity):
                 self.range + 1,
                 self.attack + 5 * (self.level + 1),
                 aoe=self.creep,
-                exclude=True
+                exclude=False
             ),
             Spell(
                 'Flame Nova',

@@ -40,7 +40,8 @@ def draw_rectangular_area(top_left, bottom_right):
 
     for i in range(start[0], end[0] + 1):
         for j in range(start[1], end[1] + 1):
-            draw_tile(GRID.game_map[i][j])
+            if GRID.is_valid_tile(i, j):
+                draw_tile(GRID.game_map[i][j])
             # print(f"Drew tile [{i}, {j}].")
 
 

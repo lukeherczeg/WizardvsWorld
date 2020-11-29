@@ -18,7 +18,8 @@ def get_aoe_tiles(caster, victim=None):
 
     for i in range(lo[0], hi[0] + 1):
         for j in range(lo[1], hi[1] + 1):
-            aoe_tiles.append(GRID.game_map[i][j])
+            if GRID.is_valid_tile(i, j):
+                aoe_tiles.append(GRID.game_map[i][j])
 
     return aoe_tiles
 
@@ -40,7 +41,7 @@ def cast_spell(caster, target):
     # Typically Buffs and defense spells
     if spell.range == 0:
         spell.cast(target)
-        perform_aoe(caster, target, spell.power, False)
+        perform_aoe(caster, target, False)
 
     # If not cast on self, its susceptible to attack roll
     if spell.range > 0:
@@ -94,14 +95,14 @@ def perform_attack(attacker, victim, spell=None):
     entity_cleanup(victim, damage_taken, crit)
 
     if spell is not None:
-        perform_aoe(attacker, victim, damage_taken, crit)
+        perform_aoe(attacker, victim, crit)
 
         # Clean aoe tiles
         aoe_tiles = get_aoe_tiles(attacker, victim)
         clear_tinted_tiles(aoe_tiles)
 
 
-def calculate_damage(attacker, victim, spell=None):
+def calculate_damage(attacker, victim, spell=None, aoe=False, crit=False):
     """ Attack damage is calculated by picking a random number between [a little
         less than one's attack power] and [a little more than one's attack power]. """
 
@@ -114,8 +115,8 @@ def calculate_damage(attacker, victim, spell=None):
     chance = randint(0, 100)
     is_crit = False
 
-    if chance <= attacker.hit_chance:
-        if chance <= attacker.crit_chance:
+    if aoe or chance <= attacker.hit_chance:
+        if crit or chance <= attacker.crit_chance:
             critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
             damage = critical_damage - victim.defense
             is_crit = True
@@ -127,7 +128,7 @@ def calculate_damage(attacker, victim, spell=None):
     return damage, is_crit
 
 
-def perform_aoe(attacker, victim, damage, crit):
+def perform_aoe(attacker, victim, crit):
     """Check if any entities (not enemies) are in the spell's AoE"""
     spell = attacker.prepared_spell
     aoe_tiles = []
@@ -143,7 +144,8 @@ def perform_aoe(attacker, victim, damage, crit):
                 draw_tinted_tiles(aoe_tiles, TileTint.FIRE)
 
         for entity in affected_entities:
-            entity_cleanup(entity, damage, crit)
+            damage, is_crit = calculate_damage(attacker, entity, spell, True, crit)
+            entity_cleanup(entity, damage, is_crit)
     attacker.attacking = False
     clear_tinted_tiles(aoe_tiles)
 

@@ -236,6 +236,15 @@ class SpellMenu:
                 self.pos_y,
                 WHITE
             )
+        elif spell.name == 'Pass':
+            # Infinite use spells
+            draw_text_abs(
+                spell.name,
+                14,
+                self.pos_x,
+                self.pos_y,
+                WHITE
+            )
         else:
             # Infinite use spells
             draw_text_abs(
