@@ -78,6 +78,16 @@ class Player(Entity):
         self.max_movement += 1
         self.refresh_spells()
 
+    def boost_creep(self):
+        """End of level boost for creep (Increases AoE)"""
+        self.creep += 1
+        self.refresh_spells()
+
+    def boost_uses(self):
+        """End of level boost for uses (increases Spell Charges)"""
+        self.uses += 1
+        self.refresh_spells()
+
     def decrease_health(self, health):
         """Decrease the health of player by a certain amount; Clamped at 0 and Max Health. Can be used for healing"""
         self.health -= health

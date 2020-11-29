@@ -385,9 +385,12 @@ class PlayerMovementPhase(Phase):
         if self.level_complete:
             self.player.level_up(self.player.level + 1)
             upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', [
-                ('Health', 'Increase your Health by 15', self.player.boost_health),
+                # ('Health', 'Increase your Health by 15', self.player.boost_health),
                 ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
-                ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
+                ('Movement', 'Increase your Movement by 1', self.player.boost_movement),
+                ('Spell Creep', 'Increase AoE of spells by 1', self.player.boost_creep),
+                ('Spell Uses', 'Increase all spell uses by 1', self.player.boost_uses)
+            ])
             upgrade_menu.draw_menu()
             upgrade_menu.await_response()
 
