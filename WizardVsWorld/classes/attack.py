@@ -7,6 +7,17 @@ from random import randint, randrange
 from math import ceil
 
 
+def remove_non_aoe_tiles(player, tiles):
+    # Remove tiles that are not immediately adjacent or diagonal / the wizard's tile
+    for tile in tiles:
+        if tile.col == (player.currentTile.col + (player.creep + 1)) or \
+                tile.col == (player.currentTile.col - (player.creep + 1)) or \
+                tile.row == (player.currentTile.row + (player.creep + 1)) or \
+                tile.row == (player.currentTile.row - (player.creep + 1)) or \
+                tile.row == (player.currentTile.row and tile.col == player.currentTile.col):
+            tiles.remove(tile)
+
+
 def can_attack(attacker, victim):
     attackable_tiles = GRID.get_attack(attacker.currentTile.row, attacker.currentTile.col, attacker.range)
     if victim.currentTile in attackable_tiles:
@@ -120,13 +131,29 @@ def calculate_damage(attacker, victim, spell=None):
 def perform_aoe(attacker, victim, damage, crit):
     """Check if any entities (not enemies) are in the spell's AoE"""
     spell = attacker.prepared_spell
+    tiles_in_range_of_spell = []
     if spell.name == "Flame Nova":
         attacker.attacking = True
     if spell is not None and spell.aoe > 0:
         affected_entities = calculate_aoe(attacker, victim)
+        if spell.name == "Flame Nova":
+            attacker.attacking = True
+            if len(affected_entities) > 0:
+                # Here, we use player creep to draw fire
+                tiles_in_range_of_spell = GRID.get_attack(
+                    attacker.currentTile.row,
+                    attacker.currentTile.col,
+                    attacker.creep + 1
+                )
+
+                # Tint surrounding tiles
+                remove_non_aoe_tiles(attacker, tiles_in_range_of_spell)
+                draw_tinted_tiles(tiles_in_range_of_spell, TileTint.FIRE)
+
         for entity in affected_entities:
             entity_cleanup(entity, damage, crit)
     attacker.attacking = False
+    clear_tinted_tiles(tiles_in_range_of_spell)
 
 
 def calculate_aoe(caster, victim):
