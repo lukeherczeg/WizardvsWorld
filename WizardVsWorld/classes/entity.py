@@ -150,6 +150,13 @@ class Player(Entity):
                 50 + self.attack + 2 * (self.level + 1),
                 aoe=self.creep,
                 exclude=True
+            ),
+            Spell(
+                'Pass',
+                'Do Nothing. Pass turn.',
+                999,
+                0,
+                0,
             )
         ]
 

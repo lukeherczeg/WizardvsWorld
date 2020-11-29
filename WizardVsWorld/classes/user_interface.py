@@ -177,7 +177,7 @@ class SpellMenu:
     """
 
     def __init__(self, spells):
-        longest_spell = max(spells, key=attrgetter('name'))
+        longest_spell = max(spells, key=attrgetter('description'))
 
         self.pos_x = WINDOW_WIDTH // 2
         self.pos_y = WINDOW_HEIGHT // 2
