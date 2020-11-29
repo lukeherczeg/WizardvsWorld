@@ -457,6 +457,7 @@ def animate_map_transition_up(old_grid, old_enemies, player):
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_y = player_y + BLOCK_SIZE
+
     # heal player since health is regenerated automatically
     player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
@@ -525,6 +526,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_y = player_y + (14 * BLOCK_SIZE)
+
     # heal player since health is regenerated automatically
     player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
