@@ -74,7 +74,7 @@ class PlayerAttackPhase(Phase):
                 enemies_within_range += 1
 
         # If statement to eliminate the orange square when healing
-        if self.player.prepared_spell.name == 'Heal':
+        if self.player.prepared_spell.name == 'Heal' or self.player.prepared_spell.name == 'Pass':
             draw_tinted_tiles(enemy_tiles, None)
         elif self.player.prepared_spell.name == 'Flame Nova':
             aoe_tiles = get_aoe_tiles(self.player, self.player)
@@ -85,7 +85,6 @@ class PlayerAttackPhase(Phase):
 
         # Spells cast on self trigger here
         if self.player.prepared_spell.range == 0:
-            tiles_in_range_of_spell.append(self.player.currentTile)
             self.enemyTile = self.player.currentTile
             time.sleep(1)
             self.player.selected = False
