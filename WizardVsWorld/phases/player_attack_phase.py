@@ -89,6 +89,7 @@ class PlayerAttackPhase(Phase):
 
         # Spells cast on self trigger here
         if self.player.prepared_spell.range == 0:
+            tiles_in_range_of_spell.append(self.player.currentTile)
             self.enemyTile = self.player.currentTile
             time.sleep(1)
             self.player.selected = False
