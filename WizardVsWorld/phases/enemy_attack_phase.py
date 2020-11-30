@@ -46,13 +46,13 @@ class EnemyAICombatPhase(Phase):
 
         elif can_attack(enemy, self.Player) and isinstance(enemy, GreatMarksman):
             randomizer = randint(1, 50)
-            #Piercing shot
+            # Piercing shot
             if self.Player.health < self.Player.max_health // 2 and randomizer > 10:
                 old_defense = self.Player.defense
                 self.Player.defense = 0
                 perform_attack(enemy, self.Player)
                 self.Player.defense = old_defense
-            #Fire arrow
+            # Fire arrow
             elif randomizer > 40:
                 old_attack = self.Player.attack
                 self.Player.attack += 20
@@ -71,8 +71,6 @@ class EnemyAICombatPhase(Phase):
             perform_attack(enemy, self.Player)
 
             if self.Player.health <= 0:
-                ENTITIES.remove(self.Player)
-                animate_death(self.Player)
                 MessageBox('You died. But that\'s okay! It looks like the Grand Magus still has plans for you...')
                 pygame.quit()
                 sys.exit()

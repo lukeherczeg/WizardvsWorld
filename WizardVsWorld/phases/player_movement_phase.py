@@ -157,6 +157,12 @@ class PlayerMovementPhase(Phase):
            if there are movable tiles, it sets constraints and tints for the movement phase,
            and if there are enemy tiles, it sets constraints for the attack phase."""
 
+        wizard_king_tile = None
+
+        for enemy in ENTITIES[1:]:
+            if isinstance(enemy, WizardKing):
+                wizard_king_tile = enemy.currentTile
+
         # Free selection phase
         if self.movable_tiles is None and self.enemy_tiles is None:
             if self.grid.is_valid_tile(row, col):
@@ -197,6 +203,10 @@ class PlayerMovementPhase(Phase):
                 if rect_size == 0:
                     draw_entity_from_tile(self.prev_tile)
 
+                if wizard_king_tile is not None:
+                    draw_entity_from_tile(wizard_king_tile)
+
+
         # Movement selection phase
         elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
             draw_tinted_tiles(self.movable_tiles, TileTint.BLUE)
@@ -210,6 +220,8 @@ class PlayerMovementPhase(Phase):
             self.currentTile = self.grid.game_map[row][col]
             select(self.currentTile.row, self.currentTile.col)
             draw_entity_from_tile(self.currentTile)
+            if wizard_king_tile is not None:
+                draw_entity_from_tile(wizard_king_tile)
 
             # If we want to use enemy specific selection tiles:
 
