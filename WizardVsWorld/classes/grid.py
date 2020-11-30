@@ -10,12 +10,12 @@ from WizardVsWorld.classes.const import *
 class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
 
-    def __init__(self, width, height, map_number=0):
+    def __init__(self, width, height, map_number=7):
         self.GRID_WIDTH = width
         self.GRID_HEIGHT = height
         # Variables to keep track of level
         self.map_number = map_number
-        self.map_layout = map_0
+        self.map_layout = map_7
         self.win_tiles = [None] * 4
         # INDEX WITH [ROW][COL]
         self._game_map = [[self.generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
