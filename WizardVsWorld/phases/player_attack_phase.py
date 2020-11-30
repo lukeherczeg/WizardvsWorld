@@ -22,8 +22,6 @@ class PlayerAttackPhase(Phase):
 
         # Check if player died to the spell
         if self.player.health <= 0:
-            # ENTITIES.remove(self.player)
-            # animate_death(self.player)
             MessageBox(
                 'Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
             pygame.quit()

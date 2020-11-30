@@ -112,11 +112,6 @@ def draw_entity_from_tile(tile):
 
 
 def draw_entity(entity):
-    if entity.tiles is not None:
-        if len(entity.tiles) > 1:
-            for tile in entity.tiles:
-                draw_tile(tile)
-
     entity_img = _get_entity_img(entity)
     entity_rect = entity_img.get_rect()
 
