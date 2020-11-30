@@ -822,6 +822,8 @@ def _animate_miss_text(victim):
 
 def _animate_hp_number(victim, victim_old_hp, crit=False):
     damage_diff = victim_old_hp - victim.health
+    if damage_diff < 0:
+        pygame.mixer.Sound.play(player_heal_sound)
 
     if crit:
         crit_font = pygame.font.Font('freesansbold.ttf', 10)

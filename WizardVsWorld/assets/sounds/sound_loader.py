@@ -15,6 +15,7 @@ game_music_ice = pygame.mixer.Sound(os.path.join(asset_path, 'game_music_ice.ogg
 fireball_attack_sound = pygame.mixer.Sound(os.path.join(asset_path, 'fireball_attack.ogg'))
 sword_attack_sound = pygame.mixer.Sound(os.path.join(asset_path, 'sword_attack.ogg'))
 arrow_attack_sound = pygame.mixer.Sound(os.path.join(asset_path, 'arrow_attack.ogg'))
+player_heal_sound = pygame.mixer.Sound(os.path.join(asset_path, 'player_heal.ogg'))
 
 death_sound = pygame.mixer.Sound(os.path.join(asset_path, 'enemy_died.ogg'))
 
