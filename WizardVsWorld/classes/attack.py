@@ -1,4 +1,4 @@
-from WizardVsWorld.classes.const import CRIT_MULTIPLIER
+from WizardVsWorld.classes.const import CRIT_MULTIPLIER, ENEMY_CRIT_MULTIPLIER
 from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.tile import Tile
 from WizardVsWorld.classes.entity import Entity, Enemy
@@ -141,7 +141,10 @@ def calculate_damage(attacker, victim, spell=None, aoe=False, crit=False):
         damage = 0
     elif aoe or chance <= attacker.hit_chance:
         if crit or chance <= attacker.crit_chance:
-            critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
+            if isinstance(attacker, Player):
+                critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
+            else:
+                critical_damage = ceil(attack_damage * ENEMY_CRIT_MULTIPLIER)
             damage = critical_damage - victim.defense
             is_crit = True
         else:

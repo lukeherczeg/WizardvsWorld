@@ -48,9 +48,9 @@ class Entity:
 class Player(Entity):
     def __init__(self):
         super().__init__()
-        self.health = 150
+        self.health = 200
         self.max_health = self.health
-        self.attack = 25
+        self.attack = 30
         self.defense = 5
         self.range = 3
         self.selected = False
@@ -59,11 +59,11 @@ class Player(Entity):
         self.hit_chance = 95
 
         # START SPELL STATS
-        self.uses = 1 # Base uses for special spells
+        self.uses = 1  # Base uses for special spells
         self.creep = 1  # Base "creep" or spread of aoe spells
         self.shield_level = 0  # Increases chances of blocking all damage
-        self.spellbook = None # Populated by self.refresh_spell()
-        self.prepared_spell = None # Keeps track of current spell to cast (jank)
+        self.spellbook = None  # Populated by self.refresh_spell()
+        self.prepared_spell = None  # Keeps track of current spell to cast (jank)
         self.refresh_spells()
         # END SPELL STATS
 
@@ -80,12 +80,12 @@ class Player(Entity):
 
     def boost_attack(self):
         """End of level boost for attack"""
-        self.attack += 5
+        self.attack += 10
         self.refresh_spells()
 
     def boost_health(self):
         """End of level boost for health"""
-        self.health += 15
+        self.health += 50
         self.refresh_spells()
 
     def boost_movement(self):
