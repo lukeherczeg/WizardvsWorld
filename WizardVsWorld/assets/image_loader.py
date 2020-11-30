@@ -135,6 +135,7 @@ WIZARD_KING_HURT_PNG = get_block_sized_texture('wizardkinghurt.png', TextureType
 SELECT_PNG = get_block_sized_texture('select.png', TextureType.MISC)
 SELECT_DARK_PNG = get_block_sized_texture('selectDARK.png', TextureType.MISC)
 ARROW_PNG = get_block_sized_texture('arrow.png', TextureType.MISC)
+BOLT_PNG = get_block_sized_texture('marksmanarrow.png', TextureType.MISC)
 FIREBALL_GIF = [
     get_block_sized_texture('fireball/fireball_0.png', TextureType.MISC),
     get_block_sized_texture('fireball/fireball_1.png', TextureType.MISC),
