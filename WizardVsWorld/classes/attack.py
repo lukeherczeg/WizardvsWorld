@@ -115,14 +115,17 @@ def calculate_damage(attacker, victim, spell=None, aoe=False, crit=False):
     chance = randint(0, 100)
     is_crit = False
 
-    if aoe or chance <= attacker.hit_chance:
+    # Check if spell shield is activated
+    if victim.shield_level > 0 and attacker.hit_chance - victim.shield_level * 5 <= chance < attacker.hit_chance:
+        damage = 0
+    elif aoe or chance <= attacker.hit_chance:
         if crit or chance <= attacker.crit_chance:
             critical_damage = ceil(attack_damage * CRIT_MULTIPLIER)
             damage = critical_damage - victim.defense
             is_crit = True
         else:
             damage = attack_damage - victim.defense
-    else:
+    else :
         damage = None
 
     return damage, is_crit

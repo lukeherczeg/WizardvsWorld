@@ -1,5 +1,7 @@
 import copy
 
+from random import randint
+
 from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.phase import Phase
 from WizardVsWorld.classes.entity import Player, Boss
@@ -375,6 +377,25 @@ class PlayerMovementPhase(Phase):
 
                         selecting = False
 
+    def pick_upgrades(self):
+        """Returns a list of 5 random upgrades for use with a selection map"""
+        upgrades = [
+            ('Health', 'Increase your Health by 15', self.player.boost_health),
+            ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
+            ('Movement', 'Increase your Movement by 1', self.player.boost_movement),
+            ('Range', 'Increase range of spells  by 1', self.player.boost_range),
+            ('Spell Creep', 'Increase AoE of spells by 1', self.player.boost_creep),
+            ('Spell Uses', 'Increase all spell uses by 1', self.player.boost_uses),
+            ('Spell Shield', 'Boost Spell Shield -- chance to block all damage.', self.player.boost_shield),
+        ]
+
+        # Select 5 random upgrades
+        selected = []
+        for i in range(5):
+            selected.append(upgrades.pop(randint(0, len(upgrades) - 1)))
+
+        return selected
+
     def update(self):
         if not self.level_complete:
             self.movement()
@@ -384,13 +405,7 @@ class PlayerMovementPhase(Phase):
         self.is_tutorial = False
         if self.level_complete:
             self.player.level_up(self.player.level + 1)
-            upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', [
-                # ('Health', 'Increase your Health by 15', self.player.boost_health),
-                ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
-                ('Movement', 'Increase your Movement by 1', self.player.boost_movement),
-                ('Spell Creep', 'Increase AoE of spells by 1', self.player.boost_creep),
-                ('Spell Uses', 'Increase all spell uses by 1', self.player.boost_uses)
-            ])
+            upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', self.pick_upgrades())
             upgrade_menu.draw_menu()
             upgrade_menu.await_response()
 
