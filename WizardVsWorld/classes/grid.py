@@ -295,7 +295,7 @@ class Grid:
             return self.win_tiles[map_index]
         elif layout[index] == 'x':
             self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
-                                             texture_type=TileTexture.WOOD, win_tile=True)
+                                             texture_type=TileTexture.TILE, win_tile=True)
             return self.win_tiles[map_index]
         elif layout[index] == 'v':
             self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
@@ -346,6 +346,7 @@ class Grid:
                     boss = WizardKing(level)
                     boss.currentTile = self.game_map[y][x]
                     boss.currentTile.occupied = True
+                    boss.populate_tiles(boss.height_tiles, boss.width_tiles)
                     ENTITIES.append(boss)
                 elif self.__generate_true(.7):  # create archer
                     archer = Archer(level)

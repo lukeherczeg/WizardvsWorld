@@ -1,7 +1,17 @@
 from WizardVsWorld.classes.tile import Tile
 from WizardVsWorld.classes.spell import Spell
+import WizardVsWorld.assets.image_loader
+from math import modf
 
 # entity will have various shared data types
+
+def round_up_from(tiles, round_percentage):
+    fraction, whole = modf(tiles)
+    if fraction >= round_percentage:
+        return whole + 1
+    else:
+        return whole
+
 class Entity:
     currentTile: Tile = None
     health: int
@@ -221,6 +231,19 @@ class Boss(Enemy):
         super()
         super().__init__()
 
+    def populate_tiles(self, height_tiles, width_tiles):
+        self.tiles = [self.currentTile]
+        for i in range(1, height_tiles):
+            for j in range(0, width_tiles):
+                WizardVsWorld.assets.image_loader.GRID.game_map[self.currentTile.row - i][
+                    self.currentTile.col - j].standable = False
+                self.tiles.append(
+                    WizardVsWorld.assets.image_loader.GRID.game_map[self.currentTile.row - i][
+                        self.currentTile.col - j])
+
+    def get_dimensions(self):
+        return self.height_tiles, self.width_tiles
+
 
 class GreatKnight(Boss):
     range = 1
@@ -269,11 +292,17 @@ class WizardKing(Boss):
         self.defense = 10 + (level * 3)
         self.crit_chance = 7
         self.level = level
+        self.cutoff = 0.7
         self.range = 2
         self.uses = 99999
         self.spellbook = None  # Populated by self.refresh_spell()
         self.prepared_spell = None  # Keeps track of current spell to cast (jank)
         self.refresh_spells()
+        self.height_tiles = 1 * (
+                WizardVsWorld.assets.image_loader.WIZARDKING_RESCALESIZE // WizardVsWorld.assets.image_loader.BLOCK_SIZE)
+        self.width_tiles = 0.5 * (
+                WizardVsWorld.assets.image_loader.WIZARDKING_RESCALESIZE // WizardVsWorld.assets.image_loader.BLOCK_SIZE)
+        self.width_tiles = int(round_up_from(self.width_tiles, self.cutoff))
 
     def get_name(self):
         return "Wizard King"

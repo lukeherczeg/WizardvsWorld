@@ -345,7 +345,7 @@ def animate_attack(attacker, victim, spell=""):
             else:
                 _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
-            _animate_archer_attack(coords)
+            _animate_archer_attack(coords, attacker)
 
 
 def animate_miss(victim):
@@ -390,7 +390,7 @@ def animate_death(entity):
     total_refresh_drawing()
 
 
-# animate the transition to grass level
+
 def animate_map_transition_right(old_grid, old_enemies, prev_location, player):
     new_grid_offset = WINDOW_WIDTH
     old_grid_offset = 0
@@ -463,7 +463,7 @@ def animate_map_transition_right(old_grid, old_enemies, prev_location, player):
     player.currentTile = GRID.game_map[prev_location[0]][0]
     total_refresh_drawing()
 
-# animate for snow level transition
+
 def animate_map_transition_left(old_grid, old_enemies, prev_location, player):
     new_grid_offset = WINDOW_WIDTH
     old_grid_offset = 0
@@ -532,7 +532,7 @@ def animate_map_transition_left(old_grid, old_enemies, prev_location, player):
     player.currentTile = GRID.game_map[prev_location[0]][24]
     total_refresh_drawing()
 
-# animate transition to the sand level
+
 def animate_map_transition_up(old_grid, old_enemies, prev_location, player):
     new_grid_offset = WINDOW_HEIGHT
     old_grid_offset = 0
@@ -610,7 +610,7 @@ def animate_map_transition_down(old_grid, old_enemies, prev_location, player):
 
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
-    player_target_y = player_y + BLOCK_SIZE
+    player_target_y = player_y - BLOCK_SIZE
 
     # heal player since health is regenerated automatically
     player.healing = True
@@ -755,11 +755,11 @@ def _animate_knight_attack():
     time.sleep(0.2)
 
 
-def _animate_archer_attack(coords):
+def _animate_archer_attack(coords, attacker):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     x_diff = x_diff + .5
     y_diff = y_diff + .5
-    trans_arrow = pygame.transform.rotate(ARROW_PNG, angle)
+    trans_arrow = pygame.transform.rotate(BOLT_PNG if isinstance(attacker, GreatMarksman) else ARROW_PNG, angle)
     trans_arrow = pygame.transform.scale(trans_arrow, (30, 30))
 
     pygame.mixer.Sound.play(arrow_attack_sound)

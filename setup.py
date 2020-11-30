@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/lukeherczeg/WizardvsWorld",
     packages=setuptools.find_namespace_packages(include=['WizardVsWorld', 'WizardVsWorld.*', 'WizardVsWorld.assets/*', 'WizardVsWorld.classes/*']),
     package_data={
-        '':['*.png', '*.txt', '*.ogg', '*.wav']
+        '':['*.png', '*.ogg', '*.PNG', '*.txt']
     },
     install_requires=[
         "pygame==1.9.6"

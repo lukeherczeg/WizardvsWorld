@@ -41,3 +41,7 @@ class Tile:
     @occupied.setter
     def occupied(self, occupied):
         self._occupied = occupied
+
+    @standable.setter
+    def standable(self, value):
+        self._standable = value
