@@ -21,7 +21,51 @@ class EnemyAICombatPhase(Phase):
     def attack_player_procedure(self, enemy):
         self.Player.healing = False
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
-        if can_attack(enemy, self.Player):
+        if can_attack(enemy, self.Player) and isinstance(enemy, GreatKnight):
+            randomizer = randint(1, 50)
+            if enemy.health < enemy.max_health / 2 and randomizer > 25:
+                enemy.health += enemy.max_health // 4
+                print("Great Knight Healed!")
+            elif self.Player.health < self.Player.max_health / 4 and randomizer > 25:
+                old_attack = enemy.attack
+                enemy.attack += 10
+                perform_attack(enemy, self.Player)
+                enemy.attack = old_attack
+                print("Fatal Strike Attempted!")
+            else:
+                perform_attack(enemy, self.Player)
+
+        elif can_attack(enemy, self.Player) and isinstance(enemy, WizardKing):
+            randomizer = randint(1 , 50)
+            if enemy.health < enemy.max_health / 2 and randomizer > 10:
+                enemy.prepared_spell = enemy.spellbook[1]
+                cast_spell(enemy, self.Player)
+            elif randomizer > 30:
+                enemy.prepared_spell = enemy.spellbook[3]
+                cast_spell(enemy, self.Player)
+            elif randomizer > 20:
+                enemy.prepared_spell = enemy.spellbook[2]
+                cast_spell(enemy, self.Player)
+            else:
+                enemy.prepared_spell = enemy.spellbook[0]
+                cast_spell(enemy, self.Player)
+
+        elif can_attack(enemy, self.Player) and isinstance(enemy, GreatMarksman):
+            randomizer = randint(1, 50)
+            #Piercing shot
+            if self.Player.health < self.Player.max_health //2 and randomizer > 10:
+                old_defense = self.Player.defense
+                self.Player.defense = 0
+                perform_attack(enemy, self.Player)
+                self.Player.defense = old_defense
+            #Fire arrow
+            elif randomizer > 40:
+                old_attack = self.Player.attack
+                self.Player.attack += 20
+                perform_attack(enemy, self.Player)
+                self.Player.attack = old_attack
+
+        elif can_attack(enemy, self.Player):
             # TUTORIAL
             if self.attack_tutorial:
                 MessageBox('Now your enemies will have a chance to attack you!')
@@ -56,7 +100,8 @@ class EnemyAICombatPhase(Phase):
     def update(self):
         valid_attackers = 0
         for enemy in self.Enemies:
-            if isinstance(enemy, Enemy):
+            #This is checking if some enemies were deleted form the entities array but not from enemies
+            if isinstance(enemy, Enemy) and not enemy.health <= 0:
                 if self.attack_player_procedure(enemy):
                     valid_attackers += 1
         # TUTORIAL
