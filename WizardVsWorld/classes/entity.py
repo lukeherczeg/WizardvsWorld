@@ -254,9 +254,9 @@ class GreatKnight(Boss):
     def __init__(self, level):
         super().__init__()
         self.max_movement = 0
-        self.health = 130 + (level * 5)
+        self.health = 150 + (level * 6)
         self.max_health = self.health
-        self.attack = 50 + (level * 2)
+        self.attack = 50 + (level * 3)
         self.defense = 10 + (level * 1)
         self.crit_chance = 5
         self.range = 1
@@ -266,12 +266,12 @@ class GreatKnight(Boss):
 
 
 class GreatMarksman(Boss):
-    range = 3
+    range = 5
 
     def __init__(self, level):
         super().__init__()
         self.max_movement = 1
-        self.health = 70 + (level * 4)
+        self.health = 100 + (level * 4)
         self.max_health = self.health
         self.attack = 70 + (level * 4)
         self.defense = 0 + (level * 2)
@@ -283,7 +283,7 @@ class GreatMarksman(Boss):
 
 
 class WizardKing(Boss):
-    range = 2
+    range = 3
 
     def __init__(self, level):
         super().__init__()
