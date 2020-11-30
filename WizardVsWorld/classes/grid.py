@@ -295,7 +295,7 @@ class Grid:
             return self.win_tiles[map_index]
         elif layout[index] == 'x':
             self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
-                                             texture_type=TileTexture.WOOD, win_tile=True)
+                                             texture_type=TileTexture.TILE, win_tile=True)
             return self.win_tiles[map_index]
         elif layout[index] == 'v':
             self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
