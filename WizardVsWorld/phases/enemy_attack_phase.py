@@ -40,10 +40,10 @@ class EnemyAICombatPhase(Phase):
             if enemy.health < enemy.max_health / 2 and randomizer > 10:
                 enemy.prepared_spell = enemy.spellbook[1]
                 cast_spell(enemy, self.Player)
-            elif randomizer > 30:
+            elif randomizer > 40:
                 enemy.prepared_spell = enemy.spellbook[3]
                 cast_spell(enemy, self.Player)
-            elif randomizer > 20:
+            elif randomizer > 30:
                 enemy.prepared_spell = enemy.spellbook[2]
                 cast_spell(enemy, self.Player)
             else:

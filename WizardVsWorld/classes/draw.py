@@ -671,7 +671,7 @@ def _animate_player_attack(coords, spell=""):
     animation_index = 0
 
     trans_fireballs = []
-    if spell == "Greater Fireball" or spell == "Dark Greater Fireball":
+    if spell == "Greater Fireball":
         for fireball in FIREBALL_LARGE_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
@@ -679,9 +679,17 @@ def _animate_player_attack(coords, spell=""):
         for fireball in FIREBALL_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
+    if spell == "Dark Greater Fireball":
+        for fireball in DARK_FIREBALL_GIF:
+            trans_fireball = pygame.transform.rotate(fireball, angle - 135)
+            trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
+    else:
+        for fireball in DARK_FIREBALL_GIF:
+            trans_fireball = pygame.transform.rotate(fireball, angle - 135)
+            trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
 
     while abs(start_x - target_x) >= 15 or abs(start_y - target_y) >= 15:
-        if spell == "Greater Fireball" or spell == "Dark Greater Fireball":
+        if spell == "Greater Fireball":
             # update animation position and frame
             fire_rect = trans_fireballs[animation_index].get_rect()
             fire_rect = fire_rect.move([start_x - BLOCK_SIZE, start_y - BLOCK_SIZE])
@@ -689,6 +697,16 @@ def _animate_player_attack(coords, spell=""):
             start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
 
             animation_index = 0 if animation_index == len(FIREBALL_LARGE_GIF) - 1 else animation_index + 1
+            # delay so you can see the glory of the fireball
+            time.sleep(0.002)
+        elif spell == "Dark Greater Fireball":
+            # update animation position and frame
+            fire_rect = trans_fireballs[animation_index].get_rect()
+            fire_rect = fire_rect.move([start_x - BLOCK_SIZE, start_y - BLOCK_SIZE])
+
+            start_x, start_y = update_coordinates((start_x, start_y, target_x, target_y), (x_diff, y_diff))
+
+            animation_index = 0 if animation_index == len(DARK_FIREBALL_GIF) - 1 else animation_index + 1
             # delay so you can see the glory of the fireball
             time.sleep(0.002)
         else:
