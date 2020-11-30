@@ -137,7 +137,7 @@ def calculate_damage(attacker, victim, spell=None, aoe=False, crit=False):
     is_crit = False
 
     # Check if spell shield is activated
-    if victim.shield_level > 0 and attacker.hit_chance - victim.shield_level * 5 <= chance < attacker.hit_chance:
+    if victim.shield_level > 0 and attacker.hit_chance - victim.shield_level * 10 <= chance < attacker.hit_chance:
         damage = 0
     elif aoe or chance <= attacker.hit_chance:
         if crit or chance <= attacker.crit_chance:
