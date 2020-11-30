@@ -333,7 +333,7 @@ def animate_attack(attacker, victim, spell=""):
             else:
                 _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
-            _animate_archer_attack(coords)
+            _animate_archer_attack(coords, attacker)
 
 
 def animate_miss(victim):
@@ -719,11 +719,11 @@ def _animate_knight_attack():
     time.sleep(0.2)
 
 
-def _animate_archer_attack(coords):
+def _animate_archer_attack(coords, attacker):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     x_diff = x_diff + .5
     y_diff = y_diff + .5
-    trans_arrow = pygame.transform.rotate(ARROW_PNG, angle)
+    trans_arrow = pygame.transform.rotate(BOLT_PNG if isinstance(attacker, GreatMarksman) else ARROW_PNG, angle)
     trans_arrow = pygame.transform.scale(trans_arrow, (30, 30))
 
     while abs(start_x - target_x) >= 3 or abs(start_y - target_y) >= 3:
