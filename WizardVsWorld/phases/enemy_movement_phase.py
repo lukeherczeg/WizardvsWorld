@@ -113,7 +113,7 @@ class EnemyAIMovement(Phase):
                 closer_movable_tiles.remove(tile)
 
         movable_tiles = closer_movable_tiles
-        if isinstance(enemy, Boss):
+        if isinstance(enemy, WizardKing):
             dimensions = enemy.get_dimensions()
             self.remove_tiles_for_bigger_sprites(enemy, movable_tiles, enemy_positions, dimensions)
         # If we are right next to the player, there are no tiles closer; so stay there!
