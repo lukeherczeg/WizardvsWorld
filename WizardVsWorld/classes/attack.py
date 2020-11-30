@@ -3,6 +3,7 @@ from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.tile import Tile
 from WizardVsWorld.classes.entity import Entity, Enemy
 from WizardVsWorld.classes.user_interface import MessageBox
+from WizardVsWorld.assets.sounds.sound_loader import firenova_attack_sound, block_magic_sound
 
 from random import randint, randrange
 from math import ceil
@@ -141,6 +142,7 @@ def calculate_damage(attacker, victim, spell=None, aoe=False, crit=False):
     if victim.shield_level > 0 and attacker.hit_chance - victim.shield_level * 10 <= chance < attacker.hit_chance:
         victim.shielding = True
         damage = 0
+        block_magic_sound.play()
     elif aoe or chance <= attacker.hit_chance:
         if crit or chance <= attacker.crit_chance:
             if isinstance(attacker, Player):
@@ -168,6 +170,7 @@ def perform_aoe(attacker, victim, crit):
             if len(affected_entities) > 0:
                 # Here, we use player creep to draw fire
                 # Tint surrounding tiles
+                firenova_attack_sound.play()
                 aoe_tiles = get_aoe_tiles(attacker, victim)
                 aoe_tiles.remove(attacker.currentTile)
                 draw_tinted_tiles(aoe_tiles, TileTint.FIRE)

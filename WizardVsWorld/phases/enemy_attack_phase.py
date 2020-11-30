@@ -1,7 +1,7 @@
 from WizardVsWorld.classes.phase import Phase
 from WizardVsWorld.classes.attack import *
 from WizardVsWorld.classes.user_interface import MessageBox
-
+from WizardVsWorld.assets.sounds.sound_loader import stop_playback, game_music_over
 
 class EnemyAICombatPhase(Phase):
     player_position: Tile
@@ -76,6 +76,8 @@ class EnemyAICombatPhase(Phase):
 
         if attacked:
             if self.Player.health <= 0:
+                stop_playback()
+                game_music_over.play(loops=-1)
                 MessageBox('You died. But that\'s okay! It looks like the Grand Magus still has plans for you...')
                 pygame.quit()
                 sys.exit()

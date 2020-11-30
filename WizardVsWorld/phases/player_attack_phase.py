@@ -1,7 +1,7 @@
 from WizardVsWorld.phases.player_movement_phase import *
 from WizardVsWorld.classes.user_interface import MessageBox, SpellMenu
 from WizardVsWorld.classes.attack import CounterAttack, cast_spell, get_aoe_tiles
-
+from WizardVsWorld.assets.sounds.sound_loader import game_music_over, stop_playback
 
 class PlayerAttackPhase(Phase):
     player: Player
@@ -22,6 +22,8 @@ class PlayerAttackPhase(Phase):
 
         # Check if player died to the spell
         if self.player.health <= 0:
+            stop_playback()
+            game_music_over.play(loops=-1)
             MessageBox(
                 'Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
             pygame.quit()
