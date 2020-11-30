@@ -127,9 +127,12 @@ WIZ_ATTACK_PNG = get_block_sized_texture('wizattack.png', TextureType.ENTITY)
 WIZ_HURT_PNG = get_block_sized_texture('wizhurt.png', TextureType.ENTITY)
 WIZ_SELECTED_PNG = get_block_sized_texture('wizselected.png', TextureType.ENTITY)
 WIZ_HEALING_PNG = get_block_sized_texture('wizhealing.png', TextureType.ENTITY)
-WIZARD_KING_PNG = get_block_sized_texture('wizardking.png', TextureType.ENTITY)
-WIZARD_KING_ATTACK_PNG = get_block_sized_texture('wizardkingattack.png', TextureType.ENTITY)
-WIZARD_KING_HURT_PNG = get_block_sized_texture('wizardkinghurt.png', TextureType.ENTITY)
+
+WIZARDKING_RESCALESIZE = int(WINDOW_WIDTH * 0.08)
+WIZARD_KING_PNG = get_block_sized_texture('wizardking.png', TextureType.ENTITY, WIZARDKING_RESCALESIZE)
+# WIZARD_KING_PNG = get_block_sized_texture('wizardking.png', TextureType.ENTITY)
+WIZARD_KING_ATTACK_PNG = get_block_sized_texture('wizardkingattack.png', TextureType.ENTITY, WIZARDKING_RESCALESIZE)
+WIZARD_KING_HURT_PNG = get_block_sized_texture('wizardkinghurt.png', TextureType.ENTITY, WIZARDKING_RESCALESIZE)
 
 # Miscellaneous
 SELECT_PNG = get_block_sized_texture('select.png', TextureType.MISC)
