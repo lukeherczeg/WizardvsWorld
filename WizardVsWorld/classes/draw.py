@@ -1107,6 +1107,8 @@ def _get_entity_img(entity):
     if isinstance(entity, Player):
         if entity.attacking:
             return WIZ_ATTACK_PNG
+        elif entity.shielding:
+            return WIZ_SHIELD
         elif entity.healing:
             return WIZ_HEALING_PNG
         elif entity.damaged:

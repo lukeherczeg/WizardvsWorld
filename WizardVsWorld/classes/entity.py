@@ -29,6 +29,7 @@ class Entity:
         self.tiles = [self.currentTile]
         self.damaged = False
         self.attacking = False
+        self.shielding = False
 
     def get_position(self):
         return self.currentTile

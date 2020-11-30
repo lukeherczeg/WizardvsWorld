@@ -72,6 +72,7 @@ def entity_cleanup(victim, damage, crit):
                     tile.standable = True
     else:
         victim.damaged = False
+        victim.shielding = False
 
     #time.sleep(.3)
 
@@ -138,6 +139,7 @@ def calculate_damage(attacker, victim, spell=None, aoe=False, crit=False):
 
     # Check if spell shield is activated
     if victim.shield_level > 0 and attacker.hit_chance - victim.shield_level * 10 <= chance < attacker.hit_chance:
+        victim.shielding = True
         damage = 0
     elif aoe or chance <= attacker.hit_chance:
         if crit or chance <= attacker.crit_chance:
@@ -265,6 +267,7 @@ class CounterAttack:
                 pygame.quit()
                 sys.exit()
             else:
+                self.victim.shielding = False
                 self.victim.damaged = False
 
     def attempt_counter_attack(self):
