@@ -63,7 +63,7 @@ class Player(Entity):
         # START SPELL STATS
         self.uses = 1  # Base uses for special spells
         self.creep = 1  # Base "creep" or spread of aoe spells
-        self.shield_level = 0  # Increases chances of blocking all damage
+        self.shield_level = 10  # Increases chances of blocking all damage
         self.spellbook = None  # Populated by self.refresh_spell()
         self.prepared_spell = None  # Keeps track of current spell to cast (jank)
         self.refresh_spells()
