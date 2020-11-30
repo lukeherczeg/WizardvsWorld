@@ -414,7 +414,10 @@ class PlayerMovementPhase(Phase):
         self.movable_tiles = None
         self.is_tutorial = False
         if self.level_complete:
-            if not GRID.defeated_maps[GRID.map_number]:
+
+            next_map_number = GRID.determine_layout(self.level_win_direction)
+
+            if not GRID.defeated_maps[next_map_number] and not GRID.defeated_maps[GRID.map_number]:
                 self.player.level_up(self.player.level + 1)
                 upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', self.pick_upgrades())
                 upgrade_menu.draw_menu()
@@ -424,7 +427,9 @@ class PlayerMovementPhase(Phase):
             # Since we want a snapshot of the old grid, we copy it
             prev_map = copy.copy(GRID)
             prev_map_index = prev_map.map_number
-            GRID.defeated_maps[prev_map_index] = True
+
+            if not GRID.defeated_maps[next_map_number] and not GRID.defeated_maps[GRID.map_number]:
+                GRID.defeated_maps[prev_map_index] = True
 
             prev_enemies = []
             prev_location = [self.player.currentTile.row, self.player.currentTile.col]
@@ -441,7 +446,7 @@ class PlayerMovementPhase(Phase):
             new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
             GRID.set_game_map(new_map)
 
-            if not GRID.defeated_maps[GRID.map_number]:
+            if not GRID.defeated_maps[next_map_number] and not GRID.defeated_maps[GRID.map_number]:
                 GRID.generate_enemies(self.player.level)
 
             if self.level_win_direction == 'north':

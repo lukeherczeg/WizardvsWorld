@@ -465,8 +465,8 @@ def animate_map_transition_left(old_grid, old_enemies, prev_location, player):
                 SCREEN.blit(tile_img, tile_rect)
 
         if (player_x > player_target_x):
-            player_x = player_x - 1 - move_wiggle[wiggle_index]
-            player_y = player_y
+            player_x = player_x - 1
+            player_y = player_y + move_wiggle[wiggle_index]
 
             wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
 
@@ -480,7 +480,7 @@ def animate_map_transition_left(old_grid, old_enemies, prev_location, player):
             entity_img = _get_entity_img(entity)
             entity_rect = entity_img.get_rect()
             entity_pos = (entity.get_position().col, entity.get_position().row)
-            entity_pos = _calc_player_coords(entity_pos, entity_rect, ((-1 * new_grid_offset), 0))
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, ((-1 * old_grid_offset), 0))
             entity_rect = entity_rect.move(entity_pos)
             SCREEN.blit(entity_img, entity_rect)
 
@@ -534,8 +534,8 @@ def animate_map_transition_up(old_grid, old_enemies, prev_location, player):
                 SCREEN.blit(tile_img, tile_rect)
 
         if (player_y < player_target_y):
-            player_x = player_x
-            player_y = player_y + 1 + move_wiggle[wiggle_index]
+            player_x = player_x + move_wiggle[wiggle_index]
+            player_y = player_y + 1
 
             wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
 
@@ -604,8 +604,8 @@ def animate_map_transition_down(old_grid, old_enemies, prev_location, player):
                 SCREEN.blit(tile_img, tile_rect)
 
         if (player_y > player_target_y):
-            player_x = player_x
-            player_y = player_y - 1 - move_wiggle[wiggle_index]
+            player_x = player_x + move_wiggle[wiggle_index]
+            player_y = player_y - 1
 
             wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
 
