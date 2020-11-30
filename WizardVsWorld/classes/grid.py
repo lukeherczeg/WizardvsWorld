@@ -5,7 +5,7 @@ import os  # importing for reading maps inside of /maps
 
 from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight, GreatMarksman, WizardKing
 from WizardVsWorld.classes.const import *
-
+from WizardVsWorld.assets.sounds.sound_loader import game_music_grass, game_music_ice, game_music_sand, game_music_castle, stop_playback
 
 class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
@@ -389,6 +389,17 @@ class Grid:
         self.load_map(self.map_number)
 
     def load_map(self, level):
+
+        stop_playback()
+        if 1 <= level <= 4:
+            game_music_ice.play(loops=-1)
+        elif level == 0 or (5 <= level <= 6):
+            game_music_grass.play(loops=-1)
+        elif 7 <= level <= 8:
+            game_music_castle.play(loops=-1)
+        elif 9 <= level <= 12:
+            game_music_sand.play(loops=-1)
+
         if level == 0:
             self.map_layout = map_0
         elif level == 1:
