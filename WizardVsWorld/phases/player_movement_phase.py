@@ -1,5 +1,7 @@
 import copy
 
+from random import randint
+
 from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.phase import Phase
 from WizardVsWorld.classes.entity import Player, Boss
@@ -81,6 +83,22 @@ class PlayerMovementPhase(Phase):
             draw_text("Bush", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
         elif tile_info == TileTexture.STONE:
             draw_text("Stone Wall", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.WOOD:
+            draw_text("Wood", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.DARK_BRICK:
+            draw_text("Dark Brick", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.SNOW:
+            draw_text("Snow", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.ROCK:
+            draw_text("Rock", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.MUD:
+            draw_text("Mud", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.MUD_BRICK:
+            draw_text("Mud Brick", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.SAND:
+            draw_text("Sand", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.CACTUS:
+            draw_text("Cactus", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
 
         if self.currentTile.standable:
             draw_color = BLUE
@@ -101,7 +119,7 @@ class PlayerMovementPhase(Phase):
 
         stats = []
         tile_info = []
-        draw_color = WHITE
+        draw_color = LIGHT_GREY
         if self.currentTile.occupied:
             for enemy in ENTITIES:
                 if enemy.currentTile is self.currentTile:
@@ -130,7 +148,7 @@ class PlayerMovementPhase(Phase):
             # Print all other stats to the top left of the screen
             for stat in stats[1:]:
                 draw_text(stat, 15, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                          (stat_draw_offset_horizontal, stat_draw_offset_vertical))
+                          (stat_draw_offset_horizontal, stat_draw_offset_vertical), LIGHT_GREY)
                 stat_draw_offset_vertical += .5
         # If there aren't any entities on this tile, we display the tile type instead
         else:
@@ -359,6 +377,25 @@ class PlayerMovementPhase(Phase):
 
                         selecting = False
 
+    def pick_upgrades(self):
+        """Returns a list of 5 random upgrades for use with a selection map"""
+        upgrades = [
+            ('Health', 'Increase your Health by 15', self.player.boost_health),
+            ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
+            ('Movement', 'Increase your Movement by 1', self.player.boost_movement),
+            ('Range', 'Increase range of spells  by 1', self.player.boost_range),
+            ('Spell Creep', 'Increase AoE of spells by 1', self.player.boost_creep),
+            ('Spell Uses', 'Increase all spell uses by 1', self.player.boost_uses),
+            ('Spell Shield', 'Boost Spell Shield -- chance to block all damage.', self.player.boost_shield),
+        ]
+
+        # Select 5 random upgrades
+        selected = []
+        for i in range(5):
+            selected.append(upgrades.pop(randint(0, len(upgrades) - 1)))
+
+        return selected
+
     def update(self):
         if not self.level_complete:
             self.movement()
@@ -368,10 +405,7 @@ class PlayerMovementPhase(Phase):
         self.is_tutorial = False
         if self.level_complete:
             self.player.level_up(self.player.level + 1)
-            upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', [
-                ('Health', 'Increase your Health by 15', self.player.boost_health),
-                ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
-                ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
+            upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', self.pick_upgrades())
             upgrade_menu.draw_menu()
             upgrade_menu.await_response()
 

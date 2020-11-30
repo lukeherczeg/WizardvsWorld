@@ -13,6 +13,7 @@ class Entity:
     crit_chance: int
     hit_chance: int
     level: int
+    shield_level: int = 0
 
     def __init__(self):
         self.tiles = [self.currentTile]
@@ -46,11 +47,16 @@ class Player(Entity):
         self.level = 0
         self.crit_chance = 25
         self.hit_chance = 95
+
+        # START SPELL STATS
         self.uses = 1 # Base uses for special spells
         self.creep = 1  # Base "creep" or spread of aoe spells
+        self.shield_level = 0  # Increases chances of blocking all damage
         self.spellbook = None # Populated by self.refresh_spell()
         self.prepared_spell = None # Keeps track of current spell to cast (jank)
         self.refresh_spells()
+        # END SPELL STATS
+
         self.tiles = None
         self.healing = False
 
@@ -75,6 +81,29 @@ class Player(Entity):
     def boost_movement(self):
         """End of level boost for movement"""
         self.max_movement += 1
+        self.refresh_spells()
+
+    def boost_creep(self):
+        """End of level boost for creep (Increases AoE)"""
+        self.creep += 1
+        self.refresh_spells()
+
+    def boost_uses(self):
+        """End of level boost for uses (increases Spell Charges)"""
+        self.uses += 1
+        self.refresh_spells()
+
+    def boost_range(self):
+        """End of level boost for range"""
+        self.range += 1
+        self.refresh_spells()
+
+    def boost_shield(self):
+        """End of level boost for spell shield -- increases chance of blocking damage"""
+        if self.shield_level is None:
+            self.shield_level = 1
+        else:
+            self.shield_level += 1
         self.refresh_spells()
 
     def decrease_health(self, health):
@@ -128,7 +157,7 @@ class Player(Entity):
                 self.range + 1,
                 self.attack + 5 * (self.level + 1),
                 aoe=self.creep,
-                exclude=True
+                exclude=False
             ),
             Spell(
                 'Flame Nova',
@@ -138,6 +167,13 @@ class Player(Entity):
                 50 + self.attack + 2 * (self.level + 1),
                 aoe=self.creep,
                 exclude=True
+            ),
+            Spell(
+                'Pass',
+                'Do Nothing. Pass turn.',
+                999,
+                0,
+                0,
             )
         ]
 

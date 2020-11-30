@@ -13,7 +13,7 @@ class Grid:
     def __init__(self, width, height, level=-1):
         self.GRID_WIDTH = width
         self.GRID_HEIGHT = height
-        #variables to keep track of level, level=grass, Ulevel=snow and up, Dlevel=sand and down
+        # variables to keep track of level, level=grass, Ulevel=snow and up, Dlevel=sand and down
         self.level = level
         self.Ulevel = -1
         self.Dlevel = -1
@@ -47,7 +47,6 @@ class Grid:
         else:
             return False
 
-
     def handle_tile(self, row, col, movable_tiles, adjacent_movable_tiles,
                     non_standable_tiles, valid_edge_tiles, valid_tiles):
         if self.is_valid_tile(row, col):
@@ -60,7 +59,6 @@ class Grid:
                 valid_edge_tiles.append(new_tile)
         else:
             valid_tiles -= 1
-
 
     def get_movement_border(self, movable_tiles, attack_range):
         tile_list = []
@@ -105,7 +103,6 @@ class Grid:
         tile_list.extend(non_standable_tiles)
         return tile_list
 
-
     def get_attack(self, row, col, range):
 
         tile_list = [self._game_map[row][col]]
@@ -130,7 +127,6 @@ class Grid:
 
         # array syntax flattens and dict.fromKeys removes duplicates
         return list(dict.fromkeys(tile_list))
-
 
     def get_movement(self, row, col, num_moves, player=None):
 
@@ -242,24 +238,24 @@ class Grid:
             else:
                 return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
         # load a texture based on layout
-        #grass spawnable tiles
+        # grass spawnable tiles
         elif layout[index] == '1' or layout[index] == 'd':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
         elif layout[index] == '2' or layout[index] == 'g':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
         elif layout[index] == '3' or layout[index] == 'f' or layout[index] == 'G':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
-        #sand spawnable tiles
+        # sand spawnable tiles
         elif layout[index] == '4' or layout[index] == 's':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.SAND)
         elif layout[index] == '5' or layout[index] == 'm' or layout[index] == 'A':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.MUD)
-        #snow spawnable tiles
+        # snow spawnable tiles
         elif layout[index] == '6' or layout[index] == 'i':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.SNOW)
         elif layout[index] == '7' or layout[index] == 'p' or layout[index] == 'W':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.WOOD)
-        #unstandable/unspawnable tiles
+        # unstandable/unspawnable tiles
         elif layout[index] == 'b':
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.BUSH)
         elif layout[index] == 'C':
@@ -272,7 +268,7 @@ class Grid:
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.MUD_BRICK)
         elif layout[index] == '<':
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.DARK_BRICK)
-        #win tiles are as follows, w for grass level, v for sand level, and x for snow level
+        # win tiles are as follows, w for grass level, v for sand level, and x for snow level
         elif layout[index] == 'w':
             self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR, win_tile=True)
             return self.win_tile
@@ -341,14 +337,14 @@ class Grid:
             index += 1
 
         # Luke testing
-        #boss = GreatKnight(level)
-        #boss.currentTile = self.game_map[0][15]
-        #boss.currentTile.occupied = True
-        #ENTITIES.append(boss)
+        # boss = GreatKnight(level)
+        # boss.currentTile = self.game_map[0][15]
+        # boss.currentTile.occupied = True
+        # ENTITIES.append(boss)
 
     # function used in init to get path to file names for map layouts
     def update_layout(self, type):
-        #grass level
+        # grass level
         if type == 1:
             self.level += 1
             if self.level > 4:
@@ -368,7 +364,7 @@ class Grid:
             elif self.level == 4:
                 self.map_layout = map_4
                 return map_4
-        #sand level
+        # sand level
         elif type == 2:
             self.Dlevel += 1
             if self.Dlevel > 4:
@@ -419,4 +415,3 @@ class Grid:
         #     string = file.read().replace('\n', '')
         #     self.map_layout = string
         # return string
-

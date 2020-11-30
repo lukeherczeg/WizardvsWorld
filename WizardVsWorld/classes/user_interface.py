@@ -177,7 +177,7 @@ class SpellMenu:
     """
 
     def __init__(self, spells):
-        longest_spell = max(spells, key=attrgetter('name'))
+        longest_spell = max(spells, key=attrgetter('description'))
 
         self.pos_x = WINDOW_WIDTH // 2
         self.pos_y = WINDOW_HEIGHT // 2
@@ -227,7 +227,7 @@ class SpellMenu:
 
         spell = self.spells[self.selected]
 
-        if spell.max_uses != 999:
+        if spell.max_uses < 999:
             # Draw option name
             draw_text_abs(
                 spell.name + f'  ({spell.current_uses}/{spell.max_uses})',
@@ -236,8 +236,17 @@ class SpellMenu:
                 self.pos_y,
                 WHITE
             )
+        elif spell.name == 'Pass':
+            # Infinite use spells
+            draw_text_abs(
+                spell.name,
+                14,
+                self.pos_x,
+                self.pos_y,
+                WHITE
+            )
         else:
-            # Draw option name
+            # Infinite use spells
             draw_text_abs(
                 spell.name + f'  (infinite)',
                 14,

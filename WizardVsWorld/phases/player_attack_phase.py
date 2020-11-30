@@ -1,6 +1,6 @@
 from WizardVsWorld.phases.player_movement_phase import *
 from WizardVsWorld.classes.user_interface import MessageBox, SpellMenu
-from WizardVsWorld.classes.attack import CounterAttack, cast_spell
+from WizardVsWorld.classes.attack import CounterAttack, cast_spell, get_aoe_tiles
 
 
 class PlayerAttackPhase(Phase):
@@ -22,9 +22,10 @@ class PlayerAttackPhase(Phase):
 
         # Check if player died to the spell
         if self.player.health <= 0:
-            #ENTITIES.remove(self.player)
-            #animate_death(self.player)
-            MessageBox('Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
+            # ENTITIES.remove(self.player)
+            # animate_death(self.player)
+            MessageBox(
+                'Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
             pygame.quit()
             sys.exit()
         elif self.player.health > 0:
@@ -61,6 +62,7 @@ class PlayerAttackPhase(Phase):
             self.player.currentTile.col,
             self.player.prepared_spell.range
         )
+        aoe_tiles = []
 
         self.data_from_movement.enemy_tiles = enemy_tiles
 
@@ -72,8 +74,12 @@ class PlayerAttackPhase(Phase):
                 enemies_within_range += 1
 
         # If statement to eliminate the orange square when healing
-        if not self.player.healing:
+        if self.player.prepared_spell.name == 'Heal' or self.player.prepared_spell.name == 'Pass':
             draw_tinted_tiles(enemy_tiles, None)
+        elif self.player.prepared_spell.name == 'Flame Nova':
+            aoe_tiles = get_aoe_tiles(self.player, self.player)
+            aoe_tiles.remove(self.player.currentTile)
+            draw_tinted_tiles(aoe_tiles, TileTint.ORANGE)
         else:
             draw_tinted_tiles(enemy_tiles, TileTint.ORANGE)
 
@@ -83,29 +89,8 @@ class PlayerAttackPhase(Phase):
             time.sleep(1)
             self.player.selected = False
 
-            # Here, we use player creep to draw fire
-            tiles_in_range_of_spell = GRID.get_attack(
-                self.player.currentTile.row,
-                self.player.currentTile.col,
-                self.player.creep + 1
-            )
-
-            # Check if spell is flame nova and tint surrounding tiles
-            if self.player.prepared_spell.name == "Flame Nova":
-
-                # Remove tiles that are not immediately adjacent or diagonal / the wizard's tile
-                for tile in tiles_in_range_of_spell:
-                    if tile.col == (self.player.currentTile.col + (self.player.creep + 1)) or \
-                       tile.col == (self.player.currentTile.col - (self.player.creep + 1)) or \
-                       tile.row == (self.player.currentTile.row + (self.player.creep + 1)) or \
-                       tile.row == (self.player.currentTile.row - (self.player.creep + 1)) or \
-                       tile.row == self.player.currentTile.row and tile.col == self.player.currentTile.col:
-                        tiles_in_range_of_spell.remove(tile)
-
-                draw_tinted_tiles(tiles_in_range_of_spell, TileTint.FIRE)
-
             cast_spell(self.player, self.player)
-            clear_tinted_tiles(tiles_in_range_of_spell)
+            clear_tinted_tiles(aoe_tiles)
             return
 
         if enemies_within_range != 0:
@@ -150,7 +135,6 @@ class PlayerAttackPhase(Phase):
         if not self.data_from_movement.level_complete:
             # Attack radius can overwrite text
             total_refresh_drawing()
-
 
             # Select a spell
             spell_menu = SpellMenu(self.player.spellbook)

@@ -43,8 +43,8 @@ def draw_rectangular_area(top_left, bottom_right):
 
     for i in range(start[0], end[0] + 1):
         for j in range(start[1], end[1] + 1):
-            draw_tile(GRID.game_map[i][j])
-            listen_events()
+            if GRID.is_valid_tile(i, j):
+                draw_tile(GRID.game_map[i][j])
             # print(f"Drew tile [{i}, {j}].")
 
 
@@ -64,7 +64,12 @@ def draw_tinted_tiles(tile_list, tint):
 
 def draw_selected_tile(tile, enemy=None):
     if enemy is None:
-        tile_img = SELECT_PNG
+        if tile.texture_type == TileTexture.SNOW or \
+                tile.texture_type == TileTexture.ROCK or \
+                tile.texture_type == TileTexture.WOOD:
+            tile_img = SELECT_DARK_PNG
+        else:
+            tile_img = SELECT_PNG
     elif isinstance(enemy, Knight):
         tile_img = KNIGHT_ATTACKABLE_PNG
     elif isinstance(enemy, Archer):
@@ -140,7 +145,7 @@ def draw_entities(ignorables=None, hard=True):
         if hard: pygame.display.update(entity_rect)
 
 
-def draw_text(message, size, tile=None, offset=None, color=WHITE):
+def draw_text(message, size, tile=None, offset=None, color=WHITE, outline_color=BLACK):
     # GOTO provided tile
     x_pos = tile.col if tile is not None else 0
     y_pos = tile.row if tile is not None else 0
@@ -149,7 +154,19 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     x_offset, y_offset = offset if offset is not None else (0, 0)
     x_pos, y_pos = x_pos + x_offset, y_pos + y_offset
 
-    # Draw text
+    # Draw outline around text, one pixel in each direction
+    outline_message_font = pygame.font.Font('freesansbold.ttf', size)
+    outline_message_text = outline_message_font.render(str(message), True, outline_color)
+    outline_message_rect_base = outline_message_text.get_rect()
+    outline_message_rect = outline_message_rect_base.move([x_pos * BLOCK_SIZE - 1, y_pos * BLOCK_SIZE])
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect = outline_message_rect_base.move([x_pos * BLOCK_SIZE + 1, y_pos * BLOCK_SIZE])
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect = outline_message_rect_base.move([x_pos * BLOCK_SIZE, y_pos * BLOCK_SIZE + 1])
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect = outline_message_rect_base.move([x_pos * BLOCK_SIZE, y_pos * BLOCK_SIZE - 1])
+    SCREEN.blit(outline_message_text, outline_message_rect)
+
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
     message_rect = message_text.get_rect()
@@ -157,7 +174,20 @@ def draw_text(message, size, tile=None, offset=None, color=WHITE):
     SCREEN.blit(message_text, message_rect)
 
 
-def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE):
+def draw_text_abs(message, size, x_pos=0, y_pos=0, color=WHITE, outline_color=BLACK):
+    # Draw outline around text, one pixel in each direction
+    outline_message_font = pygame.font.Font('freesansbold.ttf', size)
+    outline_message_text = outline_message_font.render(str(message), True, outline_color)
+    outline_message_rect = outline_message_text.get_rect()
+    outline_message_rect.center = (x_pos - 1, y_pos)
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect.center = (x_pos + 1, y_pos)
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect.center = (x_pos, y_pos + 1)
+    SCREEN.blit(outline_message_text, outline_message_rect)
+    outline_message_rect.center = (x_pos, y_pos - 1)
+    SCREEN.blit(outline_message_text, outline_message_rect)
+
     # Draw text
     message_font = pygame.font.Font('freesansbold.ttf', size)
     message_text = message_font.render(str(message), True, color)
@@ -276,7 +306,7 @@ def animate_move(entity, old_pos, new_pos):
         pygame.display.flip()
 
 
-def animate_attack(attacker, victim, GreaterFireball=False):
+def animate_attack(attacker, victim, spell=""):
     if isinstance(attacker, Knight) or isinstance(attacker, GreatKnight):
         _animate_knight_attack()
     else:
@@ -287,11 +317,11 @@ def animate_attack(attacker, victim, GreaterFireball=False):
         target_x = victim.get_position().col * BLOCK_SIZE
         target_y = victim.get_position().row * BLOCK_SIZE
 
-        # point attack at enemy
+        # Point attack at enemy
         angle = math.atan2(-(start_y - target_y), start_x - target_x)
         angle = math.degrees(angle)
 
-        # get proportion of x movement to y movement needed
+        # Get proportion of x movement to y movement needed
         if target_y == start_y:
             x_diff = 2.4
         else:
@@ -304,26 +334,9 @@ def animate_attack(attacker, victim, GreaterFireball=False):
         coords = (start_x, start_y, target_x, target_y, x_diff, y_diff, angle)
 
         if isinstance(attacker, Player):
-            # check if the attack is greater fire ball and draw splash damage
-            if GreaterFireball:
-                row = int(target_y // BLOCK_SIZE)
-                col = int(target_x // BLOCK_SIZE)
-                splash_of_fireball = GRID.get_attack(
-                    row,
-                    col,
-                    attacker.creep + 1
-                )
-                # fix the range to actual effective range of enemies
-                for tile in splash_of_fireball:
-                    if tile.col == (col + (attacker.creep + 1)) or \
-                       tile.col == (col - (attacker.creep + 1)) or \
-                       tile.row == (row + (attacker.creep + 1)) or \
-                       tile.row == (row - (attacker.creep + 1)) or \
-                       tile.row == attacker.get_position().row and tile.col == attacker.get_position().col:
-                        splash_of_fireball.remove(tile)
-
-                # Draw the fire tiles
-                _animate_player_attack(coords, True, splash_of_fireball, victim)
+            # Check if the attack is greater fire ball and draw splash damage
+            if spell == "Greater Fireball":
+                _animate_player_attack(coords, spell)
             else:
                 _animate_player_attack(coords)
         elif isinstance(attacker, Archer):
@@ -332,6 +345,7 @@ def animate_attack(attacker, victim, GreaterFireball=False):
 
 def animate_miss(victim):
     _animate_miss_text(victim)
+
 
 def animate_damage(victim, victim_old_hp, crit=False):
     _animate_hp_number(victim, victim_old_hp, crit)
@@ -453,6 +467,7 @@ def animate_map_transition_up(old_grid, old_enemies, player):
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_y = player_y + BLOCK_SIZE
+
     # heal player since health is regenerated automatically
     player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
@@ -521,6 +536,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
     player_target_y = player_y + (14 * BLOCK_SIZE)
+
     # heal player since health is regenerated automatically
     player.healing = True
     # For animating perpendicular wiggle while walking and movement speed
@@ -602,13 +618,13 @@ def update_coordinates(coords, diffs):
     return start_x, start_y
 
 
-def _animate_player_attack(coords, greater_fireball=False, tiles=None, victim=None):
+def _animate_player_attack(coords, spell=""):
     start_x, start_y, target_x, target_y, x_diff, y_diff, angle = coords
     # For animating fireball gif
     animation_index = 0
 
     trans_fireballs = []
-    if greater_fireball:
+    if spell == "Greater Fireball":
         for fireball in FIREBALL_LARGE_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
@@ -623,7 +639,7 @@ def _animate_player_attack(coords, greater_fireball=False, tiles=None, victim=No
     pygame.mixer.Sound.play(fireball_attack_sound)
 
     while abs(start_x - target_x) >= 15 or abs(start_y - target_y) >= 15:
-        if greater_fireball:
+        if spell == "Greater Fireball":
             # update animation position and frame
             fire_rect = trans_fireballs[animation_index].get_rect()
             fire_rect = fire_rect.move([start_x - BLOCK_SIZE, start_y - BLOCK_SIZE])
@@ -650,8 +666,6 @@ def _animate_player_attack(coords, greater_fireball=False, tiles=None, victim=No
         SCREEN.blit(trans_fireballs[animation_index], fire_rect)
         CLOCK.tick(FPS)
         pygame.display.flip()
-    if greater_fireball:
-        draw_tinted_tiles(tiles, TileTint.FIRE)
     # this is done to re-center the final animation sprite and ensure game state is up to date
     total_refresh_drawing()
 
