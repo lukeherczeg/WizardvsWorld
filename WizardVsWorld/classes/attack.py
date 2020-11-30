@@ -114,11 +114,12 @@ def perform_attack(attacker, victim, spell=None):
     entity_cleanup(victim, damage_taken, crit)
 
     if spell is not None:
-        perform_aoe(attacker, victim, crit)
+        if spell.aoe > 0:
+            perform_aoe(attacker, victim, crit)
 
-        # Clean aoe tiles
-        aoe_tiles = get_aoe_tiles(attacker, victim)
-        clear_tinted_tiles(aoe_tiles)
+            # Clean aoe tiles
+            aoe_tiles = get_aoe_tiles(attacker, victim)
+            clear_tinted_tiles(aoe_tiles)
 
 
 def calculate_damage(attacker, victim, spell=None, aoe=False, crit=False):
