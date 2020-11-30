@@ -40,10 +40,10 @@ class EnemyAICombatPhase(Phase):
             if enemy.health < enemy.max_health / 2 and randomizer > 10:
                 enemy.prepared_spell = enemy.spellbook[1]
                 cast_spell(enemy, self.Player)
-            elif randomizer > 30:
+            elif randomizer > 40:
                 enemy.prepared_spell = enemy.spellbook[3]
                 cast_spell(enemy, self.Player)
-            elif randomizer > 20:
+            elif randomizer > 30:
                 enemy.prepared_spell = enemy.spellbook[2]
                 cast_spell(enemy, self.Player)
             else:
@@ -53,7 +53,7 @@ class EnemyAICombatPhase(Phase):
         elif can_attack(enemy, self.Player) and isinstance(enemy, GreatMarksman):
             randomizer = randint(1, 50)
             #Piercing shot
-            if self.Player.health < self.Player.max_health //2 and randomizer > 10:
+            if self.Player.health < self.Player.max_health // 2 and randomizer > 10:
                 old_defense = self.Player.defense
                 self.Player.defense = 0
                 perform_attack(enemy, self.Player)
