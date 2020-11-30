@@ -126,6 +126,7 @@ WIZ_PNG = get_block_sized_texture('wiz.png', TextureType.ENTITY)
 WIZ_ATTACK_PNG = get_block_sized_texture('wizattack.png', TextureType.ENTITY)
 WIZ_HURT_PNG = get_block_sized_texture('wizhurt.png', TextureType.ENTITY)
 WIZ_SELECTED_PNG = get_block_sized_texture('wizselected.png', TextureType.ENTITY)
+WIZ_SHIELD = get_block_sized_texture('wizshield.png', TextureType.ENTITY)
 WIZ_HEALING_PNG = get_block_sized_texture('wizhealing.png', TextureType.ENTITY)
 
 WIZARDKING_RESCALESIZE = int(WINDOW_WIDTH * 0.08)
