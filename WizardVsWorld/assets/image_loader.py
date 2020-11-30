@@ -27,7 +27,7 @@ GRID = Grid(WINDOW_WIDTH // BLOCK_SIZE, WINDOW_HEIGHT // BLOCK_SIZE)
 
 MOVEMENT_SPEED = 3
 move_wiggle = [-2, 0, -1, 0, -1, 0, 0, 1, 0, 1, 0, 2]
-dodge_wiggle = [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0]
+dodge_wiggle = [0, 0, 1]
 # move_wiggle = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1]
 
 asset_path = os.path.dirname(__file__)

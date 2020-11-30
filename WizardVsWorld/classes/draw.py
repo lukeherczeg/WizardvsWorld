@@ -709,14 +709,15 @@ def _animate_miss_text(victim):
     victim_rect = victim_rect.move([victim.get_position().col * BLOCK_SIZE, victim.get_position().row * BLOCK_SIZE])
 
     # animation arrays and indexes
-    y_move_amount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1]
+    y_move_amount = [0, 0, 0, -1]
     y_move_index = 0
     wiggle_index = 0
-    wiggle_length = 160
+    wiggle_length = 100
     for i in range(wiggle_length):
         number_rect = number_rect.move([0, y_move_amount[y_move_index]])
 
-        victim_rect = victim_rect.move([dodge_wiggle[wiggle_index], 0])
+        wiggle = dodge_wiggle[wiggle_index] if i < (wiggle_length/2) else -dodge_wiggle[wiggle_index]
+        victim_rect = victim_rect.move([wiggle, 0])
 
         # prepare next frame
         y_move_index = 0 if y_move_index == len(y_move_amount) - 1 else y_move_index + 1
@@ -727,6 +728,7 @@ def _animate_miss_text(victim):
         draw_entities(hard=False, ignorables=[victim])
         SCREEN.blit(_get_entity_img(victim), victim_rect)
         SCREEN.blit(number_text, number_rect)
+        CLOCK.tick(FPS)
         pygame.display.flip()
         listen_events()
 
