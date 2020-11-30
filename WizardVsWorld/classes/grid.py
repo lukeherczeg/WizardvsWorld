@@ -263,7 +263,7 @@ class Grid:
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
         elif layout[index] == '2' or layout[index] == 'g':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
-        elif layout[index] == '3' or layout[index] == 'f' or layout[index] == 'G':
+        elif layout[index] == '3' or layout[index] == 'f' or layout[index] == 'G' or layout[index] == 'W':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
         # sand spawnable tiles
         elif layout[index] == '4' or layout[index] == 's':
@@ -273,7 +273,7 @@ class Grid:
         # snow spawnable tiles
         elif layout[index] == '6' or layout[index] == 'i':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.SNOW)
-        elif layout[index] == '7' or layout[index] == 'p' or layout[index] == 'W':
+        elif layout[index] == '7' or layout[index] == 'p':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.WOOD)
         # unstandable/unspawnable tiles
         elif layout[index] == 'b':
