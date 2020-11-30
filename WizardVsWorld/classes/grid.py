@@ -346,6 +346,7 @@ class Grid:
                     boss = WizardKing(level)
                     boss.currentTile = self.game_map[y][x]
                     boss.currentTile.occupied = True
+                    boss.populate_tiles(boss.height_tiles, boss.width_tiles)
                     ENTITIES.append(boss)
                 elif self.__generate_true(.7):  # create archer
                     archer = Archer(level)
