@@ -386,7 +386,7 @@ def animate_death(entity):
 
 
 # animate the transition to grass level
-def animate_map_transition(old_grid, old_enemies, player):
+def animate_map_transition_right(old_grid, old_enemies, prev_location, player):
     new_grid_offset = WINDOW_WIDTH
     old_grid_offset = 0
     grid_offset_speed = 3.5
@@ -455,11 +455,80 @@ def animate_map_transition(old_grid, old_enemies, player):
         CLOCK.tick(FPS)
         pygame.display.flip()
 
+    player.currentTile = GRID.game_map[prev_location[0]][0]
     total_refresh_drawing()
 
+# animate for snow level transition
+def animate_map_transition_left(old_grid, old_enemies, prev_location, player):
+    new_grid_offset = WINDOW_WIDTH
+    old_grid_offset = 0
+    grid_offset_speed = 3.5
+
+    player_x = player.get_position().col * BLOCK_SIZE
+    player_y = player.get_position().row * BLOCK_SIZE
+    player_target_x = player_x - BLOCK_SIZE
+
+    # heal player since health is regenerated automatically
+    player.healing = True
+    # For animating perpendicular wiggle while walking and movement speed
+    wiggle_index = 0
+
+    while new_grid_offset >= 0:
+        for _, col in enumerate(old_grid.game_map):
+            for _, tile in enumerate(col):
+                tile_img = _get_tile_img(tile)
+                tile_rect = tile_img.get_rect()
+                tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE) - old_grid_offset, (tile.row * BLOCK_SIZE)])
+                SCREEN.blit(tile_img, tile_rect)
+
+        for _, col in enumerate(GRID.game_map):
+            for _, tile in enumerate(col):
+                tile_img = _get_tile_img(tile)
+                tile_rect = tile_img.get_rect()
+                tile_rect = tile_rect.move([(tile.col * BLOCK_SIZE) - new_grid_offset, (tile.row * BLOCK_SIZE)])
+                SCREEN.blit(tile_img, tile_rect)
+
+        if (player_x > player_target_x):
+            player_x = player_x - 1 - move_wiggle[wiggle_index]
+            player_y = player_y
+
+            wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
+
+        player_img = _get_entity_img(player)
+        player_rect = player_img.get_rect()
+        player_rect = player_rect.move([player_x - old_grid_offset, player_y])
+
+        SCREEN.blit(player_img, player_rect)
+
+        for entity in old_enemies:
+            entity_img = _get_entity_img(entity)
+            entity_rect = entity_img.get_rect()
+            entity_pos = (entity.get_position().col, entity.get_position().row)
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, ((-1 * new_grid_offset), 0))
+            entity_rect = entity_rect.move(entity_pos)
+            SCREEN.blit(entity_img, entity_rect)
+
+        entities = ENTITIES[1:]
+
+        for entity in entities:
+            entity_img = _get_entity_img(entity)
+            entity_rect = entity_img.get_rect()
+            entity_pos = (entity.get_position().col, entity.get_position().row)
+            entity_pos = _calc_player_coords(entity_pos, entity_rect, ((-1 * new_grid_offset), 0))
+            entity_rect = entity_rect.move(entity_pos)
+            SCREEN.blit(entity_img, entity_rect)
+
+        new_grid_offset = new_grid_offset - grid_offset_speed
+        old_grid_offset = old_grid_offset - grid_offset_speed
+
+        CLOCK.tick(FPS)
+        pygame.display.flip()
+
+    player.currentTile = GRID.game_map[prev_location[0]][24]
+    total_refresh_drawing()
 
 # animate transition to the sand level
-def animate_map_transition_up(old_grid, old_enemies, player):
+def animate_map_transition_up(old_grid, old_enemies, prev_location, player):
     new_grid_offset = WINDOW_HEIGHT
     old_grid_offset = 0
     grid_offset_speed = 3.5
@@ -524,18 +593,19 @@ def animate_map_transition_up(old_grid, old_enemies, player):
         CLOCK.tick(FPS)
         pygame.display.flip()
 
+    player.currentTile = GRID.game_map[0][prev_location[1]]
     total_refresh_drawing()
 
 
 # animate for snow level transition
-def animate_map_transition_down(old_grid, old_enemies, player):
+def animate_map_transition_down(old_grid, old_enemies, prev_location, player):
     new_grid_offset = WINDOW_HEIGHT
     old_grid_offset = 0
     grid_offset_speed = 3.5
 
     player_x = player.get_position().col * BLOCK_SIZE
     player_y = player.get_position().row * BLOCK_SIZE
-    player_target_y = player_y + (14 * BLOCK_SIZE)
+    player_target_y = player_y + BLOCK_SIZE
 
     # heal player since health is regenerated automatically
     player.healing = True
@@ -559,9 +629,9 @@ def animate_map_transition_down(old_grid, old_enemies, player):
                 SCREEN.blit(tile_img, tile_rect)
                 listen_events()
 
-        if (player_y < player_target_y):
+        if (player_y > player_target_y):
             player_x = player_x
-            player_y = player_y - 0.1 - move_wiggle[wiggle_index]
+            player_y = player_y - 1 - move_wiggle[wiggle_index]
 
             wiggle_index = 0 if wiggle_index == len(move_wiggle) - 1 else wiggle_index + 1
 
@@ -597,6 +667,7 @@ def animate_map_transition_down(old_grid, old_enemies, player):
         CLOCK.tick(FPS)
         pygame.display.flip()
 
+    player.currentTile = GRID.game_map[14][prev_location[1]]
     total_refresh_drawing()
 
 

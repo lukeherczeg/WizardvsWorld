@@ -10,17 +10,15 @@ from WizardVsWorld.classes.const import *
 class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
 
-    def __init__(self, width, height, level=-1):
+    def __init__(self, width, height, map_number=0):
         self.GRID_WIDTH = width
         self.GRID_HEIGHT = height
-        # variables to keep track of level, level=grass, Ulevel=snow and up, Dlevel=sand and down
-        self.level = level
-        self.Ulevel = -1
-        self.Dlevel = -1
-        self.map_layout = self.update_layout(1)
+        # Variables to keep track of level
+        self.map_number = map_number
+        self.map_layout = map_0
+        self.win_tiles = [None] * 4
         # INDEX WITH [ROW][COL]
         self._game_map = [[self.generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
-        self.win_tile = None
 
     @property
     def game_map(self):
@@ -224,6 +222,27 @@ class Grid:
         # we need to calculate the index for the tile value once the string is read from file
         index = col + (row * 25)
         layout = self.map_layout
+        map_index = 0
+
+        direction = ''
+
+        if index < 25:
+            direction = 'north'
+        elif index > 349:
+            direction = 'south'
+        elif index % 25 == 0:
+            direction = 'west'
+        elif index % 24 == 0:
+            direction = 'east'
+
+        if direction == 'north':
+            map_index = 1
+        if direction == 'east':
+            map_index = 0
+        if direction == 'west':
+            map_index = 3
+        if direction == 'south':
+            map_index = 2
 
         # if the value is 0 (most tiles) randomly generate that tile
         # letters signify that an enemy is to be spawned on the texture type initial "f" or "d" or "g" etc.
@@ -270,14 +289,17 @@ class Grid:
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.DARK_BRICK)
         # win tiles are as follows, w for grass level, v for sand level, and x for snow level
         elif layout[index] == 'w':
-            self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR, win_tile=True)
-            return self.win_tile
-        elif layout[index] == 'v':
-            self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.MUD, win_tile=True)
-            return self.win_tile
+            self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
+                                             texture_type=TileTexture.FLOOR, win_tile=True)
+            return self.win_tiles[map_index]
         elif layout[index] == 'x':
-            self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.WOOD, win_tile=True)
-            return self.win_tile
+            self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
+                                             texture_type=TileTexture.WOOD, win_tile=True)
+            return self.win_tiles[map_index]
+        elif layout[index] == 'v':
+            self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
+                                             texture_type=TileTexture.MUD, win_tile=True)
+            return self.win_tiles[map_index]
         else:
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.BUSH)
 
@@ -342,76 +364,54 @@ class Grid:
         # boss.currentTile.occupied = True
         # ENTITIES.append(boss)
 
+    # Map index system:
+    #    1  2  3  4
+    #    o  o  o  o
+    # 0  5  6  7  8
+    # o  o  o  o  o
+    #    9 10 11 12
+    #    o  o  o  o
+
     # function used in init to get path to file names for map layouts
-    def update_layout(self, type):
-        # grass level
-        if type == 1:
-            self.level += 1
-            if self.level > 4:
-                self.level = 0
-            if self.level == 0:
-                self.map_layout = map_0
-                return map_0
-            elif self.level == 1:
-                self.map_layout = map_1
-                return map_1
-            elif self.level == 2:
-                self.map_layout = map_2
-                return map_2
-            elif self.level == 3:
-                self.map_layout = map_3
-                return map_3
-            elif self.level == 4:
-                self.map_layout = map_4
-                return map_4
-        # sand level
-        elif type == 2:
-            self.Dlevel += 1
-            if self.Dlevel > 4:
-                self.Dlevel = 0
-            if self.Dlevel == 0:
-                self.map_layout = map_D0
-                return map_D0
-            elif self.Dlevel == 1:
-                self.map_layout = map_D1
-                return map_D1
-            elif self.Dlevel == 2:
-                self.map_layout = map_D2
-                return map_D2
-            elif self.Dlevel == 3:
-                self.map_layout = map_D3
-                return map_D3
-            elif self.Dlevel == 4:
-                self.map_layout = map_D4
-                return map_D4
-        elif type == 3:
-            self.Ulevel += 1
-            if self.Ulevel > 4:
-                self.Ulevel = 0
-            if self.Ulevel == 0:
-                self.map_layout = map_U0
-                return map_U0
-            elif self.Ulevel == 1:
-                self.map_layout = map_U1
-                return map_U1
-            elif self.Ulevel == 2:
-                self.map_layout = map_U2
-                return map_U2
-            elif self.Ulevel == 3:
-                self.map_layout = map_U3
-                return map_U3
-            elif self.Ulevel == 4:
-                self.map_layout = map_U4
-                return map_U4
-        # lev = str(self.level)
-        # get the path of the map
-        # main_directory = os.path.dirname('WizardvsWorld')
-        # asset_path = os.path.join(main_directory, 'maps')
-        # map_layout = os.path.join(asset_path, 'map')
-        # map_layout += lev
-        # map_layout += '.txt'
-        # # turn map into single string
-        # with open(map_layout, 'r') as file:
-        #     string = file.read().replace('\n', '')
-        #     self.map_layout = string
-        # return string
+    def update_layout(self, direction='east'):
+        if self.map_number == 0:
+            self.map_number = 5
+        else:
+            if direction == 'east':
+                self.map_number += 1
+            elif direction == 'west':
+                self.map_number -= 1
+            elif direction == 'north':
+                self.map_number -= 4
+            elif direction == 'south':
+                self.map_number += 4
+
+        self.load_map(self.map_number)
+
+    def load_map(self, level):
+        if level == 0:
+            self.map_layout = map_0
+        elif level == 1:
+            self.map_layout = map_1
+        elif level == 2:
+            self.map_layout = map_2
+        elif level == 3:
+            self.map_layout = map_3
+        elif level == 4:
+            self.map_layout = map_4
+        elif level == 5:
+            self.map_layout = map_5
+        elif level == 6:
+            self.map_layout = map_6
+        elif level == 7:
+            self.map_layout = map_7
+        elif level == 8:
+            self.map_layout = map_8
+        elif level == 9:
+            self.map_layout = map_9
+        elif level == 10:
+            self.map_layout = map_10
+        elif level == 11:
+            self.map_layout = map_11
+        elif level == 12:
+            self.map_layout = map_12
