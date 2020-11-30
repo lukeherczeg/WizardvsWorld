@@ -332,7 +332,7 @@ def animate_attack(attacker, victim, spell=""):
                 _animate_player_attack(coords, spell)
             else:
                 _animate_player_attack(coords)
-        elif isinstance(attacker, Archer):
+        elif isinstance(attacker, Archer) or isinstance(attacker, GreatMarksman):
             _animate_archer_attack(coords, attacker)
 
 
