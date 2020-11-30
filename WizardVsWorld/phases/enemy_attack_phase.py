@@ -53,7 +53,7 @@ class EnemyAICombatPhase(Phase):
         elif can_attack(enemy, self.Player) and isinstance(enemy, GreatMarksman):
             randomizer = randint(1, 50)
             #Piercing shot
-            if self.Player.health < self.Player.max_health //2 and randomizer > 10:
+            if self.Player.health < self.Player.max_health // 2 and randomizer > 10:
                 old_defense = self.Player.defense
                 self.Player.defense = 0
                 perform_attack(enemy, self.Player)
