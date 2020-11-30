@@ -3,6 +3,7 @@ from enum import Enum
 ENTITIES = []
 
 CRIT_MULTIPLIER = 2
+ENEMY_CRIT_MULTIPLIER = 1.5
 
 
 class TextureType(Enum):
