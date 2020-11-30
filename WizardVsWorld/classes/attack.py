@@ -65,6 +65,10 @@ def entity_cleanup(victim, damage, crit):
         victim.currentTile.occupied = False
         ENTITIES.remove(victim)
         animate_death(victim)
+        if victim.tiles is not None:
+            if len(victim.tiles) > 1:
+                for tile in victim.tiles:
+                    tile.standable = True
     else:
         victim.damaged = False
 
