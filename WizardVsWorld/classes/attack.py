@@ -47,6 +47,7 @@ def cast_spell(caster, target):
     if spell.range > 0:
         spell.cast(target)
         perform_attack(caster, target, spell)
+        spell.expend_use()
 
 
 def entity_cleanup(victim, damage, crit):
@@ -145,10 +146,14 @@ def perform_aoe(attacker, victim, crit):
                 aoe_tiles = get_aoe_tiles(attacker, victim)
                 aoe_tiles.remove(attacker.currentTile)
                 draw_tinted_tiles(aoe_tiles, TileTint.FIRE)
+                spell.expend_use()
 
         for entity in affected_entities:
             damage, is_crit = calculate_damage(attacker, entity, spell, True, crit)
             entity_cleanup(entity, damage, is_crit)
+    elif spell is not None:
+        spell.expend_use()
+
     attacker.attacking = False
     clear_tinted_tiles(aoe_tiles)
 

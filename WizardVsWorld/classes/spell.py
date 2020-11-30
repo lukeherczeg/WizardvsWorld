@@ -60,13 +60,17 @@ class Spell:
             return False
 
     def cast(self, target):
-        """Decrement _current_uses by 1 if the spell has any"""
+        """Cast the spell effect"""
         if self._current_uses > 0:
             if self._effect is not None:
                 if target is not None:
                     self._effect(target)
                 else:
                     self._effect()
+
+    def expend_use(self):
+        """Decrement the spell uses if there are any"""
+        if self._current_uses > 0:
             self._current_uses -= 1
 
     def on_hit(self, target):
