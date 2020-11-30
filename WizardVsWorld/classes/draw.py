@@ -331,7 +331,8 @@ def animate_attack(attacker, victim, spell=""):
             if spell == "Dark Greater Fireball":
                 _animate_player_attack(coords, spell)
             else:
-                _animate_player_attack(coords)
+                spell = "Dark Fireball"
+                _animate_player_attack(coords, spell)
         elif isinstance(attacker, Archer) or isinstance(attacker, GreatMarksman):
             _animate_archer_attack(coords)
 
@@ -675,7 +676,7 @@ def _animate_player_attack(coords, spell=""):
         for fireball in FIREBALL_LARGE_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
-    else:
+    elif spell == "Fireball" or spell == "Flame Nova" or spell == "Pass" or spell == '':
         for fireball in FIREBALL_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))
@@ -683,7 +684,7 @@ def _animate_player_attack(coords, spell=""):
         for fireball in DARK_FIREBALL_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale2x(trans_fireball))
-    else:
+    elif spell == "Dark Fireball" or spell == "Dark Flame Nova":
         for fireball in DARK_FIREBALL_GIF:
             trans_fireball = pygame.transform.rotate(fireball, angle - 135)
             trans_fireballs.append(pygame.transform.scale(trans_fireball, (50, 50)))

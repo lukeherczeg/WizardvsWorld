@@ -64,6 +64,8 @@ class EnemyAICombatPhase(Phase):
                 self.Player.attack += 20
                 perform_attack(enemy, self.Player)
                 self.Player.attack = old_attack
+            else:
+                perform_attack(enemy, self.Player)
 
         elif can_attack(enemy, self.Player):
             # TUTORIAL
