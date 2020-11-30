@@ -20,23 +20,25 @@ class EnemyAICombatPhase(Phase):
 
     def attack_player_procedure(self, enemy):
         self.Player.healing = False
+        attacked = False
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
         if can_attack(enemy, self.Player) and isinstance(enemy, GreatKnight):
+            attacked = True
             randomizer = randint(1, 50)
             if self.Player.health < self.Player.max_health / 4 and randomizer > 25:
                 old_attack = enemy.attack
                 enemy.attack += 10
                 perform_attack(enemy, self.Player)
                 enemy.attack = old_attack
-                print("Fatal Strike Attempted!")
             else:
                 perform_attack(enemy, self.Player)
 
         elif can_attack(enemy, self.Player) and isinstance(enemy, WizardKing):
-            randomizer = randint(1 , 50)
+            attacked = True
+            randomizer = randint(1, 50)
             if randomizer > 40:
                 enemy.prepared_spell = enemy.spellbook[3]
-                cast_spell(enemy, self.Player)
+                cast_spell(enemy, enemy)
             elif randomizer > 30:
                 enemy.prepared_spell = enemy.spellbook[2]
                 cast_spell(enemy, self.Player)
@@ -45,6 +47,7 @@ class EnemyAICombatPhase(Phase):
                 cast_spell(enemy, self.Player)
 
         elif can_attack(enemy, self.Player) and isinstance(enemy, GreatMarksman):
+            attacked = True
             randomizer = randint(1, 50)
             # Piercing shot
             if self.Player.health < self.Player.max_health // 2 and randomizer > 10:
@@ -62,6 +65,7 @@ class EnemyAICombatPhase(Phase):
                 perform_attack(enemy, self.Player)
 
         elif can_attack(enemy, self.Player):
+            attacked = True
             # TUTORIAL
             if self.attack_tutorial:
                 MessageBox('Now your enemies will have a chance to attack you!')
@@ -70,6 +74,7 @@ class EnemyAICombatPhase(Phase):
 
             perform_attack(enemy, self.Player)
 
+        if attacked:
             if self.Player.health <= 0:
                 MessageBox('You died. But that\'s okay! It looks like the Grand Magus still has plans for you...')
                 pygame.quit()
@@ -82,10 +87,9 @@ class EnemyAICombatPhase(Phase):
                     total_refresh_drawing()
                     self.counter_tutorial = False
                 attacker.attempt_counter_attack()
-
             return True
-        else:
-            return False
+
+        return False
 
     def enter(self):
         self.Enemies = ENTITIES[1:]

@@ -213,6 +213,8 @@ class PlayerMovementPhase(Phase):
             self.currentTile = self.grid.game_map[row][col]
             select(self.currentTile.row, self.currentTile.col)
             draw_entity_from_tile(self.currentTile)
+            if wizard_king_tile is not None:
+                draw_entity_from_tile(wizard_king_tile)
 
         # Attack selection phase
         elif self.enemy_tiles and self.grid.is_valid_tile_in_list(row, col, self.enemy_tiles):
