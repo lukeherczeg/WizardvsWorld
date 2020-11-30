@@ -23,10 +23,7 @@ class EnemyAICombatPhase(Phase):
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
         if can_attack(enemy, self.Player) and isinstance(enemy, GreatKnight):
             randomizer = randint(1, 50)
-            if enemy.health < enemy.max_health / 2 and randomizer > 25:
-                enemy.health += enemy.max_health // 4
-                print("Great Knight Healed!")
-            elif self.Player.health < self.Player.max_health / 4 and randomizer > 25:
+            if self.Player.health < self.Player.max_health / 4 and randomizer > 25:
                 old_attack = enemy.attack
                 enemy.attack += 10
                 perform_attack(enemy, self.Player)
@@ -37,10 +34,7 @@ class EnemyAICombatPhase(Phase):
 
         elif can_attack(enemy, self.Player) and isinstance(enemy, WizardKing):
             randomizer = randint(1 , 50)
-            if enemy.health < enemy.max_health / 2 and randomizer > 10:
-                enemy.prepared_spell = enemy.spellbook[1]
-                cast_spell(enemy, self.Player)
-            elif randomizer > 40:
+            if randomizer > 40:
                 enemy.prepared_spell = enemy.spellbook[3]
                 cast_spell(enemy, self.Player)
             elif randomizer > 30:
