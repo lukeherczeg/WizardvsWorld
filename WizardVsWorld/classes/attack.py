@@ -73,6 +73,15 @@ def perform_attack(attacker, victim, spell=None):
         animate_attack(attacker, victim, spell.name)
         aoe_tiles = get_aoe_tiles(attacker, victim)
         draw_tinted_tiles(aoe_tiles, TileTint.FIRE)
+    elif isinstance(attacker, WizardKing):
+        if spell is not None and spell.name == "Dark Greater Fireball":
+            animate_attack(attacker, victim, spell.name)
+            aoe_tiles = get_aoe_tiles(attacker, victim)
+            draw_tinted_tiles(aoe_tiles, TileTint.FIRE)
+        elif spell is not None:
+            animate_attack(attacker, victim, spell.name)
+        else:
+            animate_attack(attacker, victim)
     else:
         animate_attack(attacker, victim)
     attacker.attacking = False
@@ -138,7 +147,7 @@ def perform_aoe(attacker, victim, crit):
     aoe_tiles = []
     if spell is not None and spell.aoe > 0:
         affected_entities = calculate_aoe(attacker, victim)
-        if spell.name == "Flame Nova":
+        if spell.name == "Flame Nova" or spell.name == "Dark Flame Nova":
             attacker.attacking = True
             if len(affected_entities) > 0:
                 # Here, we use player creep to draw fire
