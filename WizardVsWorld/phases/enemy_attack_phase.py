@@ -57,10 +57,10 @@ class EnemyAICombatPhase(Phase):
                 self.Player.defense = old_defense
             # Fire arrow
             elif randomizer > 40:
-                old_attack = self.Player.attack
-                self.Player.attack += 20
+                old_attack = enemy.attack
+                enemy.attack += 20
                 perform_attack(enemy, self.Player)
-                self.Player.attack = old_attack
+                enemy.attack = old_attack
             else:
                 perform_attack(enemy, self.Player)
 
