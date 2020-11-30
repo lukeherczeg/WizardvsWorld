@@ -2,6 +2,7 @@ from WizardVsWorld.classes.const import CRIT_MULTIPLIER
 from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.tile import Tile
 from WizardVsWorld.classes.entity import Entity, Enemy
+from WizardVsWorld.classes.user_interface import MessageBox
 
 from random import randint, randrange
 from math import ceil
@@ -257,8 +258,9 @@ class CounterAttack:
                 player.health = 0
                 ENTITIES.remove(player)
                 animate_death(player)
-                time.sleep(2)
+                MessageBox('You died. But that\'s okay! It looks like the Grand Magus still has plans for you...')
                 pygame.quit()
+                sys.exit()
             else:
                 self.victim.damaged = False
 

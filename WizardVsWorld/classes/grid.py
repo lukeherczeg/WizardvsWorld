@@ -376,19 +376,23 @@ class Grid:
 
     # function used in init to get path to file names for map layouts
     def update_layout(self, direction='east'):
+        self.map_number = self.determine_layout(direction)
+        self.load_map(self.map_number)
+
+    def determine_layout(self, direction='east'):
+        new_number = self.map_number
         if self.map_number == 0:
-            self.map_number = 5
+            new_number = 5
         else:
             if direction == 'east':
-                self.map_number += 1
+                new_number += 1
             elif direction == 'west':
-                self.map_number -= 1
+                new_number -= 1
             elif direction == 'north':
-                self.map_number -= 4
+                new_number -= 4
             elif direction == 'south':
-                self.map_number += 4
-
-        self.load_map(self.map_number)
+                new_number += 4
+        return new_number
 
     def load_map(self, level):
 
