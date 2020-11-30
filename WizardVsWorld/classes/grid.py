@@ -19,6 +19,7 @@ class Grid:
         self.win_tiles = [None] * 4
         # INDEX WITH [ROW][COL]
         self._game_map = [[self.generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
+        self.defeated_maps = [False] * 13
 
     @property
     def game_map(self):

@@ -400,14 +400,17 @@ class PlayerMovementPhase(Phase):
         self.movable_tiles = None
         self.is_tutorial = False
         if self.level_complete:
-            self.player.level_up(self.player.level + 1)
-            upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', self.pick_upgrades())
-            upgrade_menu.draw_menu()
-            upgrade_menu.await_response()
+            if not GRID.defeated_maps[GRID.map_number]:
+                self.player.level_up(self.player.level + 1)
+                upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', self.pick_upgrades())
+                upgrade_menu.draw_menu()
+                upgrade_menu.await_response()
 
             # We need a smart copy of the GRID global object, or prev_map will update by reference
             # Since we want a snapshot of the old grid, we copy it
             prev_map = copy.copy(GRID)
+            prev_map_index = prev_map.map_number
+            GRID.defeated_maps[prev_map_index] = True
 
             prev_enemies = []
             prev_location = [self.player.currentTile.row, self.player.currentTile.col]
@@ -420,9 +423,12 @@ class PlayerMovementPhase(Phase):
                 ENTITIES.append(wiz)
 
             GRID.update_layout(self.level_win_direction)
+            GRID.win_tiles = [None] * 4
             new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
             GRID.set_game_map(new_map)
-            GRID.generate_enemies(self.player.level)
+
+            if not GRID.defeated_maps[GRID.map_number]:
+                GRID.generate_enemies(self.player.level)
 
             if self.level_win_direction == 'north':
                 animate_map_transition_down(prev_map, prev_enemies, prev_location, self.player)
@@ -432,7 +438,6 @@ class PlayerMovementPhase(Phase):
                 animate_map_transition_left(prev_map, prev_enemies, prev_location, self.player)
             if self.level_win_direction == 'south':
                 animate_map_transition_up(prev_map, prev_enemies, prev_location, self.player)
-
 
             self.player.health = self.player.max_health
             self.all_bosses_defeated = False
