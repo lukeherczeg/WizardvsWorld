@@ -390,8 +390,8 @@ class PlayerMovementPhase(Phase):
     def pick_upgrades(self):
         """Returns a list of 5 random upgrades for use with a selection map"""
         upgrades = [
-            ('Health', 'Increase your Health by 15', self.player.boost_health),
-            ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
+            ('Health', 'Increase your Health by 50', self.player.boost_health),
+            ('Attack', 'Increase your Attack by 10', self.player.boost_attack),
             ('Movement', 'Increase your Movement by 1', self.player.boost_movement),
             ('Range', 'Increase range of spells  by 1', self.player.boost_range),
             ('Spell Creep', 'Increase AoE of spells by 1', self.player.boost_creep),
