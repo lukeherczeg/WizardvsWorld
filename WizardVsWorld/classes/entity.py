@@ -262,12 +262,79 @@ class WizardKing(Boss):
     def __init__(self, level):
         super().__init__()
         self.max_movement = 0
+        self.creep = 1
         self.health = 45 + (level * 6)
         self.max_health = self.health
         self.attack = 35 + (level * 6)
         self.defense = 10 + (level * 3)
         self.crit_chance = 7
+        self.level = level
         self.range = 2
+        self.uses = 99999
+        self.spellbook = None  # Populated by self.refresh_spell()
+        self.prepared_spell = None  # Keeps track of current spell to cast (jank)
+        self.refresh_spells()
 
     def get_name(self):
         return "Wizard King"
+
+    def heal(self, target):
+        self.healing = True
+        target.health = target.max_health
+
+    def refresh_spells(self):
+        """Called to initialize the spellbook and to refresh between levels (Rescales spells to current stats)"""
+        self.spellbook = [
+            # Example Spell
+            # Spell(
+            #   'Name',                     # Name of Spell
+            #   'Description Goes Here',    # Description
+            #   0,                          # Max Uses
+            #   self.range,                 # Range
+            #   self.attack,                # Spell Power (Positive for Damage, Negative for Healing)
+            #   aoe=self.creep,             # AoE of the Spell (Default = 0)
+            #   exclude=True,               # Exclude the caster from AoE
+            #   effect=some_function,       # On cast effect
+            #   impact=other_function       # On hit effect
+            #),
+            Spell(
+                'Dark Fireball',
+                'Basic Fireball.',
+                999,
+                self.range,
+                self.attack
+            ),
+            Spell(
+                'Heal',
+                'Heal to full.',
+                self.uses,
+                0,
+                -self.max_health,
+                effect=self.heal
+            ),
+            Spell(
+                'Dark Greater Fireball',
+                f'Cast a stronger fireball with AoE of {self.creep}',
+                self.uses,
+                self.range + 1,
+                self.attack + 5 * (self.level + 1),
+                aoe=self.creep,
+                exclude=False
+            ),
+            Spell(
+                'Dark Flame Nova',
+                f'A cloak of flames with AoE of {self.creep}',
+                self.uses,
+                0,
+                50 + self.attack + 2 * (self.level + 1),
+                aoe=self.creep,
+                exclude=True
+            ),
+            Spell(
+                'Pass',
+                'Do Nothing. Pass turn.',
+                999,
+                0,
+                0,
+            )
+        ]
