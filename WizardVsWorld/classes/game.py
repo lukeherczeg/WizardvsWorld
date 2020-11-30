@@ -16,7 +16,7 @@ from WizardVsWorld.classes.entity import Player
 def main():
     pygame.init()
 
-    pygame.display.set_caption('Wizard vs. World BETA Build v 0.9.1')
+    pygame.display.set_caption('Wizard vs. World v1.0.0')
     pygame.display.set_icon(WIZ_LARGE_PNG)
 
     player = Player()
