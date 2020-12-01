@@ -6,7 +6,7 @@ Link to project page: [https://github.com/lukeherczeg/WizardvsWorld](https://git
 ## Install directly from PIP
 1. You must be using Python 3.7.x (Meaning: 3.7.0 <= your_python_version < 3.8.0)
 2. Install the game: `python3.7 -m pip install WizardVsWorld`
-  - NOTE: `python3.7` represents whatever Python 3.7 is aliased to on your machine it could also be `py`, `python`, etc.
+    - NOTE: `python3.7` represents whatever Python 3.7 is aliased to on your machine it could also be `py`, `python`, etc.
 3. Run the game: `WizardVsWorld`
 
 ## If you require a virtual environment 
