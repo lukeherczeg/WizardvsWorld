@@ -5,16 +5,16 @@ with open("README.md", "r") as readme:
 
 setuptools.setup(
     name="WizardVsWorld",
-    version= "0.1.5",
+    version= "1.0.3",
     author="Logan D.G. Smith",
     author_email="loganda.smith@ufl.edu",
     description="2D tactical game involving magic and malice.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/lukeherczeg/WizardvsWorld",
-    packages=setuptools.find_namespace_packages(include=['WizardVsWorld', 'WizardVsWorld.*', 'WizardVsWorld.assets/*']),
+    packages=setuptools.find_namespace_packages(include=['WizardVsWorld', 'WizardVsWorld.*', 'WizardVsWorld.assets/*', 'WizardVsWorld.classes/*']),
     package_data={
-        '':['*.png', '*.txt']
+        '':['*.png', '*.ogg', '*.PNG', '*.txt']
     },
     install_requires=[
         "pygame==1.9.6"

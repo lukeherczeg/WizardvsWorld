@@ -3,21 +3,23 @@ from WizardVsWorld.classes.tile import Tile, TileTexture
 from random import random
 import os  # importing for reading maps inside of /maps
 
-from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight
+from WizardVsWorld.classes.entity import Knight, Archer, GreatKnight, GreatMarksman, WizardKing
 from WizardVsWorld.classes.const import *
-
+from WizardVsWorld.assets.sounds.sound_loader import game_music_grass, game_music_ice, game_music_sand, game_music_castle, game_music_castle_2, stop_playback
 
 class Grid:
     STANDABLE_TILE_DENSITY_ODDS: float = 0.98
 
-    def __init__(self, width, height, level=-1):
+    def __init__(self, width, height, map_number=0):
         self.GRID_WIDTH = width
         self.GRID_HEIGHT = height
-        self.level = level
-        self.map_layout = self.update_layout()
+        # Variables to keep track of level
+        self.map_number = map_number
+        self.map_layout = map_0
+        self.win_tiles = [None] * 4
         # INDEX WITH [ROW][COL]
         self._game_map = [[self.generate_tile(x, y) for x in range(self.GRID_WIDTH)] for y in range(self.GRID_HEIGHT)]
-        self.win_tile = None
+        self.defeated_maps = [False] * 13
 
     @property
     def game_map(self):
@@ -221,6 +223,27 @@ class Grid:
         # we need to calculate the index for the tile value once the string is read from file
         index = col + (row * 25)
         layout = self.map_layout
+        map_index = 0
+
+        direction = ''
+
+        if index < 25:
+            direction = 'north'
+        elif index > 349:
+            direction = 'south'
+        elif index % 25 == 0:
+            direction = 'west'
+        elif index % 24 == 0:
+            direction = 'east'
+
+        if direction == 'north':
+            map_index = 1
+        if direction == 'east':
+            map_index = 0
+        if direction == 'west':
+            map_index = 3
+        if direction == 'south':
+            map_index = 2
 
         # if the value is 0 (most tiles) randomly generate that tile
         # letters signify that an enemy is to be spawned on the texture type initial "f" or "d" or "g" etc.
@@ -235,17 +258,49 @@ class Grid:
             else:
                 return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
         # load a texture based on layout
+        # grass spawnable tiles
         elif layout[index] == '1' or layout[index] == 'd':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.DIRT)
-        elif layout[index] == '2':
-            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.STONE)
-        elif layout[index] == '3' or layout[index] == 'f':
-            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
-        elif layout[index] == '4' or layout[index] == 'g':
+        elif layout[index] == '2' or layout[index] == 'g':
             return Tile(col=col, row=row, standable=True, texture_type=TileTexture.GRASS)
+        elif layout[index] == '3' or layout[index] == 'f' or layout[index] == 'G' or layout[index] == 'W':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR)
+        # sand spawnable tiles
+        elif layout[index] == '4' or layout[index] == 's':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.SAND)
+        elif layout[index] == '5' or layout[index] == 'm' or layout[index] == 'A':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.MUD)
+        # snow spawnable tiles
+        elif layout[index] == '6' or layout[index] == 'i':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.SNOW)
+        elif layout[index] == '7' or layout[index] == 'p':
+            return Tile(col=col, row=row, standable=True, texture_type=TileTexture.WOOD)
+        # unstandable/unspawnable tiles
+        elif layout[index] == 'b':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.BUSH)
+        elif layout[index] == 'C':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.CACTUS)
+        elif layout[index] == 'c':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.ROCK)
+        elif layout[index] == '[':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.STONE)
+        elif layout[index] == '{':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.MUD_BRICK)
+        elif layout[index] == '<':
+            return Tile(col=col, row=row, standable=False, texture_type=TileTexture.DARK_BRICK)
+        # win tiles are as follows, w for grass level, v for sand level, and x for snow level
         elif layout[index] == 'w':
-            self.win_tile = Tile(col=col, row=row, standable=True, texture_type=TileTexture.FLOOR, win_tile=True)
-            return self.win_tile
+            self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
+                                             texture_type=TileTexture.FLOOR, win_tile=True)
+            return self.win_tiles[map_index]
+        elif layout[index] == 'x':
+            self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
+                                             texture_type=TileTexture.WOOD, win_tile=True)
+            return self.win_tiles[map_index]
+        elif layout[index] == 'v':
+            self.win_tiles[map_index] = Tile(col=col, row=row, standable=True,
+                                             texture_type=TileTexture.MUD, win_tile=True)
+            return self.win_tiles[map_index]
         else:
             return Tile(col=col, row=row, standable=False, texture_type=TileTexture.BUSH)
 
@@ -261,7 +316,9 @@ class Grid:
         index = 0
         while index < len(layout):
             if layout[index] == 'r' or layout[index] == 'd' or layout[index] == 'f' or layout[index] == 'g' or \
-                    layout[index] == 'K' or layout[index] == 'R':
+                    layout[index] == 'K' or layout[index] == 'R' or layout[index] == 'G' or layout[index] == 'A' or \
+                    layout[index] == 'W' or layout[index] == 's' or layout[index] == 'm' or layout[index] == 'i' or \
+                    layout[index] == 'p':
                 # need to translate index into a set of coordinates
                 x = index % self.GRID_WIDTH
                 y = index // self.GRID_WIDTH
@@ -275,6 +332,22 @@ class Grid:
                     archer.currentTile = self.game_map[y][x]
                     archer.currentTile.occupied = True
                     ENTITIES.append(archer)
+                elif layout[index] == 'G':
+                    boss = GreatKnight(level)
+                    boss.currentTile = self.game_map[y][x]
+                    boss.currentTile.occupied = True
+                    ENTITIES.append(boss)
+                elif layout[index] == 'A':
+                    boss = GreatMarksman(level)
+                    boss.currentTile = self.game_map[y][x]
+                    boss.currentTile.occupied = True
+                    ENTITIES.append(boss)
+                elif layout[index] == 'W':
+                    boss = WizardKing(level)
+                    boss.currentTile = self.game_map[y][x]
+                    boss.currentTile.occupied = True
+                    boss.populate_tiles(boss.height_tiles, boss.width_tiles)
+                    ENTITIES.append(boss)
                 elif self.__generate_true(.7):  # create archer
                     archer = Archer(level)
                     archer.currentTile = self.game_map[y][x]
@@ -288,40 +361,76 @@ class Grid:
             index += 1
 
         # Luke testing
-        boss = GreatKnight(level)
-        boss.currentTile = self.game_map[7][23]
-        boss.currentTile.occupied = True
-        ENTITIES.append(boss)
+        # boss = GreatKnight(level)
+        # boss.currentTile = self.game_map[0][15]
+        # boss.currentTile.occupied = True
+        # ENTITIES.append(boss)
+
+    # Map index system:
+    #    1  2  3  4
+    #    o  o  o  o
+    # 0  5  6  7  8
+    # o  o  o  o  o
+    #    9 10 11 12
+    #    o  o  o  o
 
     # function used in init to get path to file names for map layouts
-    def update_layout(self):
-        self.level += 1
-        if self.level > 4:
-            self.level = 0
-        # lev = str(self.level)
-        # get the path of the map
-        # main_directory = os.path.dirname('WizardvsWorld')
-        # asset_path = os.path.join(main_directory, 'maps')
-        # map_layout = os.path.join(asset_path, 'map')
-        # map_layout += lev
-        # map_layout += '.txt'
-        # # turn map into single string
-        # with open(map_layout, 'r') as file:
-        #     string = file.read().replace('\n', '')
-        #     self.map_layout = string
-        # return string
-        if self.level == 0:
+    def update_layout(self, direction='east'):
+        self.map_number = self.determine_layout(direction)
+        self.load_map(self.map_number)
+
+    def determine_layout(self, direction='east'):
+        new_number = self.map_number
+        if self.map_number == 0:
+            new_number = 5
+        else:
+            if direction == 'east':
+                new_number += 1
+            elif direction == 'west':
+                new_number -= 1
+            elif direction == 'north':
+                new_number -= 4
+            elif direction == 'south':
+                new_number += 4
+        return new_number
+
+    def load_map(self, level):
+
+        stop_playback()
+        if 1 <= level <= 4:
+            game_music_ice.play(loops=-1)
+        elif level == 0 or (5 <= level <= 6):
+            game_music_grass.play(loops=-1)
+        elif level == 7:
+            game_music_castle.play(loops=-1)
+        elif level == 8:
+            game_music_castle_2.play(loops=-1)
+        elif 9 <= level <= 12:
+            game_music_sand.play(loops=-1)
+
+        if level == 0:
             self.map_layout = map_0
-            return map_0
-        elif self.level == 1:
+        elif level == 1:
             self.map_layout = map_1
-            return map_1
-        elif self.level == 2:
+        elif level == 2:
             self.map_layout = map_2
-            return map_2
-        elif self.level == 3:
+        elif level == 3:
             self.map_layout = map_3
-            return map_3
-        elif self.level == 4:
+        elif level == 4:
             self.map_layout = map_4
-            return map_4
+        elif level == 5:
+            self.map_layout = map_5
+        elif level == 6:
+            self.map_layout = map_6
+        elif level == 7:
+            self.map_layout = map_7
+        elif level == 8:
+            self.map_layout = map_8
+        elif level == 9:
+            self.map_layout = map_9
+        elif level == 10:
+            self.map_layout = map_10
+        elif level == 11:
+            self.map_layout = map_11
+        elif level == 12:
+            self.map_layout = map_12

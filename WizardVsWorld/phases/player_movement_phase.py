@@ -1,3 +1,7 @@
+import copy
+
+from random import randint
+
 from WizardVsWorld.classes.draw import *
 from WizardVsWorld.classes.phase import Phase
 from WizardVsWorld.classes.entity import Player, Boss
@@ -47,9 +51,10 @@ class PlayerMovementPhase(Phase):
         self.enemy_tiles = None
         self.occupied_index = 0
         self.is_tutorial = True
-        self.level_win_tile = GRID.game_map[7][24]
         self.all_bosses_defeated = False
         self.level_complete = False
+        # Tile types themselves
+        self.level_win_direction = ''
 
     def cyclic_last(self, tile_list, current_tile):
         self.occupied_index -= 1
@@ -72,6 +77,22 @@ class PlayerMovementPhase(Phase):
             draw_text("Bush", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
         elif tile_info == TileTexture.STONE:
             draw_text("Stone Wall", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.WOOD:
+            draw_text("Wood", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.DARK_BRICK:
+            draw_text("Dark Brick", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.SNOW:
+            draw_text("Snow", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.ROCK:
+            draw_text("Rock", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.MUD:
+            draw_text("Mud", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.MUD_BRICK:
+            draw_text("Mud Brick", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.SAND:
+            draw_text("Sand", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
+        elif tile_info == TileTexture.CACTUS:
+            draw_text("Cactus", 24, GRID.game_map[row][col], (offset_x, offset_y), draw_color)
 
         if self.currentTile.standable:
             draw_color = BLUE
@@ -92,7 +113,7 @@ class PlayerMovementPhase(Phase):
 
         stats = []
         tile_info = []
-        draw_color = WHITE
+        draw_color = LIGHT_GREY
         if self.currentTile.occupied:
             for enemy in ENTITIES:
                 if enemy.currentTile is self.currentTile:
@@ -121,7 +142,7 @@ class PlayerMovementPhase(Phase):
             # Print all other stats to the top left of the screen
             for stat in stats[1:]:
                 draw_text(stat, 15, GRID.game_map[stat_draw_location[0]][stat_draw_location[1]],
-                          (stat_draw_offset_horizontal, stat_draw_offset_vertical))
+                          (stat_draw_offset_horizontal, stat_draw_offset_vertical), LIGHT_GREY)
                 stat_draw_offset_vertical += .5
         # If there aren't any entities on this tile, we display the tile type instead
         else:
@@ -135,6 +156,12 @@ class PlayerMovementPhase(Phase):
            If there are no movable or enemy tiles, then it must be normal, free selection phase,
            if there are movable tiles, it sets constraints and tints for the movement phase,
            and if there are enemy tiles, it sets constraints for the attack phase."""
+
+        wizard_king_tile = None
+
+        for enemy in ENTITIES[1:]:
+            if isinstance(enemy, WizardKing):
+                wizard_king_tile = enemy.currentTile
 
         # Free selection phase
         if self.movable_tiles is None and self.enemy_tiles is None:
@@ -176,19 +203,27 @@ class PlayerMovementPhase(Phase):
                 if rect_size == 0:
                     draw_entity_from_tile(self.prev_tile)
 
+                if wizard_king_tile is not None:
+                    draw_entity_from_tile(wizard_king_tile)
+
+
         # Movement selection phase
         elif self.movable_tiles and self.grid.is_valid_tile_in_list(row, col, self.movable_tiles):
-            draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
+            draw_tinted_tiles(self.movable_tiles, TileTint.BLUE)
             self.currentTile = self.grid.game_map[row][col]
             select(self.currentTile.row, self.currentTile.col)
             draw_entity_from_tile(self.currentTile)
+            if wizard_king_tile is not None:
+                draw_entity_from_tile(wizard_king_tile)
 
         # Attack selection phase
         elif self.enemy_tiles and self.grid.is_valid_tile_in_list(row, col, self.enemy_tiles):
-            draw_tinted_tiles(self.enemy_tiles, self.player, TileTint.ORANGE)
+            draw_tinted_tiles(self.enemy_tiles, TileTint.ORANGE)
             self.currentTile = self.grid.game_map[row][col]
             select(self.currentTile.row, self.currentTile.col)
             draw_entity_from_tile(self.currentTile)
+            if wizard_king_tile is not None:
+                draw_entity_from_tile(wizard_king_tile)
 
             # If we want to use enemy specific selection tiles:
 
@@ -244,8 +279,6 @@ class PlayerMovementPhase(Phase):
                         return True
                     elif self.movable_tiles:
                         if self.currentTile in self.movable_tiles:
-                            if self.all_bosses_defeated and self.currentTile == self.level_win_tile:
-                                self.level_complete = True
                             return True
                     elif self.enemy_tiles:
                         if self.currentTile in self.enemy_tiles and self.currentTile.occupied:
@@ -258,8 +291,8 @@ class PlayerMovementPhase(Phase):
         self.immovable_tiles = GRID.get_movement_border(movable_tiles, self.player.range)
         self.movable_tiles = list(set(movable_tiles).difference(set(self.immovable_tiles)))
 
-        draw_tinted_tiles(self.movable_tiles, self.player, TileTint.BLUE)
-        draw_tinted_tiles(self.immovable_tiles, self.player, TileTint.RED)
+        draw_tinted_tiles(self.movable_tiles, TileTint.BLUE)
+        draw_tinted_tiles(self.immovable_tiles, TileTint.RED)
 
         select(self.currentTile.row, self.currentTile.col)
         draw_entity_from_tile(self.currentTile)
@@ -270,12 +303,36 @@ class PlayerMovementPhase(Phase):
             if self.selection():
                 selecting = False
 
-        clear_tinted_tiles(self.movable_tiles, self.player)
-        clear_tinted_tiles(self.immovable_tiles, self.player)
+        clear_tinted_tiles(self.movable_tiles)
+        clear_tinted_tiles(self.immovable_tiles)
 
         self.player.currentTile = self.currentTile
 
+        # Several win tiles, level is complete if on any one of them and all bosses defeated
+        if self.all_bosses_defeated:
+            self.handle_win_tiles()
+
         animate_entity_movement(self.player, initial_tile)
+
+    def calculate_direction_from_index(self, index):
+        if index == 1:
+            self.level_win_direction = 'north'
+        if index == 0:
+            self.level_win_direction = 'east'
+        if index == 3:
+            self.level_win_direction = 'west'
+        if index == 2:
+            self.level_win_direction = 'south'
+
+    def handle_win_tiles(self):
+        for i in range(len(GRID.win_tiles)):
+            if GRID.win_tiles[i] is not None:
+                tile = GRID.win_tiles[i]
+                tile.tint = TileTint.ORANGE
+                draw_tile(tile)
+                if self.player.currentTile == tile:
+                    self.calculate_direction_from_index(i)
+                    self.level_complete = True
 
     def enter(self):
         bosses_remaining = 0
@@ -285,82 +342,126 @@ class PlayerMovementPhase(Phase):
         if bosses_remaining < 1:
             self.all_bosses_defeated = True
 
-        if self.all_bosses_defeated:
-            self.level_win_tile.tint = TileTint.ORANGE
-
         self.enemy_tiles = None
         self.currentTile = self.player.currentTile
+        # Stop heal from level advance
+        self.player.healing = False
         total_refresh_drawing()
 
         background = pygame.transform.scale(BACKGROUND_PNG, (562, 225))
         animate_text_abs('Player Phase', 75, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, BLUE, 1, background, 15)
         total_refresh_drawing()
 
-        # TUTORIAL
-        if self.is_tutorial:
-            MessageBox('In order to win, defeat the boss inside the castle guarding the exit!')
-            MessageBox('After defeating the boss, the entrance to the next level will be highlighted.')
-            GRID.game_map[7][24].tint = TileTint.ORANGE
-            total_refresh_drawing()
-            MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
-            GRID.game_map[7][24].tint = TileTint.NONE
-            MessageBox('You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
-                       + 'You are the lone wizard in blue. Please select yourself!')
+        if self.all_bosses_defeated:
+            self.handle_win_tiles()
 
-            total_refresh_drawing()
+        if not self.level_complete:
+            # TUTORIAL
+            if self.is_tutorial:
+                MessageBox('In order to win, defeat the boss inside the castle guarding the exit!')
+                MessageBox('After defeating the boss, the entrance to the next level will be highlighted.')
+                GRID.game_map[7][24].tint = TileTint.ORANGE
+                draw_tile(GRID.game_map[7][24])
+                MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
+                GRID.game_map[7][24].tint = TileTint.NONE
+                MessageBox(
+                    'You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
+                    + 'You are the lone wizard in blue. Select the wizard!')
 
-        entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
-        self.display_tile_info(entities_in_top_left)
-        select(self.currentTile.row, self.currentTile.col)
-        draw_entity_from_tile(self.currentTile)
-        selecting = True
-        while selecting:
-            if self.selection():
-                if self.currentTile == self.player.currentTile:
+                total_refresh_drawing()
 
-                    # TUTORIAL
-                    if self.is_tutorial:
-                        MessageBox('Great job! Now pick one of the blue spaces to move to.')
+            entities_in_top_left = check_for_entities_in_area(GRID.game_map[1][0], GRID.game_map[5][3])
+            self.display_tile_info(entities_in_top_left)
+            select(self.currentTile.row, self.currentTile.col)
+            draw_entity_from_tile(self.currentTile)
+            selecting = True
+            while selecting:
+                if self.selection():
+                    if self.currentTile == self.player.currentTile:
 
-                    total_refresh_drawing()
+                        # TUTORIAL
+                        if self.is_tutorial:
+                            MessageBox('Great job! Now pick one of the blue spaces to move to.')
 
-                    selecting = False
+                        total_refresh_drawing()
+
+                        selecting = False
+
+    def pick_upgrades(self):
+        """Returns a list of 5 random upgrades for use with a selection map"""
+        upgrades = [
+            ('Health', 'Increase your Health by 50', self.player.boost_health),
+            ('Attack', 'Increase your Attack by 10', self.player.boost_attack),
+            ('Movement', 'Increase your Movement by 1', self.player.boost_movement),
+            ('Range', 'Increase range of spells  by 1', self.player.boost_range),
+            ('Spell Creep', 'Increase AoE of spells by 1', self.player.boost_creep),
+            ('Spell Uses', 'Increase all spell uses by 1', self.player.boost_uses),
+            ('Spell Shield', 'Boost Spell Shield -- chance to block all damage.', self.player.boost_shield),
+        ]
+
+        # Select 5 random upgrades
+        selected = []
+        for i in range(5):
+            selected.append(upgrades.pop(randint(0, len(upgrades) - 1)))
+
+        return selected
 
     def update(self):
-        self.movement()
+        if not self.level_complete:
+            self.movement()
 
     def exit(self):
         self.movable_tiles = None
         self.is_tutorial = False
         if self.level_complete:
-            self.player.level_up(self.player.level + 1)
-            upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', [
-                ('Health', 'Increase your Health by 15', self.player.boost_health),
-                ('Attack', 'Increase your Attack by 5', self.player.boost_attack),
-                ('Movement', 'Increase your Movement by 1', self.player.boost_movement)])
-            upgrade_menu.draw_menu()
-            upgrade_menu.await_response()
-            prev_map = GRID
+
+            next_map_number = GRID.determine_layout(self.level_win_direction)
+
+            if not GRID.defeated_maps[next_map_number] and not GRID.defeated_maps[GRID.map_number]:
+                self.player.level_up(self.player.level + 1)
+                upgrade_menu = SelectionMenu('You leveled up! Choose an Upgrade', self.pick_upgrades())
+                upgrade_menu.draw_menu()
+                upgrade_menu.await_response()
+
+            # We need a smart copy of the GRID global object, or prev_map will update by reference
+            # Since we want a snapshot of the old grid, we copy it
+            prev_map = copy.copy(GRID)
+            prev_map_index = prev_map.map_number
+
+            if not GRID.defeated_maps[next_map_number] and not GRID.defeated_maps[GRID.map_number]:
+                GRID.defeated_maps[prev_map_index] = True
+
             prev_enemies = []
             prev_location = [self.player.currentTile.row, self.player.currentTile.col]
 
+            # We don't seem to need to copy the entities, perhaps since it isn't an object
             if len(ENTITIES) > 1:
                 prev_enemies = ENTITIES[1:]
                 wiz = ENTITIES[0]
                 ENTITIES.clear()
                 ENTITIES.append(wiz)
 
-            GRID.update_layout()
+            GRID.update_layout(self.level_win_direction)
+            GRID.win_tiles = [None] * 4
             new_map = [[GRID.generate_tile(x, y) for x in range(GRID.GRID_WIDTH)] for y in range(GRID.GRID_HEIGHT)]
             GRID.set_game_map(new_map)
-            GRID.generate_enemies(self.player.level)
 
-            animate_map_transition(prev_map, prev_enemies, self.player)
-            self.player.currentTile = GRID.game_map[prev_location[0]][0]
+            if not GRID.defeated_maps[next_map_number] and not GRID.defeated_maps[GRID.map_number]:
+                GRID.generate_enemies(self.player.level)
+
+            if self.level_win_direction == 'north':
+                animate_map_transition_down(prev_map, prev_enemies, prev_location, self.player)
+            if self.level_win_direction == 'east':
+                animate_map_transition_right(prev_map, prev_enemies, prev_location, self.player)
+            if self.level_win_direction == 'west':
+                animate_map_transition_left(prev_map, prev_enemies, prev_location, self.player)
+            if self.level_win_direction == 'south':
+                animate_map_transition_up(prev_map, prev_enemies, prev_location, self.player)
+
             self.player.health = self.player.max_health
             self.all_bosses_defeated = False
+            self.level_win_direction = ''
             self.level_complete = False
-            self.level_win_tile = GRID.win_tile
             self.enter()
             self.update()
             self.exit()

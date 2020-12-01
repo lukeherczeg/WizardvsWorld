@@ -1,7 +1,7 @@
 from WizardVsWorld.phases.player_movement_phase import *
-from WizardVsWorld.classes.user_interface import MessageBox
-from WizardVsWorld.classes.attack import CounterAttack, perform_attack
-
+from WizardVsWorld.classes.user_interface import MessageBox, SpellMenu
+from WizardVsWorld.classes.attack import CounterAttack, cast_spell, get_aoe_tiles
+from WizardVsWorld.assets.sounds.sound_loader import game_music_over, stop_playback
 
 class PlayerAttackPhase(Phase):
     player: Player
@@ -18,13 +18,35 @@ class PlayerAttackPhase(Phase):
         self.is_tutorial = True
 
     def attack(self, enemy, enemy_tiles):
-        perform_attack(self.player, enemy)
+        cast_spell(self.player, enemy)
 
-        if enemy.health <= 0:
-            enemy.currentTile.occupied = False
-            ENTITIES.remove(enemy)
-            animate_death(enemy)
-        elif enemy.health > 0:
+        # Check if player died to the spell
+        if self.player.health <= 0:
+            stop_playback()
+            game_music_over.play(loops=-1)
+            MessageBox(
+                'Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
+            pygame.quit()
+            sys.exit()
+        elif self.player.health > 0:
+            self.player.damaged = False
+
+        # # Check if any entities died in the attack or its effects
+        # dead_entities = []
+        # for entity in ENTITIES:
+        #     if entity.health <= 0:
+        #         entity.currentTile.occupied = False
+        #         dead_entities.append(entity)
+        #     else:
+        #         entity.damaged = False
+        #
+        # # Remove all of the dead
+        # for entity in dead_entities:
+        #     ENTITIES.remove(entity)
+        #     animate_death(entity)
+
+        # Potential counterattack from enemy
+        if self.player is not enemy and enemy.health > 0:
             enemy.damaged = False
             attacker = CounterAttack(enemy, self.player, enemy_tiles)
             attacker.attempt_counter_attack()
@@ -35,7 +57,12 @@ class PlayerAttackPhase(Phase):
             self.attack(enemy, enemy_tiles)
 
     def attack_selection(self):
-        enemy_tiles = GRID.get_attack(self.player.currentTile.row, self.player.currentTile.col, self.player.range)
+        enemy_tiles = GRID.get_attack(
+            self.player.currentTile.row,
+            self.player.currentTile.col,
+            self.player.prepared_spell.range
+        )
+        aoe_tiles = []
 
         self.data_from_movement.enemy_tiles = enemy_tiles
 
@@ -46,7 +73,25 @@ class PlayerAttackPhase(Phase):
                 occupied_enemy_tiles.append(tile)
                 enemies_within_range += 1
 
-        draw_tinted_tiles(enemy_tiles, self.player, TileTint.ORANGE)
+        # If statement to eliminate the orange square when healing
+        if self.player.prepared_spell.name == 'Heal' or self.player.prepared_spell.name == 'Pass':
+            draw_tinted_tiles(enemy_tiles, None)
+        elif self.player.prepared_spell.name == 'Flame Nova':
+            aoe_tiles = get_aoe_tiles(self.player, self.player)
+            aoe_tiles.remove(self.player.currentTile)
+            draw_tinted_tiles(aoe_tiles, TileTint.ORANGE)
+        else:
+            draw_tinted_tiles(enemy_tiles, TileTint.ORANGE)
+
+        # Spells cast on self trigger here
+        if self.player.prepared_spell.range == 0:
+            self.enemyTile = self.player.currentTile
+            time.sleep(1)
+            self.player.selected = False
+
+            cast_spell(self.player, self.player)
+            clear_tinted_tiles(aoe_tiles)
+            return
 
         if enemies_within_range != 0:
 
@@ -75,7 +120,6 @@ class PlayerAttackPhase(Phase):
 
                     self.enemyTile = self.data_from_movement.currentTile
                     self.player.selected = False
-                    #draw_entities()
                     selecting = False
         else:
             time.sleep(1)
@@ -85,11 +129,18 @@ class PlayerAttackPhase(Phase):
                 MessageBox('No enemies are close enough to attack. Let\'s pass for now.')
                 total_refresh_drawing()
 
-        clear_tinted_tiles(enemy_tiles, self.player)
+        clear_tinted_tiles(enemy_tiles)
 
     def enter(self):
         if not self.data_from_movement.level_complete:
-            total_refresh_drawing()  # Attack radius can overwrite text
+            # Attack radius can overwrite text
+            total_refresh_drawing()
+
+            # Select a spell
+            spell_menu = SpellMenu(self.player.spellbook)
+            spell_number = spell_menu.await_response()
+            self.player.prepared_spell = self.player.spellbook[spell_number]
+
             self.attack_selection()
 
     def update(self):

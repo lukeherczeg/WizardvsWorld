@@ -1,5 +1,6 @@
 from WizardVsWorld.assets.image_loader import *
 from WizardVsWorld.classes.draw import quit_game, draw_text_abs, total_refresh_drawing
+from operator import attrgetter
 
 
 class Button:
@@ -64,7 +65,7 @@ class MessageBox:
         SCREEN.blit(background, rect)
 
         for offset in range(length):
-            draw_text_abs(self.__lines[offset], 24, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 35))
+            draw_text_abs(self.__lines[offset], 24, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 50))
 
         pygame.display.update()
 
@@ -161,6 +162,138 @@ class SelectionMenu:
                     self.options[self.selected][2]()  # Call the on_click function of the option
                     total_refresh_drawing()
                     return True
+                elif event.type == pygame.QUIT:
+                    quit_game()
+
+            if update:
+                self.draw_menu()
+
+
+class SpellMenu:
+    """Overlay the current screen with selection menu.
+
+    :param spells: a list of Spell Objects
+
+    """
+
+    def __init__(self, spells):
+        longest_spell = max(spells, key=attrgetter('description'))
+
+        self.pos_x = WINDOW_WIDTH // 2
+        self.pos_y = WINDOW_HEIGHT // 2
+        self.width = len(longest_spell.description)
+        self.header = 'Choose a Spell'
+        self.spells = spells
+
+        self.selected = 0
+
+    def draw_menu(self, initialize=None):
+        # Build the Dialogue Box
+        background = pygame.transform.scale(BACKGROUND_PNG, (self.width * 20, 40))
+        rect = background.get_rect()
+        rect.center = (self.pos_x, self.pos_y + 10)
+        SCREEN.blit(background, rect)
+
+        # Draw Title
+        if initialize is not None and initialize is not False:
+            draw_text_abs(
+                'Choose a Spell!',
+                18,
+                self.pos_x,
+                self.pos_y - 25,
+                WHITE
+            )
+            draw_text_abs(
+                '^',
+                25,
+                self.pos_x - self.pos_x / 3.5,
+                self.pos_y + self.pos_y / 45,
+                WHITE
+            )
+            draw_text_abs(
+                'v',
+                20,
+                self.pos_x - self.pos_x / 3.5,
+                self.pos_y + self.pos_y / 15,
+                WHITE
+            )
+            draw_text_abs(
+                '(Use the \'Up\' and \'Down\' arrow keys!)',
+                14,
+                self.pos_x,
+                self.pos_y + self.pos_y / 7,
+                WHITE
+            )
+
+        spell = self.spells[self.selected]
+
+        if spell.max_uses < 999:
+            # Draw option name
+            draw_text_abs(
+                spell.name + f'  ({spell.current_uses}/{spell.max_uses})',
+                14,
+                self.pos_x,
+                self.pos_y,
+                WHITE
+            )
+        elif spell.name == 'Pass':
+            # Infinite use spells
+            draw_text_abs(
+                spell.name,
+                14,
+                self.pos_x,
+                self.pos_y,
+                WHITE
+            )
+        else:
+            # Infinite use spells
+            draw_text_abs(
+                spell.name + f'  (infinite)',
+                14,
+                self.pos_x,
+                self.pos_y,
+                WHITE
+            )
+
+        # Draw option description
+        draw_text_abs(
+            self.spells[self.selected].description,
+            12,
+            self.pos_x,
+            self.pos_y + 20,
+            WHITE
+        )
+
+        pygame.display.update()
+
+    def await_response(self):
+        self.draw_menu(initialize=True)
+        while True:
+            update = False
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+                    if self.selected == len(self.spells) - 1:
+                        self.selected = 0
+                        self.last_selected = len(self.spells) - 1
+                    else:
+                        self.last_selected = self.selected
+                        self.selected += 1
+                    update = True
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+                    if self.selected == 0:
+                        self.selected = len(self.spells) - 1
+                        self.last_selected = 0
+                    else:
+                        self.last_selected = self.selected
+                        self.selected -= 1
+                    update = True
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    if self.spells[self.selected].can_cast() is not False:
+                        total_refresh_drawing()
+                        return self.selected
+                    else:
+                        # TODO: ADD VISUAL CUE THAT TELLS USER THEY CAN'T CAST THIS
+                        pass
                 elif event.type == pygame.QUIT:
                     quit_game()
 

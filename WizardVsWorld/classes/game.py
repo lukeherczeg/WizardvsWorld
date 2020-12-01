@@ -16,11 +16,11 @@ from WizardVsWorld.classes.entity import Player
 def main():
     pygame.init()
 
-    pygame.display.set_caption('Wizard vs. World ALPHA Build v 0.1')
+    pygame.display.set_caption('Wizard vs. World v1.0.3')
     pygame.display.set_icon(WIZ_LARGE_PNG)
 
     player = Player()
-    player.currentTile = GRID.game_map[7][18]
+    player.currentTile = GRID.game_map[7][0]
     ENTITIES.append(player)
     GRID.generate_enemies(0)
 
