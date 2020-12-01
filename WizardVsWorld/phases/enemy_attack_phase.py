@@ -21,6 +21,7 @@ class EnemyAICombatPhase(Phase):
     def attack_player_procedure(self, enemy):
         self.Player.healing = False
         attacked = False
+        aoe_attacked = False
         enemy_tiles = GRID.get_attack(self.player_position.row, self.player_position.col, self.Player.range)
         if can_attack(enemy, self.Player) and isinstance(enemy, GreatKnight):
             attacked = True
@@ -34,15 +35,17 @@ class EnemyAICombatPhase(Phase):
                 perform_attack(enemy, self.Player)
 
         elif can_attack(enemy, self.Player) and isinstance(enemy, WizardKing):
-            attacked = True
             randomizer = randint(1, 50)
             if randomizer > 40:
+                aoe_attacked = True
                 enemy.prepared_spell = enemy.spellbook[3]
                 cast_spell(enemy, enemy)
             elif randomizer > 30:
+                aoe_attacked = True
                 enemy.prepared_spell = enemy.spellbook[2]
                 cast_spell(enemy, self.Player)
             else:
+                attacked = True
                 enemy.prepared_spell = enemy.spellbook[0]
                 cast_spell(enemy, self.Player)
 
@@ -74,14 +77,14 @@ class EnemyAICombatPhase(Phase):
 
             perform_attack(enemy, self.Player)
 
-        if attacked:
-            if self.Player.health <= 0:
-                stop_playback()
-                game_music_over.play(loops=-1)
-                MessageBox('You died. But that\'s okay! It looks like the Grand Magus still has plans for you...')
-                pygame.quit()
-                sys.exit()
-            elif self.Player.health > 0:
+        if self.Player.health <= 0:
+            stop_playback()
+            game_music_over.play(loops=-1)
+            MessageBox('You died. But that\'s okay! It looks like the Grand Magus still has plans for you...')
+            pygame.quit()
+            sys.exit()
+        elif self.Player.health > 0 and not enemy.health <= 0:
+            if attacked:
                 self.Player.damaged = False
                 attacker = CounterAttack(self.Player, enemy, enemy_tiles)
                 if self.counter_tutorial:
@@ -89,7 +92,9 @@ class EnemyAICombatPhase(Phase):
                     total_refresh_drawing()
                     self.counter_tutorial = False
                 attacker.attempt_counter_attack()
-            return True
+                return True
+            elif aoe_attacked:
+                return True
 
         return False
 
