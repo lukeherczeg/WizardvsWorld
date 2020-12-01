@@ -403,7 +403,7 @@ class Grid:
             game_music_grass.play(loops=-1)
         elif level == 7:
             game_music_castle.play(loops=-1)
-        elif level == 6:
+        elif level == 8:
             game_music_castle_2.play(loops=-1)
         elif 9 <= level <= 12:
             game_music_sand.play(loops=-1)
