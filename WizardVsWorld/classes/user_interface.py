@@ -49,7 +49,7 @@ class MessageBox:
 
     # TODO: PUT A DARK TRANSPARENT OVERLAY ON THE TOP OF THE SCREEN TO FOCUS PLAYER
     def __init__(self, message):
-        self.__lines = self.split(message, 75)  # 80 Characters Max in a line
+        self.__lines = self.split(message, 75)  # 70 Characters Max in a line
         self.__lines.append('Press ENTER to continue...')
         self.draw_message_box()
         self.confirm()
@@ -65,7 +65,7 @@ class MessageBox:
         SCREEN.blit(background, rect)
 
         for offset in range(length):
-            draw_text_abs(self.__lines[offset], 24, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 50))
+            draw_text_abs(self.__lines[offset], 22, WINDOW_WIDTH // 2, 2 * WINDOW_HEIGHT // 3 + (offset * 45 + 50))
 
         pygame.display.update()
 

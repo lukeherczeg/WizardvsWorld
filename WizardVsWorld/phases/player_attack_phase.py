@@ -23,7 +23,8 @@ class PlayerAttackPhase(Phase):
         # Check if player died to the spell
         if self.player.health <= 0:
             MessageBox(
-                'Your spells were too strong! You\'ve died, but that\'s okay. It looks like the Grand Magus still has plans for you...')
+                'Your spells were too strong! You\'ve died, but that\'s okay. '
+                + 'It looks like the Grand Magus still has plans for you...')
             pygame.quit()
             sys.exit()
         elif self.player.health > 0:
@@ -95,8 +96,8 @@ class PlayerAttackPhase(Phase):
 
             # TUTORIAL
             if self.is_tutorial:
-                MessageBox('Uh oh, enemies are close! Select one of the enemies within range by pressing ENTER'
-                           + ' while they are in your selector.')
+                MessageBox('Great! Now, just cycle using the arrow keys to choose an enemy within range, and press'
+                           + ' ENTER while they are in your selector to use your spell.')
                 total_refresh_drawing()
 
             self.is_tutorial = False
@@ -136,6 +137,12 @@ class PlayerAttackPhase(Phase):
 
             # Select a spell
             spell_menu = SpellMenu(self.player.spellbook)
+
+            if self.is_tutorial:
+                MessageBox('Uh oh, enemies are close! Select one of your available spells! Don\'t worry, your spell'
+                           + ' uses will regenerate when you advance to the next level.')
+                total_refresh_drawing()
+
             spell_number = spell_menu.await_response()
             self.player.prepared_spell = self.player.spellbook[spell_number]
 

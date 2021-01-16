@@ -363,6 +363,8 @@ class PlayerMovementPhase(Phase):
                 GRID.game_map[7][24].tint = TileTint.ORANGE
                 draw_tile(GRID.game_map[7][24])
                 MessageBox('See that orange tile at the back of the castle on the right? That\'s it!')
+                MessageBox('If you step on the tile after defeating the boss, you\'ll advance to the next level, and'
+                           ' heal to full health!')
                 GRID.game_map[7][24].tint = TileTint.NONE
                 MessageBox(
                     'You can use the arrow keys to move the tile selector. ENTER will let you select a character. '
