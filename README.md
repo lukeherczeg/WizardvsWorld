@@ -7,6 +7,8 @@ Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical roguelike 
     - NOTE: `python3.7` represents whatever Python 3.7 is aliased to on your machine it could also be `py`, `python`, etc.
 3. Run the game: `WizardVsWorld`
 
+### - See the "WizardVsWorldHowToDownload" file for more detailed instructions!
+
 ## If you require a virtual environment 
 1. Create a virtual environment for Python3.7: `virtualenv -p="/usr/bin/python3.7" <env_name>`
 2. Use the virtual environment: `source <env_name>/bin/activate`
