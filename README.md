@@ -5,6 +5,8 @@ Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical roguelike 
 
 # - See the "WizardVsWorldHowToDownload" file for detailed instructions on how to play!
 
+
+
 ## Install directly from PIP
 1. You must be using Python 3.7.x (Meaning: 3.7.0 <= your_python_version < 3.8.0)
 2. Install the game: `python3.7 -m pip install WizardVsWorld`
