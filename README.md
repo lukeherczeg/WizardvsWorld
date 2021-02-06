@@ -1,7 +1,7 @@
 <img src = "https://cdn.discordapp.com/attachments/347967840655245316/807707133423648778/unknown.png">
 
 
-Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical roguelike role-playing game where you play as a single wizard fighting an army of endless soldiers. The game is built using the PyGame 1.9.6 engine. 
+Inspired by the Fire Emblem series, Wizard vs. World is a 2D tactical roguelike role-playing game built using the PyGame 1.9.6 engine. 
 
 ## Install directly from PIP
 1. You must be using Python 3.7.x (Meaning: 3.7.0 <= your_python_version < 3.8.0)
